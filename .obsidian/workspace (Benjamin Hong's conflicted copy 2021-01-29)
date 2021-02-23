@@ -1,0 +1,191 @@
+{
+  "main": {
+    "id": "c6e868ad46e36bad",
+    "type": "split",
+    "children": [
+      {
+        "id": "99c18ea5790756e6",
+        "type": "leaf",
+        "active": true,
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "quick-capture/TheJamDev Conference — 202101211455.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "a8ef4ae0a04052e3",
+    "type": "split",
+    "children": [
+      {
+        "id": "c40b3f61390dbc5d",
+        "type": "tabs",
+        "dimension": 53.08641975308642,
+        "children": [
+          {
+            "id": "ec1698e7d057ce27",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "7f99185fd6d0d4fe",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#i-learned",
+                "matchingCase": false,
+                "explainSearch": true,
+                "collapseAll": true,
+                "extraContext": false,
+                "sortOrder": "byCreatedTimeReverse"
+              }
+            }
+          },
+          {
+            "id": "baf3a0fb4cf01b6b",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
+          }
+        ]
+      },
+      {
+        "id": "a917382ab31b9cd4",
+        "type": "tabs",
+        "dimension": 46.91358024691358,
+        "children": [
+          {
+            "id": "0e317a6be7c3c7d8",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "alphabetical",
+                "useHierarchy": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 595.5,
+    "collapsed": true
+  },
+  "right": {
+    "id": "85ecf5f9629d0b69",
+    "type": "split",
+    "children": [
+      {
+        "id": "9534e310d0e8ec16",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8155f0cfb5122d8f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "quick-capture/TheJamDev Conference — 202101211455.md"
+              }
+            }
+          },
+          {
+            "id": "480f29edc2e5693f",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          },
+          {
+            "id": "3aa2ac9732e4cba0",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 2
+      },
+      {
+        "id": "4769a36c58d6845c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1ba04d1f24ae7365",
+            "type": "leaf",
+            "state": {
+              "type": "localgraph",
+              "state": {
+                "file": "quick-capture/TheJamDev Conference — 202101211455.md",
+                "options": {
+                  "search": "",
+                  "localJumps": 1,
+                  "localBacklinks": true,
+                  "localForelinks": true,
+                  "localInterlinks": false,
+                  "showTags": false,
+                  "showAttachments": false,
+                  "hideUnresolved": false,
+                  "showArrow": false,
+                  "textFadeMultiplier": 0,
+                  "nodeSizeMultiplier": 1,
+                  "lineSizeMultiplier": 1,
+                  "centerStrength": 0.518713248970312,
+                  "repelStrength": 10,
+                  "linkStrength": 1,
+                  "linkDistance": 250,
+                  "scale": 1.387843304065943
+                }
+              }
+            }
+          },
+          {
+            "id": "e467f7565d1dbad3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "quick-capture/TheJamDev Conference — 202101211455.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 388.3646545410156,
+    "collapsed": true
+  },
+  "lastOpenFiles": [
+    "quick-capture/TheJamDev Conference — 202101211455.md",
+    "quick-capture/Untitled 11.md",
+    "quick-capture/Untitled 10.md",
+    "quick-capture/Untitled 9.md",
+    "reports/Daily Notes/2021-01-28.md",
+    "templates/Block - Definition — Template.md",
+    "people/@ Seth Godin.md",
+    "quick-capture/20210124180645 — Introduction.md",
+    "quick-capture/Creativity is a choice, it’s not a bolt of lightning from somewhere else. (3).md",
+    "quick-capture/20210128125408 — Creativity is a choice, it’s not a bolt of lightning from somewhere else. (3).md"
+  ]
+}

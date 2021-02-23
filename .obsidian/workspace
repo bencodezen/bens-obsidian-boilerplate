@@ -1,0 +1,189 @@
+{
+  "main": {
+    "id": "c6e868ad46e36bad",
+    "type": "split",
+    "children": [
+      {
+        "id": "69f1e9b06a1b2a68",
+        "type": "leaf",
+        "active": true,
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "templates/Pages/Page — Weekly Note — Template.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "a8ef4ae0a04052e3",
+    "type": "split",
+    "children": [
+      {
+        "id": "c40b3f61390dbc5d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ec1698e7d057ce27",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "7f99185fd6d0d4fe",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "\"Mem",
+                "matchingCase": false,
+                "explainSearch": true,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "byCreatedTime"
+              }
+            }
+          },
+          {
+            "id": "baf3a0fb4cf01b6b",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
+          },
+          {
+            "id": "0e317a6be7c3c7d8",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "alphabetical",
+                "useHierarchy": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 369.5
+  },
+  "right": {
+    "id": "85ecf5f9629d0b69",
+    "type": "split",
+    "children": [
+      {
+        "id": "9534e310d0e8ec16",
+        "type": "tabs",
+        "dimension": 51.79533213644524,
+        "children": [
+          {
+            "id": "8155f0cfb5122d8f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "templates/Pages/Page — Weekly Note — Template.md"
+              }
+            }
+          },
+          {
+            "id": "3aa2ac9732e4cba0",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          },
+          {
+            "id": "1c6d265f778cffcf",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {}
+            }
+          }
+        ]
+      },
+      {
+        "id": "4769a36c58d6845c",
+        "type": "tabs",
+        "dimension": 48.204667863554754,
+        "children": [
+          {
+            "id": "1ba04d1f24ae7365",
+            "type": "leaf",
+            "state": {
+              "type": "localgraph",
+              "state": {
+                "file": "templates/Pages/Page — Weekly Note — Template.md",
+                "options": {
+                  "collapse-filter": true,
+                  "search": "-path:reports",
+                  "localJumps": 2,
+                  "localBacklinks": true,
+                  "localForelinks": true,
+                  "localInterlinks": true,
+                  "showTags": true,
+                  "showAttachments": false,
+                  "hideUnresolved": false,
+                  "collapse-color-groups": true,
+                  "colorGroups": [],
+                  "collapse-display": true,
+                  "showArrow": true,
+                  "textFadeMultiplier": 0,
+                  "nodeSizeMultiplier": 1.21017543859649,
+                  "lineSizeMultiplier": 3.19842105263158,
+                  "collapse-forces": true,
+                  "centerStrength": 0.518713248970312,
+                  "repelStrength": 10,
+                  "linkStrength": 1,
+                  "linkDistance": 250,
+                  "scale": 1.0136072508934197,
+                  "close": false
+                }
+              }
+            }
+          },
+          {
+            "id": "e467f7565d1dbad3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "templates/Pages/Page — Weekly Note — Template.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 514.754638671875,
+    "collapsed": true
+  },
+  "lastOpenFiles": [
+    "templates/Pages/Page — Weekly Note — Template.md",
+    "templates/Pages/Page — Project — Template.md",
+    "templates/Pages/Page — Note Zettel — Template.md",
+    "templates/Pages/Page — Meeting Log — Template.md",
+    "templates/Pages/Page — Fitness Log — Template.md",
+    "templates/Pages/Page — Daily Note — Template.md",
+    "templates/Section/Section — Meta Frontmatter — Template.md",
+    "templates/Pages/Page — POD — Template.md",
+    "templates/Pages/Page — People — Template.md",
+    "templates/Pages/Page — Ukulele Practice Entry — Template.md"
+  ]
+}
