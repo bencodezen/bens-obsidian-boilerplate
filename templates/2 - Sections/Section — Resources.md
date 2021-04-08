@@ -1,3 +1,3 @@
 ## 📚 Resources
 
-- 
+- {{tp_cursor}}

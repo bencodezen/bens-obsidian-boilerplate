@@ -8,3 +8,5 @@ tags:
 ---
 
 # {{tp_title}}
+
+{{tp_cursor}}
