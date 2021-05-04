@@ -6,13 +6,9 @@
       {
         "id": "69f1e9b06a1b2a68",
         "type": "leaf",
-        "active": true,
         "state": {
-          "type": "markdown",
-          "state": {
-            "file": "templates/Pages/Page — Weekly Note — Template.md",
-            "mode": "source"
-          }
+          "type": "empty",
+          "state": {}
         }
       }
     ],
@@ -88,9 +84,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "templates/Pages/Page — Weekly Note — Template.md"
-              }
+              "state": {}
             }
           },
           {
@@ -103,6 +97,14 @@
           },
           {
             "id": "1c6d265f778cffcf",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          },
+          {
+            "id": "7bba91b6a631f56f",
             "type": "leaf",
             "state": {
               "type": "calendar",
@@ -122,7 +124,6 @@
             "state": {
               "type": "localgraph",
               "state": {
-                "file": "templates/Pages/Page — Weekly Note — Template.md",
                 "options": {
                   "collapse-filter": true,
                   "search": "-path:reports",
@@ -157,10 +158,11 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "templates/Pages/Page — Weekly Note — Template.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,6 +176,7 @@
     "width": 514.754638671875,
     "collapsed": true
   },
+  "active": "69f1e9b06a1b2a68",
   "lastOpenFiles": [
     "templates/Pages/Page — Weekly Note — Template.md",
     "templates/Pages/Page — Project — Template.md",
