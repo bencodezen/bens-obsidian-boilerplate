@@ -1,0 +1,3 @@
+## 📝 Notes
+
+- <% tp.file.cursor() %>

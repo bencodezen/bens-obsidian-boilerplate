@@ -2,19 +2,13 @@
 
 **🏷 Tags**
 
-- 🧠 Mode: 
 - 🗂 Type: 
-- 🌎 Area: 
-- 🚀 Team: 
 - 🏁 Status: 
-- 🛰 Platform: 
-- 💬 Topic: 
-
+- 💬 Topic(s): 
 
 **🖇️ Related Links**
 
 - 👤 Creator(s): 
 - 👍 Recommended By: 
 - 🔮 Origin: 
-- ✨ POD: 
 - 🔗 Location: 

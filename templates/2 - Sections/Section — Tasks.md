@@ -1,3 +1,0 @@
-## ✅ Tasks
-
-- {{tp_cursor}}

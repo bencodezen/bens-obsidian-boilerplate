@@ -1,3 +1,0 @@
-## 📊 Summary
-
-{{tp_cursor}}

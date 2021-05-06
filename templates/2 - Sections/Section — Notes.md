@@ -1,3 +1,0 @@
-## 📝 Notes
-
-- {{tp_cursor}}

@@ -1,1 +1,1 @@
-{"command_timeout":5,"template_folder":"templates","templates_pairs":[["",""]],"locale":"en"}
+{"command_timeout":5,"template_folder":"templates","templates_pairs":[["",""]],"trigger_on_file_creation":true,"enable_system_commands":false,"shell_path":"","locale":"en"}

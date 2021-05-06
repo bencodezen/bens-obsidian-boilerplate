@@ -4,11 +4,14 @@
     "type": "split",
     "children": [
       {
-        "id": "69f1e9b06a1b2a68",
+        "id": "25d9c58ad8e8d282",
         "type": "leaf",
         "state": {
-          "type": "empty",
-          "state": {}
+          "type": "markdown",
+          "state": {
+            "file": "notes/Hello World.md",
+            "mode": "source"
+          }
         }
       }
     ],
@@ -52,7 +55,13 @@
               "type": "starred",
               "state": {}
             }
-          },
+          }
+        ]
+      },
+      {
+        "id": "dcccbaf530a7fe16",
+        "type": "tabs",
+        "children": [
           {
             "id": "0e317a6be7c3c7d8",
             "type": "leaf",
@@ -77,14 +86,16 @@
       {
         "id": "9534e310d0e8ec16",
         "type": "tabs",
-        "dimension": 51.79533213644524,
+        "dimension": 54.54545454545454,
         "children": [
           {
             "id": "8155f0cfb5122d8f",
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "notes/Hello World.md"
+              }
             }
           },
           {
@@ -104,19 +115,20 @@
             }
           },
           {
-            "id": "7bba91b6a631f56f",
+            "id": "a94e2765a08873f8",
             "type": "leaf",
             "state": {
               "type": "calendar",
               "state": {}
             }
           }
-        ]
+        ],
+        "currentTab": 3
       },
       {
         "id": "4769a36c58d6845c",
         "type": "tabs",
-        "dimension": 48.204667863554754,
+        "dimension": 45.45454545454545,
         "children": [
           {
             "id": "1ba04d1f24ae7365",
@@ -124,6 +136,7 @@
             "state": {
               "type": "localgraph",
               "state": {
+                "file": "notes/Hello World.md",
                 "options": {
                   "collapse-filter": true,
                   "search": "-path:reports",
@@ -158,6 +171,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "notes/Hello World.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -173,20 +187,19 @@
       }
     ],
     "direction": "horizontal",
-    "width": 514.754638671875,
-    "collapsed": true
+    "width": 514.754638671875
   },
-  "active": "69f1e9b06a1b2a68",
+  "active": "25d9c58ad8e8d282",
   "lastOpenFiles": [
-    "templates/Pages/Page — Weekly Note — Template.md",
-    "templates/Pages/Page — Project — Template.md",
-    "templates/Pages/Page — Note Zettel — Template.md",
-    "templates/Pages/Page — Meeting Log — Template.md",
-    "templates/Pages/Page — Fitness Log — Template.md",
-    "templates/Pages/Page — Daily Note — Template.md",
-    "templates/Section/Section — Meta Frontmatter — Template.md",
-    "templates/Pages/Page — POD — Template.md",
-    "templates/Pages/Page — People — Template.md",
-    "templates/Pages/Page — Ukulele Practice Entry — Template.md"
+    "notes/Test.md",
+    "notes/Untitled 1.md",
+    "notes/Untitled.md",
+    "templates/3 - Pages/Page — Weekly Note — Template.md",
+    "templates/3 - Pages/Page — Project — Template.md",
+    "templates/3 - Pages/Page — Note Zettel — Template.md",
+    "templates/3 - Pages/Meeting Log (Section Template).md",
+    "templates/3 - Pages/Page — Meeting Log — Template.md",
+    "templates/3 - Pages/Daily Note (Page Template).md",
+    "reports/Daily Notes/2021-05-06.md"
   ]
 }

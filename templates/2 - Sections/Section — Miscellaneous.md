@@ -1,3 +1,0 @@
-## 🌮 Miscellaneous
-
-- {{tp_cursor}}

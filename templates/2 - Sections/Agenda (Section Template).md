@@ -1,0 +1,3 @@
+## 📋 Agenda
+
+- <% tp.file.cursor() %>

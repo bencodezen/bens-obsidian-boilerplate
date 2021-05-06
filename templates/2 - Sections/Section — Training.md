@@ -1,3 +1,0 @@
-## 🏹 Training
-
-- {{tp_cursor}}

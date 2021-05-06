@@ -1,3 +1,0 @@
-## 📖 Logs
-
-{{tp_cursor}}

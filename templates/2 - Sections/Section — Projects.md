@@ -1,3 +1,0 @@
-## 💼 Projects
-
-- {{tp_cursor}}

@@ -1,3 +1,0 @@
-## 👥 Participants
-
-- {{tp_cursor}}

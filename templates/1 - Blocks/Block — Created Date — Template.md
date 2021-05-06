@@ -1,1 +1,0 @@
-{{tp_creation_date:f=YYYY-MM-DDTHH:mm:ss}}
