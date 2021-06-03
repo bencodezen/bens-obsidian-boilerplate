@@ -1,11 +1,15 @@
-# Obsidian Starter Kit
+# Ben's Obsidian Boilerplate
 
-An opinionated starter kit to help people get up and running as quickly as possible.
+An opinionated boilerplate for people using [Obsidian](https://obsidian.md/).
+
+If you're new to Obsidian, I'd recommend just using it without any plugins or configs. Just get familiar with the interface as a Markdown editor and linking things.
+
+Once you're more acclimated to it, then feel free to take pieces of inspiration from the boilerplate!
 
 ## Getting Up and Running
 
 1. Download and install [Obsidian](https://obsidian.md/)
-2. [Download](https://github.com/bencodezen/obsidian-starter-kit/archive/refs/heads/main.zip) or clone a fork of this repo
+2. [Download](https://github.com/bencodezen/bens-obsidian-boilerplate/archive/refs/heads/main.zip) or clone a fork of this repo
 3. Open Obsidian and you should see a prompt like below:
 
 <img src="/assets/obsidian-prompt.png" alt="Obsidian open prompt" width="300" />
