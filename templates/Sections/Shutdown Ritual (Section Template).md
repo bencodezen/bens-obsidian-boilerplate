@@ -1,0 +1,14 @@
+- [ ] 🌙 #i/practiced/shutdown-ritual
+	- [ ] Silence (1 min)
+	- [ ] Review financial system
+	- [ ] Fill out [[Summary — Section Template]]
+	- [ ] Reflect on today
+		- [ ] 回光返照
+		- [ ] 二十法
+		- [ ] 歡心唸
+		- [ ] 懺悔
+		- [ ] 供養佛菩薩本尊咒
+		- [ ] 回向
+	- [ ] Use Theragun on muscles
+	- [ ] Acknowledge and appreciate how much rest I'm about to get for the night
+	- [ ] Set an intention for tomorrow

@@ -33,7 +33,11 @@ else if (title.startsWith("Sync with")) {
 }
 // "Music Lesson" Notes
 else if (title.startsWith("Music Lesson")) {
-  return tp.file.include('[[Music Lessons — Page Template]]')
+  return tp.file.include('[[Music Lessons (Page Template)]]')
+}
+// "Obsidian Office Hours - Episode" Notes
+else if (title.startsWith("Obsidian Office Hours (E")) {
+  return tp.file.include('[[Obsidian Office Hours (Page Template)]]')
 }
 // "People" Notes
 else if (title.startsWith("@")) {
