@@ -1,3 +1,0 @@
-## 📚 Resources
-
-- <% tp.file.cursor() %>

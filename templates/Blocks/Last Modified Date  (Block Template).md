@@ -1,1 +1,0 @@
-<% tp.file.last_modified_date("YYYY-MM-DDTHH:mm:ss") %>

@@ -1,7 +1,0 @@
-- [ ] 🔎 #i/practiced/daily-review-protocol
-	- [ ] Review email for 5 min
-	- [ ] Review today's timeline
-	- [ ] Review [GitHub notifications](https://github.com/notifications)
-	- [ ] Update today's summary sections
-	- [ ] Review Quick Capture System
-	- [ ] Review schedule for tomorrow

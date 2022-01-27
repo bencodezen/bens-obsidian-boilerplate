@@ -4,13 +4,14 @@
     "type": "split",
     "children": [
       {
-        "id": "25d9c58ad8e8d282",
+        "id": "6d32ff89db5740d6",
         "type": "leaf",
         "state": {
           "type": "markdown",
           "state": {
-            "file": "notes/Hello World.md",
-            "mode": "source"
+            "file": "README.md",
+            "mode": "source",
+            "source": false
           }
         }
       }
@@ -57,23 +58,6 @@
             }
           }
         ]
-      },
-      {
-        "id": "dcccbaf530a7fe16",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "0e317a6be7c3c7d8",
-            "type": "leaf",
-            "state": {
-              "type": "tag",
-              "state": {
-                "sortOrder": "alphabetical",
-                "useHierarchy": true
-              }
-            }
-          }
-        ]
       }
     ],
     "direction": "horizontal",
@@ -84,59 +68,57 @@
     "type": "split",
     "children": [
       {
-        "id": "9534e310d0e8ec16",
+        "id": "4769a36c58d6845c",
         "type": "tabs",
-        "dimension": 54.54545454545454,
         "children": [
           {
-            "id": "8155f0cfb5122d8f",
-            "type": "leaf",
-            "state": {
-              "type": "outline",
-              "state": {
-                "file": "notes/Hello World.md"
-              }
-            }
-          },
-          {
-            "id": "3aa2ac9732e4cba0",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {}
-            }
-          },
-          {
-            "id": "1c6d265f778cffcf",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {}
-            }
-          },
-          {
-            "id": "a94e2765a08873f8",
+            "id": "81f1c2cff5bba3f1",
             "type": "leaf",
             "state": {
               "type": "calendar",
               "state": {}
             }
+          },
+          {
+            "id": "71c9fc12f34d0fd4",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "README.md"
+              }
+            }
           }
-        ],
-        "currentTab": 3
+        ]
       },
       {
-        "id": "4769a36c58d6845c",
+        "id": "4cb042d22bc1a658",
         "type": "tabs",
-        "dimension": 45.45454545454545,
         "children": [
+          {
+            "id": "e467f7565d1dbad3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
           {
             "id": "1ba04d1f24ae7365",
             "type": "leaf",
             "state": {
               "type": "localgraph",
               "state": {
-                "file": "notes/Hello World.md",
+                "file": "README.md",
                 "options": {
                   "collapse-filter": true,
                   "search": "-path:reports",
@@ -166,40 +148,33 @@
             }
           },
           {
-            "id": "e467f7565d1dbad3",
+            "id": "c5fa2af64af5676c",
             "type": "leaf",
             "state": {
-              "type": "backlink",
+              "type": "tag",
               "state": {
-                "file": "notes/Hello World.md",
-                "collapseAll": false,
-                "extraContext": false,
-                "sortOrder": "alphabetical",
-                "showSearch": false,
-                "searchQuery": "",
-                "backlinkCollapsed": false,
-                "unlinkedCollapsed": true
+                "sortOrder": "frequency",
+                "useHierarchy": true
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 514.754638671875
+    "width": 326.9686584472656
   },
-  "active": "25d9c58ad8e8d282",
+  "active": "6d32ff89db5740d6",
   "lastOpenFiles": [
-    "notes/Test.md",
-    "notes/Untitled 1.md",
-    "notes/Untitled.md",
-    "templates/3 - Pages/Page — Weekly Note — Template.md",
-    "templates/3 - Pages/Page — Project — Template.md",
-    "templates/3 - Pages/Page — Note Zettel — Template.md",
-    "templates/3 - Pages/Meeting Log (Section Template).md",
-    "templates/3 - Pages/Page — Meeting Log — Template.md",
-    "templates/3 - Pages/Daily Note (Page Template).md",
-    "reports/Daily Notes/2021-05-06.md"
+    "README.md",
+    "Books Dashboard.md",
+    "assets/obsidian-prompt.png",
+    "assets/preferences-panel.png",
+    "notes/Hello World.md",
+    "notes/Book.md",
+    "templates/Last Modified Date  (Template).md",
+    "templates/Base Note (Template).md",
+    "templates/Book (Template).md",
+    "templates/Daily Note (Template).md"
   ]
 }

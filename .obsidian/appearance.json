@@ -1,0 +1,9 @@
+{
+  "cssTheme": "Night Owl",
+  "theme": "obsidian",
+  "enabledCssSnippets": [
+    "dracula-custom-edits"
+  ],
+  "translucency": false,
+  "baseFontSize": 21
+}

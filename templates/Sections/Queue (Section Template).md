@@ -1,3 +1,0 @@
-## 📤 Queue
-
-- <% tp.file.cursor() %>

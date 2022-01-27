@@ -1,3 +1,1 @@
-# Hello World
-
-This is my first note!
+# Hello Obsidian!

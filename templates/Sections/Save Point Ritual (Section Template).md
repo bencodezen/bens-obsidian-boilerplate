@@ -1,6 +1,0 @@
-- [ ] 💾 #i/practiced/save-point-protocol
-	- [ ] Habit: Drink water
-	- [ ] Silence (1 min)
-	- [ ] Update timeline as needed
-	- [ ] Reflect on this morning
-		- [ ] 回光返照
