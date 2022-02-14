@@ -1,5 +1,5 @@
-<% tp.file.include('[[Frontmatter (Section Template)]]') %>
-	
+<% tp.file.include('[[Frontmatter (Template)]]') %>
+
 # [[<% tp.file.title %>]]
 
 <% tp.file.cursor() %>
