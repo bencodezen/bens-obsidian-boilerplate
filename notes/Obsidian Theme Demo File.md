@@ -1,5 +1,5 @@
 
-Obsidian is a Markdown-based note-taking and knowledge base app. 
+Obsidian is a Markdown-based note-taking and knowledge base app.
 
 We currently support the formats below:
 
@@ -23,7 +23,7 @@ Embed another file (read more about [[Embed files]]). Here's an embedded section
 ![[Obsidian#What is Obsidian]]
 ```
 
-![[+Obsidian#What is Obsidian]]
+![[@Obsidian 1#What is Obsidian]]
 
 ---
 
@@ -31,7 +31,7 @@ Embed another file (read more about [[Embed files]]). Here's an embedded section
 
 # This is a heading 1
 ## This is a heading 2
-### This is a heading 3 
+### This is a heading 3
 #### This is a heading 4
 ##### This is a heading 5
 ###### This is a heading 6
@@ -110,7 +110,7 @@ This is my **bold** and _italic_ example.
    1. Item 3a
    1. Item 3b
 
---- 
+---
 
 ### Images
 
@@ -148,7 +148,7 @@ http://obsidian.md - automatic!
 
 #### Obsidian URI links
 
-[[Build with Ben (027) - Obsidian Theme Development|BWB #27]]
+[[Build with Ben (027) - Getting Started with Obsidian Theme Development|BWB #27]]
 
 [[This note doesn't exist]]
 
@@ -201,7 +201,7 @@ Or you can enclose the target in `<>`, such as:
 Text inside `backticks` on a line will be formatted like code.
 ```
 
-Text inside `backticks` on a line will be formatted like code. 
+Text inside `backticks` on a line will be formatted like code.
 
 
 ---
@@ -225,14 +225,14 @@ function fancyAlert(arg) {
   }
 }
 ```
-    
-	
+
+
 ```md
-    Text indented with a tab is formatted like this, and will also look like a code block in preview. 
+    Text indented with a tab is formatted like this, and will also look like a code block in preview.
 ```
 
-    Text indented with a tab is formatted like this, and will also look like a code block in preview. 
-    
+    Text indented with a tab is formatted like this, and will also look like a code block in preview.
+
 ---
 
 ### Task list
@@ -250,6 +250,35 @@ function fancyAlert(arg) {
 - [x] this is a complete item
 - [ ] this is an incomplete item
 - [ ] tasks can be clicked in Preview to be checked off
+
+---
+
+### Callouts
+
+> [!note]
+
+> [!abstract]
+
+> [!info]
+
+> [!tip]
+
+> [!success]
+
+> [!question]
+
+> [!warning]
+
+> [!failure]
+
+> [!danger]
+
+> [!bug]
+
+> [!example]
+
+> [!quote]
+
 
 ---
 
@@ -293,7 +322,7 @@ First Header | Second Header
 
 First Header | Second Header
 ------------ | ------------
-[[Format your notes\|Formatting]]	|  [[Keyboard shortcuts\|hotkeys]]	
+[[Format your notes\|Formatting]]	|  [[Keyboard shortcuts\|hotkeys]]
 
 ---
 
@@ -344,7 +373,7 @@ Here's a simple footnote,[^1] and here's a longer one.[^bignote]
     `{ my code }`
 
     Add as many paragraphs as you like.
-	
+
 ```md
 You can also use inline footnotes. ^[notice that the carat goes outside of the brackets on this one.]
 ```
