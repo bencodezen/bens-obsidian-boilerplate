@@ -1,0 +1,29 @@
+- [ ] VS Code
+  - [ ] Reset Zoom
+  - [ ] Enable GitHub Autopilot
+- [ ] Chrome
+  - [ ] Reset zoom
+  - [ ] Turn on 1Password extension
+- [ ] Obsidian - Reset Zoom
+- [ ] End stream on Streamlabs
+- [ ] End recording on Screenflow
+- [ ] Download recording from Twitch
+- [ ] Upload recording on [[@Descript]]
+- [ ] Edit transcript
+  - [ ] Cut out ums and ahs
+  - [ ] Do basic transcript review
+  - [ ] Create markers for the outline of the video
+- [ ] Export and create assets
+  - [ ] Export video from [[@Descript]]
+  - [ ] Create thumbnail for episode
+  - [ ] Export markers to Obsidian episode
+  - [ ] Update folder status for episocde
+- [ ] Upload it to YouTube
+  - [ ] Update description
+  - [ ] Add keywords
+  - [ ] Schedule it for publishing
+- [ ] Update Notion
+  - [ ] Add short title for thumbnails
+  - [ ] Drop in any logos that are required
+- [ ] Unpublish it from Twitch
+- [ ] Update website
