@@ -1,0 +1,164 @@
+{
+  "main": {
+    "id": "390ce2f9b053bb3c",
+    "type": "split",
+    "children": [
+      {
+        "id": "0ce7b63055adad06",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6519938022b3fdc8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/Obsidian Theme Demo File.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "7e11ed0b2ad341ae",
+    "type": "split",
+    "children": [
+      {
+        "id": "9b2b54a0dbbb215d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4cd46a0ca99c06f1",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "e8b0550146f5c99e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "924f2f4b672c3982",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "8bb12e8b3365261b",
+    "type": "split",
+    "children": [
+      {
+        "id": "6217fad8ae07b96b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f2632ace54f501f6",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {}
+            }
+          },
+          {
+            "id": "09bebd2aba949028",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "notes/Obsidian Theme Demo File.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "ef9dea5e933e8a6c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "notes/Obsidian Theme Demo File.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "8a24cc53f3c9685a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "c9d3216a78fba7d4",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "notes/Obsidian Theme Demo File.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "command-palette:Open command palette": false,
+      "markdown-importer:Open format converter": false,
+      "workspaces:Manage workspace layouts": false,
+      "periodic-notes:Open today": false,
+      "templater-obsidian:Templater": false
+    }
+  },
+  "active": "6519938022b3fdc8",
+  "lastOpenFiles": [
+    "obsidian.css",
+    "obsidian.css.md",
+    "notes/Obsidian Office Hours (033).md"
+  ]
+}

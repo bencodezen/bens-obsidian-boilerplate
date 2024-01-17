@@ -5,27 +5,10 @@ if you want to view the source, please visit the github repository of this plugi
 
 var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
 var __export = (target, all) => {
   __markAsModule(target);
@@ -43,32 +26,28 @@ var __reExport = (target, module2, desc) => {
 var __toModule = (module2) => {
   return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
 };
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve2, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve2(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
+var __toBinary = /* @__PURE__ */ (() => {
+  var table = new Uint8Array(128);
+  for (var i = 0; i < 64; i++)
+    table[i < 26 ? i + 65 : i < 52 ? i + 71 : i < 62 ? i - 4 : i * 4 - 205] = i;
+  return (base64) => {
+    var n = base64.length, bytes = new Uint8Array((n - (base64[n - 1] == "=") - (base64[n - 2] == "=")) * 3 / 4 | 0);
+    for (var i2 = 0, j = 0; i2 < n; ) {
+      var c0 = table[base64.charCodeAt(i2++)], c1 = table[base64.charCodeAt(i2++)];
+      var c2 = table[base64.charCodeAt(i2++)], c3 = table[base64.charCodeAt(i2++)];
+      bytes[j++] = c0 << 2 | c1 >> 4;
+      bytes[j++] = c1 << 4 | c2 >> 2;
+      bytes[j++] = c2 << 6 | c3;
+    }
+    return bytes;
+  };
+})();
 
 // src/main.ts
 __export(exports, {
   default: () => TemplaterPlugin
 });
-var import_obsidian19 = __toModule(require("obsidian"));
+var import_obsidian17 = __toModule(require("obsidian"));
 
 // src/settings/Settings.ts
 var import_obsidian6 = __toModule(require("obsidian"));
@@ -78,7 +57,7 @@ var import_obsidian = __toModule(require("obsidian"));
 function log_error(e) {
   const notice = new import_obsidian.Notice("", 8e3);
   if (e instanceof TemplaterError && e.console_msg) {
-    notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}<br/>Check console for more informations`;
+    notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}<br/>Check console for more information`;
     console.error(`Templater Error:`, e.message, "\n", e.console_msg);
   } else {
     notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}`;
@@ -91,22 +70,22 @@ var TemplaterError = class extends Error {
     super(msg);
     this.console_msg = console_msg;
     this.name = this.constructor.name;
-    Error.captureStackTrace(this, this.constructor);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
   }
 };
-function errorWrapper(fn2, msg) {
-  return __async(this, null, function* () {
-    try {
-      return yield fn2();
-    } catch (e) {
-      if (!(e instanceof TemplaterError)) {
-        log_error(new TemplaterError(msg, e.message));
-      } else {
-        log_error(e);
-      }
-      return null;
+async function errorWrapper(fn2, msg) {
+  try {
+    return await fn2();
+  } catch (e) {
+    if (!(e instanceof TemplaterError)) {
+      log_error(new TemplaterError(msg, e.message));
+    } else {
+      log_error(e);
     }
-  });
+    return null;
+  }
 }
 function errorWrapperSync(fn2, msg) {
   try {
@@ -265,33 +244,52 @@ var max = Math.max;
 var min = Math.min;
 var round = Math.round;
 
+// node_modules/@popperjs/core/lib/utils/userAgent.js
+function getUAString() {
+  var uaData = navigator.userAgentData;
+  if (uaData != null && uaData.brands && Array.isArray(uaData.brands)) {
+    return uaData.brands.map(function(item) {
+      return item.brand + "/" + item.version;
+    }).join(" ");
+  }
+  return navigator.userAgent;
+}
+
+// node_modules/@popperjs/core/lib/dom-utils/isLayoutViewport.js
+function isLayoutViewport() {
+  return !/^((?!chrome|android).)*safari/i.test(getUAString());
+}
+
 // node_modules/@popperjs/core/lib/dom-utils/getBoundingClientRect.js
-function getBoundingClientRect(element, includeScale) {
+function getBoundingClientRect(element, includeScale, isFixedStrategy) {
   if (includeScale === void 0) {
     includeScale = false;
   }
-  var rect = element.getBoundingClientRect();
+  if (isFixedStrategy === void 0) {
+    isFixedStrategy = false;
+  }
+  var clientRect = element.getBoundingClientRect();
   var scaleX = 1;
   var scaleY = 1;
-  if (isHTMLElement(element) && includeScale) {
-    var offsetHeight = element.offsetHeight;
-    var offsetWidth = element.offsetWidth;
-    if (offsetWidth > 0) {
-      scaleX = round(rect.width) / offsetWidth || 1;
-    }
-    if (offsetHeight > 0) {
-      scaleY = round(rect.height) / offsetHeight || 1;
-    }
+  if (includeScale && isHTMLElement(element)) {
+    scaleX = element.offsetWidth > 0 ? round(clientRect.width) / element.offsetWidth || 1 : 1;
+    scaleY = element.offsetHeight > 0 ? round(clientRect.height) / element.offsetHeight || 1 : 1;
   }
+  var _ref = isElement(element) ? getWindow(element) : window, visualViewport = _ref.visualViewport;
+  var addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
+  var x = (clientRect.left + (addVisualOffsets && visualViewport ? visualViewport.offsetLeft : 0)) / scaleX;
+  var y = (clientRect.top + (addVisualOffsets && visualViewport ? visualViewport.offsetTop : 0)) / scaleY;
+  var width = clientRect.width / scaleX;
+  var height = clientRect.height / scaleY;
   return {
-    width: rect.width / scaleX,
-    height: rect.height / scaleY,
-    top: rect.top / scaleY,
-    right: rect.right / scaleX,
-    bottom: rect.bottom / scaleY,
-    left: rect.left / scaleX,
-    x: rect.left / scaleX,
-    y: rect.top / scaleY
+    width,
+    height,
+    top: y,
+    right: x + width,
+    bottom: y + height,
+    left: x,
+    x,
+    y
   };
 }
 
@@ -362,8 +360,8 @@ function getTrueOffsetParent(element) {
   return element.offsetParent;
 }
 function getContainingBlock(element) {
-  var isFirefox = navigator.userAgent.toLowerCase().indexOf("firefox") !== -1;
-  var isIE = navigator.userAgent.indexOf("Trident") !== -1;
+  var isFirefox = /firefox/i.test(getUAString());
+  var isIE = /Trident/i.test(getUAString());
   if (isIE && isHTMLElement(element)) {
     var elementCss = getComputedStyle(element);
     if (elementCss.position === "fixed") {
@@ -371,6 +369,9 @@ function getContainingBlock(element) {
     }
   }
   var currentNode = getParentNode(element);
+  if (isShadowRoot(currentNode)) {
+    currentNode = currentNode.host;
+  }
   while (isHTMLElement(currentNode) && ["html", "body"].indexOf(getNodeName(currentNode)) < 0) {
     var css = getComputedStyle(currentNode);
     if (css.transform !== "none" || css.perspective !== "none" || css.contain === "paint" || ["transform", "perspective"].indexOf(css.willChange) !== -1 || isFirefox && css.willChange === "filter" || isFirefox && css.filter && css.filter !== "none") {
@@ -477,15 +478,7 @@ function effect2(_ref2) {
       return;
     }
   }
-  if (true) {
-    if (!isHTMLElement(arrowElement)) {
-      console.error(['Popper: "arrow" element must be an HTMLElement (not an SVGElement).', "To use an SVG arrow, wrap it in an HTMLElement that will be used as", "the arrow."].join(" "));
-    }
-  }
   if (!contains(state.elements.popper, arrowElement)) {
-    if (true) {
-      console.error(['Popper: "arrow" modifier\'s `element` must be a child of the popper', "element."].join(" "));
-    }
     return;
   }
   state.elements.arrow = arrowElement;
@@ -512,9 +505,8 @@ var unsetSides = {
   bottom: "auto",
   left: "auto"
 };
-function roundOffsetsByDPR(_ref) {
+function roundOffsetsByDPR(_ref, win) {
   var x = _ref.x, y = _ref.y;
-  var win = window;
   var dpr = win.devicePixelRatio || 1;
   return {
     x: round(x * dpr) / dpr || 0,
@@ -553,13 +545,13 @@ function mapToStyles(_ref2) {
     offsetParent = offsetParent;
     if (placement === top || (placement === left || placement === right) && variation === end) {
       sideY = bottom;
-      var offsetY = isFixed && win.visualViewport ? win.visualViewport.height : offsetParent[heightProp];
+      var offsetY = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.height : offsetParent[heightProp];
       y -= offsetY - popperRect.height;
       y *= gpuAcceleration ? 1 : -1;
     }
     if (placement === left || (placement === top || placement === bottom) && variation === end) {
       sideX = right;
-      var offsetX = isFixed && win.visualViewport ? win.visualViewport.width : offsetParent[widthProp];
+      var offsetX = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.width : offsetParent[widthProp];
       x -= offsetX - popperRect.width;
       x *= gpuAcceleration ? 1 : -1;
     }
@@ -570,7 +562,7 @@ function mapToStyles(_ref2) {
   var _ref4 = roundOffsets === true ? roundOffsetsByDPR({
     x,
     y
-  }) : {
+  }, getWindow(popper2)) : {
     x,
     y
   };
@@ -585,14 +577,6 @@ function mapToStyles(_ref2) {
 function computeStyles(_ref5) {
   var state = _ref5.state, options = _ref5.options;
   var _options$gpuAccelerat = options.gpuAcceleration, gpuAcceleration = _options$gpuAccelerat === void 0 ? true : _options$gpuAccelerat, _options$adaptive = options.adaptive, adaptive = _options$adaptive === void 0 ? true : _options$adaptive, _options$roundOffsets = options.roundOffsets, roundOffsets = _options$roundOffsets === void 0 ? true : _options$roundOffsets;
-  if (true) {
-    var transitionProperty = getComputedStyle(state.elements.popper).transitionProperty || "";
-    if (adaptive && ["transform", "top", "right", "bottom", "left"].some(function(property) {
-      return transitionProperty.indexOf(property) >= 0;
-    })) {
-      console.warn(["Popper: Detected CSS transitions on at least one of the following", 'CSS properties: "transform", "top", "right", "bottom", "left".', "\n\n", 'Disable the "computeStyles" modifier\'s `adaptive` option to allow', "for smooth transitions, or remove these properties from the CSS", "transition declaration on the popper element if only transitioning", "opacity or background-color for example.", "\n\n", "We recommend using the popper element as a wrapper around an inner", "element that can have any CSS property transitioned for animations."].join(" "));
-    }
-  }
   var commonStyles = {
     placement: getBasePlacement(state.placement),
     variation: getVariation(state.placement),
@@ -708,7 +692,7 @@ function getWindowScrollBarX(element) {
 }
 
 // node_modules/@popperjs/core/lib/dom-utils/getViewportRect.js
-function getViewportRect(element) {
+function getViewportRect(element, strategy) {
   var win = getWindow(element);
   var html = getDocumentElement(element);
   var visualViewport = win.visualViewport;
@@ -719,7 +703,8 @@ function getViewportRect(element) {
   if (visualViewport) {
     width = visualViewport.width;
     height = visualViewport.height;
-    if (!/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+    var layoutViewport = isLayoutViewport();
+    if (layoutViewport || !layoutViewport && strategy === "fixed") {
       x = visualViewport.offsetLeft;
       y = visualViewport.offsetTop;
     }
@@ -795,8 +780,8 @@ function rectToClientRect(rect) {
 }
 
 // node_modules/@popperjs/core/lib/dom-utils/getClippingRect.js
-function getInnerBoundingClientRect(element) {
-  var rect = getBoundingClientRect(element);
+function getInnerBoundingClientRect(element, strategy) {
+  var rect = getBoundingClientRect(element, false, strategy === "fixed");
   rect.top = rect.top + element.clientTop;
   rect.left = rect.left + element.clientLeft;
   rect.bottom = rect.top + element.clientHeight;
@@ -807,8 +792,8 @@ function getInnerBoundingClientRect(element) {
   rect.y = rect.top;
   return rect;
 }
-function getClientRectFromMixedType(element, clippingParent) {
-  return clippingParent === viewport ? rectToClientRect(getViewportRect(element)) : isElement(clippingParent) ? getInnerBoundingClientRect(clippingParent) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
+function getClientRectFromMixedType(element, clippingParent, strategy) {
+  return clippingParent === viewport ? rectToClientRect(getViewportRect(element, strategy)) : isElement(clippingParent) ? getInnerBoundingClientRect(clippingParent, strategy) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
 }
 function getClippingParents(element) {
   var clippingParents2 = listScrollParents(getParentNode(element));
@@ -821,18 +806,18 @@ function getClippingParents(element) {
     return isElement(clippingParent) && contains(clippingParent, clipperElement) && getNodeName(clippingParent) !== "body";
   });
 }
-function getClippingRect(element, boundary, rootBoundary) {
+function getClippingRect(element, boundary, rootBoundary, strategy) {
   var mainClippingParents = boundary === "clippingParents" ? getClippingParents(element) : [].concat(boundary);
   var clippingParents2 = [].concat(mainClippingParents, [rootBoundary]);
   var firstClippingParent = clippingParents2[0];
   var clippingRect = clippingParents2.reduce(function(accRect, clippingParent) {
-    var rect = getClientRectFromMixedType(element, clippingParent);
+    var rect = getClientRectFromMixedType(element, clippingParent, strategy);
     accRect.top = max(rect.top, accRect.top);
     accRect.right = min(rect.right, accRect.right);
     accRect.bottom = min(rect.bottom, accRect.bottom);
     accRect.left = max(rect.left, accRect.left);
     return accRect;
-  }, getClientRectFromMixedType(element, firstClippingParent));
+  }, getClientRectFromMixedType(element, firstClippingParent, strategy));
   clippingRect.width = clippingRect.right - clippingRect.left;
   clippingRect.height = clippingRect.bottom - clippingRect.top;
   clippingRect.x = clippingRect.left;
@@ -900,12 +885,12 @@ function detectOverflow(state, options) {
   if (options === void 0) {
     options = {};
   }
-  var _options = options, _options$placement = _options.placement, placement = _options$placement === void 0 ? state.placement : _options$placement, _options$boundary = _options.boundary, boundary = _options$boundary === void 0 ? clippingParents : _options$boundary, _options$rootBoundary = _options.rootBoundary, rootBoundary = _options$rootBoundary === void 0 ? viewport : _options$rootBoundary, _options$elementConte = _options.elementContext, elementContext = _options$elementConte === void 0 ? popper : _options$elementConte, _options$altBoundary = _options.altBoundary, altBoundary = _options$altBoundary === void 0 ? false : _options$altBoundary, _options$padding = _options.padding, padding = _options$padding === void 0 ? 0 : _options$padding;
+  var _options = options, _options$placement = _options.placement, placement = _options$placement === void 0 ? state.placement : _options$placement, _options$strategy = _options.strategy, strategy = _options$strategy === void 0 ? state.strategy : _options$strategy, _options$boundary = _options.boundary, boundary = _options$boundary === void 0 ? clippingParents : _options$boundary, _options$rootBoundary = _options.rootBoundary, rootBoundary = _options$rootBoundary === void 0 ? viewport : _options$rootBoundary, _options$elementConte = _options.elementContext, elementContext = _options$elementConte === void 0 ? popper : _options$elementConte, _options$altBoundary = _options.altBoundary, altBoundary = _options$altBoundary === void 0 ? false : _options$altBoundary, _options$padding = _options.padding, padding = _options$padding === void 0 ? 0 : _options$padding;
   var paddingObject = mergePaddingObject(typeof padding !== "number" ? padding : expandToHashMap(padding, basePlacements));
   var altContext = elementContext === popper ? reference : popper;
   var popperRect = state.rects.popper;
   var element = state.elements[altBoundary ? altContext : elementContext];
-  var clippingClientRect = getClippingRect(isElement(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary);
+  var clippingClientRect = getClippingRect(isElement(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary, strategy);
   var referenceClientRect = getBoundingClientRect(state.elements.reference);
   var popperOffsets2 = computeOffsets({
     reference: referenceClientRect,
@@ -948,9 +933,6 @@ function computeAutoPlacement(state, options) {
   });
   if (allowedPlacements.length === 0) {
     allowedPlacements = placements2;
-    if (true) {
-      console.error(["Popper: The `allowedAutoPlacements` option did not allow any", "placements. Ensure the `placement` option matches the variation", "of the allowed placements.", 'For example, "auto" cannot be used to allow "bottom-start".', 'Use "auto-start" instead.'].join(" "));
-    }
   }
   var overflows = allowedPlacements.reduce(function(acc, placement2) {
     acc[placement2] = detectOverflow(state, {
@@ -1312,7 +1294,7 @@ function getCompositeRect(elementOrVirtualElement, offsetParent, isFixed) {
   var isOffsetParentAnElement = isHTMLElement(offsetParent);
   var offsetParentIsScaled = isHTMLElement(offsetParent) && isElementScaled(offsetParent);
   var documentElement = getDocumentElement(offsetParent);
-  var rect = getBoundingClientRect(elementOrVirtualElement, offsetParentIsScaled);
+  var rect = getBoundingClientRect(elementOrVirtualElement, offsetParentIsScaled, isFixed);
   var scroll = {
     scrollLeft: 0,
     scrollTop: 0
@@ -1383,101 +1365,15 @@ function debounce(fn2) {
   var pending;
   return function() {
     if (!pending) {
-      pending = new Promise(function(resolve2) {
+      pending = new Promise(function(resolve) {
         Promise.resolve().then(function() {
           pending = void 0;
-          resolve2(fn2());
+          resolve(fn2());
         });
       });
     }
     return pending;
   };
-}
-
-// node_modules/@popperjs/core/lib/utils/format.js
-function format(str) {
-  for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
-  }
-  return [].concat(args).reduce(function(p, c) {
-    return p.replace(/%s/, c);
-  }, str);
-}
-
-// node_modules/@popperjs/core/lib/utils/validateModifiers.js
-var INVALID_MODIFIER_ERROR = 'Popper: modifier "%s" provided an invalid %s property, expected %s but got %s';
-var MISSING_DEPENDENCY_ERROR = 'Popper: modifier "%s" requires "%s", but "%s" modifier is not available';
-var VALID_PROPERTIES = ["name", "enabled", "phase", "fn", "effect", "requires", "options"];
-function validateModifiers(modifiers) {
-  modifiers.forEach(function(modifier) {
-    [].concat(Object.keys(modifier), VALID_PROPERTIES).filter(function(value, index, self) {
-      return self.indexOf(value) === index;
-    }).forEach(function(key) {
-      switch (key) {
-        case "name":
-          if (typeof modifier.name !== "string") {
-            console.error(format(INVALID_MODIFIER_ERROR, String(modifier.name), '"name"', '"string"', '"' + String(modifier.name) + '"'));
-          }
-          break;
-        case "enabled":
-          if (typeof modifier.enabled !== "boolean") {
-            console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"enabled"', '"boolean"', '"' + String(modifier.enabled) + '"'));
-          }
-          break;
-        case "phase":
-          if (modifierPhases.indexOf(modifier.phase) < 0) {
-            console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"phase"', "either " + modifierPhases.join(", "), '"' + String(modifier.phase) + '"'));
-          }
-          break;
-        case "fn":
-          if (typeof modifier.fn !== "function") {
-            console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"fn"', '"function"', '"' + String(modifier.fn) + '"'));
-          }
-          break;
-        case "effect":
-          if (modifier.effect != null && typeof modifier.effect !== "function") {
-            console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"effect"', '"function"', '"' + String(modifier.fn) + '"'));
-          }
-          break;
-        case "requires":
-          if (modifier.requires != null && !Array.isArray(modifier.requires)) {
-            console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"requires"', '"array"', '"' + String(modifier.requires) + '"'));
-          }
-          break;
-        case "requiresIfExists":
-          if (!Array.isArray(modifier.requiresIfExists)) {
-            console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"requiresIfExists"', '"array"', '"' + String(modifier.requiresIfExists) + '"'));
-          }
-          break;
-        case "options":
-        case "data":
-          break;
-        default:
-          console.error('PopperJS: an invalid property has been provided to the "' + modifier.name + '" modifier, valid properties are ' + VALID_PROPERTIES.map(function(s) {
-            return '"' + s + '"';
-          }).join(", ") + '; but "' + key + '" was provided.');
-      }
-      modifier.requires && modifier.requires.forEach(function(requirement) {
-        if (modifiers.find(function(mod) {
-          return mod.name === requirement;
-        }) == null) {
-          console.error(format(MISSING_DEPENDENCY_ERROR, String(modifier.name), requirement, requirement));
-        }
-      });
-    });
-  });
-}
-
-// node_modules/@popperjs/core/lib/utils/uniqueBy.js
-function uniqueBy(arr, fn2) {
-  var identifiers = new Set();
-  return arr.filter(function(item) {
-    var identifier = fn2(item);
-    if (!identifiers.has(identifier)) {
-      identifiers.add(identifier);
-      return true;
-    }
-  });
 }
 
 // node_modules/@popperjs/core/lib/utils/mergeByName.js
@@ -1496,8 +1392,6 @@ function mergeByName(modifiers) {
 }
 
 // node_modules/@popperjs/core/lib/createPopper.js
-var INVALID_ELEMENT_ERROR = "Popper: Invalid reference or popper argument provided. They must be either a DOM element or virtual element.";
-var INFINITE_LOOP_ERROR = "Popper: An infinite loop in the modifiers cycle has been detected! The cycle has been interrupted to prevent a browser crash.";
 var DEFAULT_OPTIONS = {
   placement: "bottom",
   modifiers: [],
@@ -1548,28 +1442,6 @@ function popperGenerator(generatorOptions) {
         state.orderedModifiers = orderedModifiers.filter(function(m) {
           return m.enabled;
         });
-        if (true) {
-          var modifiers = uniqueBy([].concat(orderedModifiers, state.options.modifiers), function(_ref) {
-            var name = _ref.name;
-            return name;
-          });
-          validateModifiers(modifiers);
-          if (getBasePlacement(state.options.placement) === auto) {
-            var flipModifier = state.orderedModifiers.find(function(_ref2) {
-              var name = _ref2.name;
-              return name === "flip";
-            });
-            if (!flipModifier) {
-              console.error(['Popper: "auto" placements require the "flip" modifier be', "present and enabled to work."].join(" "));
-            }
-          }
-          var _getComputedStyle = getComputedStyle(popper2), marginTop = _getComputedStyle.marginTop, marginRight = _getComputedStyle.marginRight, marginBottom = _getComputedStyle.marginBottom, marginLeft = _getComputedStyle.marginLeft;
-          if ([marginTop, marginRight, marginBottom, marginLeft].some(function(margin) {
-            return parseFloat(margin);
-          })) {
-            console.warn(['Popper: CSS "margin" styles cannot be used to apply padding', "between the popper and its reference element or boundary.", "To replicate margin, use the `offset` modifier, as well as", "the `padding` option in the `preventOverflow` and `flip`", "modifiers."].join(" "));
-          }
-        }
         runModifierEffects();
         return instance.update();
       },
@@ -1579,9 +1451,6 @@ function popperGenerator(generatorOptions) {
         }
         var _state$elements = state.elements, reference3 = _state$elements.reference, popper3 = _state$elements.popper;
         if (!areValidElements(reference3, popper3)) {
-          if (true) {
-            console.error(INVALID_ELEMENT_ERROR);
-          }
           return;
         }
         state.rects = {
@@ -1593,15 +1462,7 @@ function popperGenerator(generatorOptions) {
         state.orderedModifiers.forEach(function(modifier) {
           return state.modifiersData[modifier.name] = Object.assign({}, modifier.data);
         });
-        var __debug_loops__ = 0;
         for (var index = 0; index < state.orderedModifiers.length; index++) {
-          if (true) {
-            __debug_loops__ += 1;
-            if (__debug_loops__ > 100) {
-              console.error(INFINITE_LOOP_ERROR);
-              break;
-            }
-          }
           if (state.reset === true) {
             state.reset = false;
             index = -1;
@@ -1619,9 +1480,9 @@ function popperGenerator(generatorOptions) {
         }
       },
       update: debounce(function() {
-        return new Promise(function(resolve2) {
+        return new Promise(function(resolve) {
           instance.forceUpdate();
-          resolve2(state);
+          resolve(state);
         });
       }),
       destroy: function destroy() {
@@ -1630,9 +1491,6 @@ function popperGenerator(generatorOptions) {
       }
     };
     if (!areValidElements(reference2, popper2)) {
-      if (true) {
-        console.error(INVALID_ELEMENT_ERROR);
-      }
       return instance;
     }
     instance.setOptions(options).then(function(state2) {
@@ -1641,8 +1499,8 @@ function popperGenerator(generatorOptions) {
       }
     });
     function runModifierEffects() {
-      state.orderedModifiers.forEach(function(_ref3) {
-        var name = _ref3.name, _ref3$options = _ref3.options, options2 = _ref3$options === void 0 ? {} : _ref3$options, effect4 = _ref3.effect;
+      state.orderedModifiers.forEach(function(_ref) {
+        var name = _ref.name, _ref$options = _ref.options, options2 = _ref$options === void 0 ? {} : _ref$options, effect4 = _ref.effect;
         if (typeof effect4 === "function") {
           var cleanupFn = effect4({
             state,
@@ -1733,8 +1591,8 @@ var Suggest = class {
     const normalizedIndex = wrapAround(selectedIndex, this.suggestions.length);
     const prevSelectedSuggestion = this.suggestions[this.selectedItem];
     const selectedSuggestion = this.suggestions[normalizedIndex];
-    prevSelectedSuggestion == null ? void 0 : prevSelectedSuggestion.removeClass("is-selected");
-    selectedSuggestion == null ? void 0 : selectedSuggestion.addClass("is-selected");
+    prevSelectedSuggestion?.removeClass("is-selected");
+    selectedSuggestion?.addClass("is-selected");
     this.selectedItem = normalizedIndex;
     if (scrollIntoView) {
       selectedSuggestion.scrollIntoView(false);
@@ -1742,8 +1600,7 @@ var Suggest = class {
   }
 };
 var TextInputSuggest = class {
-  constructor(app, inputEl) {
-    this.app = app;
+  constructor(inputEl) {
     this.inputEl = inputEl;
     this.scope = new import_obsidian2.Scope();
     this.suggestEl = createDiv("suggestion-container");
@@ -1766,13 +1623,13 @@ var TextInputSuggest = class {
     }
     if (suggestions.length > 0) {
       this.suggest.setSuggestions(suggestions);
-      this.open(this.app.dom.appContainerEl, this.inputEl);
+      this.open(app.dom.appContainerEl, this.inputEl);
     } else {
       this.close();
     }
   }
   open(container, inputEl) {
-    this.app.keymap.pushScope(this.scope);
+    app.keymap.pushScope(this.scope);
     container.appendChild(this.suggestEl);
     this.popper = createPopper(inputEl, this.suggestEl, {
       placement: "bottom-start",
@@ -1795,7 +1652,7 @@ var TextInputSuggest = class {
     });
   }
   close() {
-    this.app.keymap.popScope(this.scope);
+    app.keymap.popScope(this.scope);
     this.suggest.setSuggestions([]);
     if (this.popper)
       this.popper.destroy();
@@ -1806,7 +1663,7 @@ var TextInputSuggest = class {
 // src/settings/suggesters/FolderSuggester.ts
 var FolderSuggest = class extends TextInputSuggest {
   getSuggestions(inputStr) {
-    const abstractFiles = this.app.vault.getAllLoadedFiles();
+    const abstractFiles = app.vault.getAllLoadedFiles();
     const folders = [];
     const lowerCaseInputStr = inputStr.toLowerCase();
     abstractFiles.forEach((folder) => {
@@ -1832,7 +1689,7 @@ var import_obsidian5 = __toModule(require("obsidian"));
 // src/utils/Utils.ts
 var import_obsidian4 = __toModule(require("obsidian"));
 function delay(ms) {
-  return new Promise((resolve2) => setTimeout(resolve2, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 function escape_RegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -1840,7 +1697,7 @@ function escape_RegExp(str) {
 function generate_dynamic_command_regex() {
   return /(<%(?:-|_)?\s*[*~]{0,1})\+((?:.|\s)*?%>)/g;
 }
-function resolve_tfolder(app, folder_str) {
+function resolve_tfolder(folder_str) {
   folder_str = (0, import_obsidian4.normalizePath)(folder_str);
   const folder = app.vault.getAbstractFileByPath(folder_str);
   if (!folder) {
@@ -1851,7 +1708,7 @@ function resolve_tfolder(app, folder_str) {
   }
   return folder;
 }
-function resolve_tfile(app, file_str) {
+function resolve_tfile(file_str) {
   file_str = (0, import_obsidian4.normalizePath)(file_str);
   const file = app.vault.getAbstractFileByPath(file_str);
   if (!file) {
@@ -1862,8 +1719,8 @@ function resolve_tfile(app, file_str) {
   }
   return file;
 }
-function get_tfiles_from_folder(app, folder_str) {
-  const folder = resolve_tfolder(app, folder_str);
+function get_tfiles_from_folder(folder_str) {
+  const folder = resolve_tfolder(folder_str);
   const files = [];
   import_obsidian4.Vault.recurseChildren(folder, (file) => {
     if (file instanceof import_obsidian4.TFile) {
@@ -1883,6 +1740,9 @@ function arraymove(arr, fromIndex, toIndex) {
   arr[fromIndex] = arr[toIndex];
   arr[toIndex] = element;
 }
+function get_active_file(app2) {
+  return app2.workspace.activeEditor?.file ?? app2.workspace.getActiveFile();
+}
 
 // src/settings/suggesters/FileSuggester.ts
 var FileSuggestMode;
@@ -1891,9 +1751,8 @@ var FileSuggestMode;
   FileSuggestMode2[FileSuggestMode2["ScriptFiles"] = 1] = "ScriptFiles";
 })(FileSuggestMode || (FileSuggestMode = {}));
 var FileSuggest = class extends TextInputSuggest {
-  constructor(app, inputEl, plugin, mode) {
-    super(app, inputEl);
-    this.app = app;
+  constructor(inputEl, plugin, mode) {
+    super(inputEl);
     this.inputEl = inputEl;
     this.plugin = plugin;
     this.mode = mode;
@@ -1915,7 +1774,7 @@ var FileSuggest = class extends TextInputSuggest {
     }
   }
   getSuggestions(input_str) {
-    const all_files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.get_folder(this.mode)), this.get_error_msg(this.mode));
+    const all_files = errorWrapperSync(() => get_tfiles_from_folder(this.get_folder(this.mode)), this.get_error_msg(this.mode));
     if (!all_files) {
       return [];
     }
@@ -1951,13 +1810,14 @@ var DEFAULT_SETTINGS = {
   enable_folder_templates: true,
   folder_templates: [{ folder: "", template: "" }],
   syntax_highlighting: true,
+  syntax_highlighting_mobile: false,
   enabled_templates_hotkeys: [""],
-  startup_templates: [""]
+  startup_templates: [""],
+  enable_ribbon_icon: true
 };
 var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
-  constructor(app, plugin) {
+  constructor(plugin) {
     super(app, plugin);
-    this.app = app;
     this.plugin = plugin;
   }
   display() {
@@ -1965,9 +1825,10 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     this.add_general_setting_header();
     this.add_template_folder_setting();
     this.add_internal_functions_setting();
-    this.add_syntax_highlighting_setting();
+    this.add_syntax_highlighting_settings();
     this.add_auto_jump_to_cursor();
     this.add_trigger_on_new_file_creation_setting();
+    this.add_ribbon_icon_setting();
     this.add_templates_hotkeys_setting();
     if (this.plugin.settings.trigger_on_file_creation) {
       this.add_folder_templates_setting();
@@ -1975,13 +1836,14 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     this.add_startup_templates_setting();
     this.add_user_script_functions_setting();
     this.add_user_system_command_functions_setting();
+    this.add_donating_setting();
   }
   add_general_setting_header() {
     this.containerEl.createEl("h2", { text: "General Settings" });
   }
   add_template_folder_setting() {
     new import_obsidian6.Setting(this.containerEl).setName("Template folder location").setDesc("Files in this folder will be available as templates.").addSearch((cb) => {
-      new FolderSuggest(this.app, cb.inputEl);
+      new FolderSuggest(cb.inputEl);
       cb.setPlaceholder("Example: folder1/folder2").setValue(this.plugin.settings.templates_folder).onChange((new_folder) => {
         this.plugin.settings.templates_folder = new_folder;
         this.plugin.save_settings();
@@ -1997,12 +1859,21 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     }), " to get a list of all the available internal variables / functions.");
     new import_obsidian6.Setting(this.containerEl).setName("Internal Variables and Functions").setDesc(desc);
   }
-  add_syntax_highlighting_setting() {
-    const desc = document.createDocumentFragment();
-    desc.append("Adds syntax highlighting for Templater commands in edit mode.");
-    new import_obsidian6.Setting(this.containerEl).setName("Syntax Highlighting").setDesc(desc).addToggle((toggle) => {
+  add_syntax_highlighting_settings() {
+    const desktopDesc = document.createDocumentFragment();
+    desktopDesc.append("Adds syntax highlighting for Templater commands in edit mode.");
+    const mobileDesc = document.createDocumentFragment();
+    mobileDesc.append("Adds syntax highlighting for Templater commands in edit mode on mobile. Use with caution: this may break live preview on mobile platforms.");
+    new import_obsidian6.Setting(this.containerEl).setName("Syntax Highlighting on Desktop").setDesc(desktopDesc).addToggle((toggle) => {
       toggle.setValue(this.plugin.settings.syntax_highlighting).onChange((syntax_highlighting) => {
         this.plugin.settings.syntax_highlighting = syntax_highlighting;
+        this.plugin.save_settings();
+        this.plugin.event_handler.update_syntax_highlighting();
+      });
+    });
+    new import_obsidian6.Setting(this.containerEl).setName("Syntax Highlighting on Mobile").setDesc(mobileDesc).addToggle((toggle) => {
+      toggle.setValue(this.plugin.settings.syntax_highlighting_mobile).onChange((syntax_highlighting_mobile) => {
+        this.plugin.settings.syntax_highlighting_mobile = syntax_highlighting_mobile;
         this.plugin.save_settings();
         this.plugin.event_handler.update_syntax_highlighting();
       });
@@ -2032,6 +1903,23 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
       });
     });
   }
+  add_ribbon_icon_setting() {
+    const desc = document.createDocumentFragment();
+    desc.append("Show Templater icon in sidebar ribbon, allowing you to quickly use templates anywhere.");
+    new import_obsidian6.Setting(this.containerEl).setName("Show icon in sidebar").setDesc(desc).addToggle((toggle) => {
+      toggle.setValue(this.plugin.settings.enable_ribbon_icon).onChange((enable_ribbon_icon) => {
+        this.plugin.settings.enable_ribbon_icon = enable_ribbon_icon;
+        this.plugin.save_settings();
+        if (this.plugin.settings.enable_ribbon_icon) {
+          this.plugin.addRibbonIcon("templater-icon", "Templater", async () => {
+            this.plugin.fuzzy_suggester.insert_template();
+          }).setAttribute("id", "rb-templater-icon");
+        } else {
+          document.getElementById("rb-templater-icon")?.remove();
+        }
+      });
+    });
+  }
   add_templates_hotkeys_setting() {
     this.containerEl.createEl("h2", { text: "Template Hotkeys" });
     const desc = document.createDocumentFragment();
@@ -2039,7 +1927,7 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     new import_obsidian6.Setting(this.containerEl).setDesc(desc);
     this.plugin.settings.enabled_templates_hotkeys.forEach((template, index) => {
       const s = new import_obsidian6.Setting(this.containerEl).addSearch((cb) => {
-        new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
+        new FileSuggest(cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
         cb.setPlaceholder("Example: folder1/template_file").setValue(template).onChange((new_template) => {
           if (new_template && this.plugin.settings.enabled_templates_hotkeys.contains(new_template)) {
             log_error(new TemplaterError("This template is already bound to a hotkey"));
@@ -2052,8 +1940,8 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
         cb.containerEl.addClass("templater_search");
       }).addExtraButton((cb) => {
         cb.setIcon("any-key").setTooltip("Configure Hotkey").onClick(() => {
-          this.app.setting.openTabById("hotkeys");
-          const tab = this.app.setting.activeTab;
+          app.setting.openTabById("hotkeys");
+          const tab = app.setting.activeTab;
           tab.searchInputEl.value = "Templater: Insert";
           tab.updateHotkeyVisibility();
         });
@@ -2116,7 +2004,7 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     });
     this.plugin.settings.folder_templates.forEach((folder_template, index) => {
       const s = new import_obsidian6.Setting(this.containerEl).addSearch((cb) => {
-        new FolderSuggest(this.app, cb.inputEl);
+        new FolderSuggest(cb.inputEl);
         cb.setPlaceholder("Folder").setValue(folder_template.folder).onChange((new_folder) => {
           if (new_folder && this.plugin.settings.folder_templates.some((e) => e.folder == new_folder)) {
             log_error(new TemplaterError("This folder already has a template associated with it"));
@@ -2127,7 +2015,7 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
         });
         cb.containerEl.addClass("templater_search");
       }).addSearch((cb) => {
-        new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
+        new FileSuggest(cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
         cb.setPlaceholder("Template").setValue(folder_template.template).onChange((new_template) => {
           this.plugin.settings.folder_templates[index].template = new_template;
           this.plugin.save_settings();
@@ -2162,7 +2050,7 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     new import_obsidian6.Setting(this.containerEl).setDesc(desc);
     this.plugin.settings.startup_templates.forEach((template, index) => {
       const s = new import_obsidian6.Setting(this.containerEl).addSearch((cb) => {
-        new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
+        new FileSuggest(cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
         cb.setPlaceholder("Example: folder1/template_file").setValue(template).onChange((new_template) => {
           if (new_template && this.plugin.settings.startup_templates.contains(new_template)) {
             log_error(new TemplaterError("This startup template already exist"));
@@ -2195,9 +2083,9 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     desc.append("All JavaScript files in this folder will be loaded as CommonJS modules, to import custom user functions.", desc.createEl("br"), "The folder needs to be accessible from the vault.", desc.createEl("br"), "Check the ", desc.createEl("a", {
       href: "https://silentvoid13.github.io/Templater/",
       text: "documentation"
-    }), " for more informations.");
+    }), " for more information.");
     new import_obsidian6.Setting(this.containerEl).setName("Script files folder location").setDesc(desc).addSearch((cb) => {
-      new FolderSuggest(this.app, cb.inputEl);
+      new FolderSuggest(cb.inputEl);
       cb.setPlaceholder("Example: folder1/folder2").setValue(this.plugin.settings.user_scripts_folder).onChange((new_folder) => {
         this.plugin.settings.user_scripts_folder = new_folder;
         this.plugin.save_settings();
@@ -2209,7 +2097,7 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
     if (!this.plugin.settings.user_scripts_folder) {
       name = "No User Scripts folder set";
     } else {
-      const files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder), `User Scripts folder doesn't exist`);
+      const files = errorWrapperSync(() => get_tfiles_from_folder(this.plugin.settings.user_scripts_folder), `User Scripts folder doesn't exist`);
       if (!files || files.length === 0) {
         name = "No User Scripts detected";
       } else {
@@ -2323,6 +2211,23 @@ var TemplaterSettingTab = class extends import_obsidian6.PluginSettingTab {
       div.appendChild(this.containerEl.lastChild);
     }
   }
+  add_donating_setting() {
+    const s = new import_obsidian6.Setting(this.containerEl).setName("Donate").setDesc("If you like this Plugin, consider donating to support continued development.");
+    const a1 = document.createElement("a");
+    a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
+    a1.addClass("templater_donating");
+    const img1 = document.createElement("img");
+    img1.src = "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
+    a1.appendChild(img1);
+    const a2 = document.createElement("a");
+    a2.setAttribute("href", "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q");
+    a2.addClass("templater_donating");
+    const img2 = document.createElement("img");
+    img2.src = "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
+    a2.appendChild(img2);
+    s.settingEl.appendChild(a1);
+    s.settingEl.appendChild(a2);
+  }
 };
 
 // src/handlers/FuzzySuggester.ts
@@ -2333,17 +2238,16 @@ var OpenMode;
   OpenMode2[OpenMode2["CreateNoteTemplate"] = 1] = "CreateNoteTemplate";
 })(OpenMode || (OpenMode = {}));
 var FuzzySuggester = class extends import_obsidian7.FuzzySuggestModal {
-  constructor(app, plugin) {
+  constructor(plugin) {
     super(app);
-    this.app = app;
     this.plugin = plugin;
     this.setPlaceholder("Type name of a template...");
   }
   getItems() {
     if (!this.plugin.settings.templates_folder) {
-      return this.app.vault.getMarkdownFiles();
+      return app.vault.getMarkdownFiles();
     }
-    const files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.templates_folder), `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`);
+    const files = errorWrapperSync(() => get_tfiles_from_folder(this.plugin.settings.templates_folder), `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`);
     if (!files) {
       return [];
     }
@@ -2385,12 +2289,11 @@ var UNSUPPORTED_MOBILE_TEMPLATE = "Error_MobileUnsupportedTemplate";
 var ICON_DATA = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51.1328 28.7"><path d="M0 15.14 0 10.15 18.67 1.51 18.67 6.03 4.72 12.33 4.72 12.76 18.67 19.22 18.67 23.74 0 15.14ZM33.6928 1.84C33.6928 1.84 33.9761 2.1467 34.5428 2.76C35.1094 3.38 35.3928 4.56 35.3928 6.3C35.3928 8.0466 34.8195 9.54 33.6728 10.78C32.5261 12.02 31.0995 12.64 29.3928 12.64C27.6862 12.64 26.2661 12.0267 25.1328 10.8C23.9928 9.5733 23.4228 8.0867 23.4228 6.34C23.4228 4.6 23.9995 3.1066 25.1528 1.86C26.2994.62 27.7261 0 29.4328 0C31.1395 0 32.5594.6133 33.6928 1.84M49.8228.67 29.5328 28.38 24.4128 28.38 44.7128.67 49.8228.67M31.0328 8.38C31.0328 8.38 31.1395 8.2467 31.3528 7.98C31.5662 7.7067 31.6728 7.1733 31.6728 6.38C31.6728 5.5867 31.4461 4.92 30.9928 4.38C30.5461 3.84 29.9995 3.57 29.3528 3.57C28.7061 3.57 28.1695 3.84 27.7428 4.38C27.3228 4.92 27.1128 5.5867 27.1128 6.38C27.1128 7.1733 27.3361 7.84 27.7828 8.38C28.2361 8.9267 28.7861 9.2 29.4328 9.2C30.0795 9.2 30.6128 8.9267 31.0328 8.38M49.4328 17.9C49.4328 17.9 49.7161 18.2067 50.2828 18.82C50.8495 19.4333 51.1328 20.6133 51.1328 22.36C51.1328 24.1 50.5594 25.59 49.4128 26.83C48.2595 28.0766 46.8295 28.7 45.1228 28.7C43.4228 28.7 42.0028 28.0833 40.8628 26.85C39.7295 25.6233 39.1628 24.1366 39.1628 22.39C39.1628 20.65 39.7361 19.16 40.8828 17.92C42.0361 16.6733 43.4628 16.05 45.1628 16.05C46.8694 16.05 48.2928 16.6667 49.4328 17.9M46.8528 24.52C46.8528 24.52 46.9595 24.3833 47.1728 24.11C47.3795 23.8367 47.4828 23.3033 47.4828 22.51C47.4828 21.7167 47.2595 21.05 46.8128 20.51C46.3661 19.97 45.8162 19.7 45.1628 19.7C44.5161 19.7 43.9828 19.97 43.5628 20.51C43.1428 21.05 42.9328 21.7167 42.9328 22.51C42.9328 23.3033 43.1561 23.9733 43.6028 24.52C44.0494 25.06 44.5961 25.33 45.2428 25.33C45.8895 25.33 46.4261 25.06 46.8528 24.52Z" fill="currentColor"/></svg>`;
 
 // src/core/Templater.ts
-var import_obsidian14 = __toModule(require("obsidian"));
+var import_obsidian12 = __toModule(require("obsidian"));
 
 // src/core/functions/internal_functions/InternalModule.ts
 var InternalModule = class {
-  constructor(app, plugin) {
-    this.app = app;
+  constructor(plugin) {
     this.plugin = plugin;
     this.static_functions = new Map();
     this.dynamic_functions = new Map();
@@ -2398,18 +2301,17 @@ var InternalModule = class {
   getName() {
     return this.name;
   }
-  init() {
-    return __async(this, null, function* () {
-      yield this.create_static_templates();
-      this.static_object = Object.fromEntries(this.static_functions);
-    });
+  async init() {
+    await this.create_static_templates();
+    this.static_object = Object.fromEntries(this.static_functions);
   }
-  generate_object(new_config) {
-    return __async(this, null, function* () {
-      this.config = new_config;
-      yield this.create_dynamic_templates();
-      return __spreadValues(__spreadValues({}, this.static_object), Object.fromEntries(this.dynamic_functions));
-    });
+  async generate_object(new_config) {
+    this.config = new_config;
+    await this.create_dynamic_templates();
+    return {
+      ...this.static_object,
+      ...Object.fromEntries(this.dynamic_functions)
+    };
   }
 };
 
@@ -2419,20 +2321,18 @@ var InternalModuleDate = class extends InternalModule {
     super(...arguments);
     this.name = "date";
   }
-  create_static_templates() {
-    return __async(this, null, function* () {
-      this.static_functions.set("now", this.generate_now());
-      this.static_functions.set("tomorrow", this.generate_tomorrow());
-      this.static_functions.set("weekday", this.generate_weekday());
-      this.static_functions.set("yesterday", this.generate_yesterday());
-    });
+  async create_static_templates() {
+    this.static_functions.set("now", this.generate_now());
+    this.static_functions.set("tomorrow", this.generate_tomorrow());
+    this.static_functions.set("weekday", this.generate_weekday());
+    this.static_functions.set("yesterday", this.generate_yesterday());
   }
-  create_dynamic_templates() {
-    return __async(this, null, function* () {
-    });
+  async create_dynamic_templates() {
+  }
+  async teardown() {
   }
   generate_now() {
-    return (format2 = "YYYY-MM-DD", offset2, reference2, reference_format) => {
+    return (format = "YYYY-MM-DD", offset2, reference2, reference_format) => {
       if (reference2 && !window.moment(reference2, reference_format).isValid()) {
         throw new TemplaterError("Invalid reference date format, try specifying one with the argument 'reference_format'");
       }
@@ -2442,25 +2342,25 @@ var InternalModuleDate = class extends InternalModule {
       } else if (typeof offset2 === "number") {
         duration = window.moment.duration(offset2, "days");
       }
-      return window.moment(reference2, reference_format).add(duration).format(format2);
+      return window.moment(reference2, reference_format).add(duration).format(format);
     };
   }
   generate_tomorrow() {
-    return (format2 = "YYYY-MM-DD") => {
-      return window.moment().add(1, "days").format(format2);
+    return (format = "YYYY-MM-DD") => {
+      return window.moment().add(1, "days").format(format);
     };
   }
   generate_weekday() {
-    return (format2 = "YYYY-MM-DD", weekday, reference2, reference_format) => {
+    return (format = "YYYY-MM-DD", weekday, reference2, reference_format) => {
       if (reference2 && !window.moment(reference2, reference_format).isValid()) {
         throw new TemplaterError("Invalid reference date format, try specifying one with the argument 'reference_format'");
       }
-      return window.moment(reference2, reference_format).weekday(weekday).format(format2);
+      return window.moment(reference2, reference_format).weekday(weekday).format(format);
     };
   }
   generate_yesterday() {
-    return (format2 = "YYYY-MM-DD") => {
-      return window.moment().add(-1, "days").format(format2);
+    return (format = "YYYY-MM-DD") => {
+      return window.moment().add(-1, "days").format(format);
     };
   }
 };
@@ -2476,84 +2376,76 @@ var InternalModuleFile = class extends InternalModule {
     this.create_new_depth = 0;
     this.linkpath_regex = new RegExp("^\\[\\[(.*)\\]\\]$");
   }
-  create_static_templates() {
-    return __async(this, null, function* () {
-      this.static_functions.set("creation_date", this.generate_creation_date());
-      this.static_functions.set("create_new", this.generate_create_new());
-      this.static_functions.set("cursor", this.generate_cursor());
-      this.static_functions.set("cursor_append", this.generate_cursor_append());
-      this.static_functions.set("exists", this.generate_exists());
-      this.static_functions.set("find_tfile", this.generate_find_tfile());
-      this.static_functions.set("folder", this.generate_folder());
-      this.static_functions.set("include", this.generate_include());
-      this.static_functions.set("last_modified_date", this.generate_last_modified_date());
-      this.static_functions.set("move", this.generate_move());
-      this.static_functions.set("path", this.generate_path());
-      this.static_functions.set("rename", this.generate_rename());
-      this.static_functions.set("selection", this.generate_selection());
-    });
+  async create_static_templates() {
+    this.static_functions.set("creation_date", this.generate_creation_date());
+    this.static_functions.set("create_new", this.generate_create_new());
+    this.static_functions.set("cursor", this.generate_cursor());
+    this.static_functions.set("cursor_append", this.generate_cursor_append());
+    this.static_functions.set("exists", this.generate_exists());
+    this.static_functions.set("find_tfile", this.generate_find_tfile());
+    this.static_functions.set("folder", this.generate_folder());
+    this.static_functions.set("include", this.generate_include());
+    this.static_functions.set("last_modified_date", this.generate_last_modified_date());
+    this.static_functions.set("move", this.generate_move());
+    this.static_functions.set("path", this.generate_path());
+    this.static_functions.set("rename", this.generate_rename());
+    this.static_functions.set("selection", this.generate_selection());
   }
-  create_dynamic_templates() {
-    return __async(this, null, function* () {
-      this.dynamic_functions.set("content", yield this.generate_content());
-      this.dynamic_functions.set("tags", this.generate_tags());
-      this.dynamic_functions.set("title", this.generate_title());
-    });
+  async create_dynamic_templates() {
+    this.dynamic_functions.set("content", await this.generate_content());
+    this.dynamic_functions.set("tags", this.generate_tags());
+    this.dynamic_functions.set("title", this.generate_title());
   }
-  generate_content() {
-    return __async(this, null, function* () {
-      return yield this.app.vault.read(this.config.target_file);
-    });
+  async teardown() {
+  }
+  async generate_content() {
+    return await app.vault.read(this.config.target_file);
   }
   generate_create_new() {
-    return (template, filename, open_new = false, folder) => __async(this, null, function* () {
+    return async (template, filename, open_new = false, folder) => {
       this.create_new_depth += 1;
       if (this.create_new_depth > DEPTH_LIMIT) {
         this.create_new_depth = 0;
         throw new TemplaterError("Reached create_new depth limit (max = 10)");
       }
-      const new_file = yield this.plugin.templater.create_new_note_from_template(template, folder, filename, open_new);
+      const new_file = await this.plugin.templater.create_new_note_from_template(template, folder, filename, open_new);
       this.create_new_depth -= 1;
       return new_file;
-    });
+    };
   }
   generate_creation_date() {
-    return (format2 = "YYYY-MM-DD HH:mm") => {
-      return window.moment(this.config.target_file.stat.ctime).format(format2);
+    return (format = "YYYY-MM-DD HH:mm") => {
+      return window.moment(this.config.target_file.stat.ctime).format(format);
     };
   }
   generate_cursor() {
     return (order2) => {
-      return `<% tp.file.cursor(${order2 != null ? order2 : ""}) %>`;
+      return `<% tp.file.cursor(${order2 ?? ""}) %>`;
     };
   }
   generate_cursor_append() {
     return (content) => {
-      const active_view = this.app.workspace.getActiveViewOfType(import_obsidian8.MarkdownView);
-      if (active_view === null) {
-        log_error(new TemplaterError("No active view, can't append to cursor."));
+      const active_editor = app.workspace.activeEditor;
+      if (!active_editor || !active_editor.editor) {
+        log_error(new TemplaterError("No active editor, can't append to cursor."));
         return;
       }
-      const editor = active_view.editor;
+      const editor = active_editor.editor;
       const doc = editor.getDoc();
       doc.replaceSelection(content);
       return "";
     };
   }
   generate_exists() {
-    return (filename) => {
-      let match;
-      if ((match = this.linkpath_regex.exec(filename)) !== null) {
-        filename = match[1];
-      }
-      const file = this.app.metadataCache.getFirstLinkpathDest(filename, "");
-      return file != null;
+    return async (filepath) => {
+      const path = (0, import_obsidian8.normalizePath)(filepath);
+      return await app.vault.exists(path);
     };
   }
   generate_find_tfile() {
     return (filename) => {
       const path = (0, import_obsidian8.normalizePath)(filename);
-      return this.app.metadataCache.getFirstLinkpathDest(path, "");
+      return app.metadataCache.getFirstLinkpathDest(path, "");
     };
   }
   generate_folder() {
@@ -2569,8 +2461,7 @@ var InternalModuleFile = class extends InternalModule {
     };
   }
   generate_include() {
-    return (include_link) => __async(this, null, function* () {
-      var _a;
+    return async (include_link) => {
       this.include_depth += 1;
       if (this.include_depth > DEPTH_LIMIT) {
         this.include_depth -= 1;
@@ -2578,7 +2469,7 @@ var InternalModuleFile = class extends InternalModule {
       }
       let inc_file_content;
       if (include_link instanceof import_obsidian8.TFile) {
-        inc_file_content = yield this.app.vault.read(include_link);
+        inc_file_content = await app.vault.read(include_link);
       } else {
         let match;
         if ((match = this.linkpath_regex.exec(include_link)) === null) {
@@ -2586,53 +2477,67 @@ var InternalModuleFile = class extends InternalModule {
           throw new TemplaterError("Invalid file format, provide an obsidian link between quotes.");
         }
         const { path, subpath } = (0, import_obsidian8.parseLinktext)(match[1]);
-        const inc_file = this.app.metadataCache.getFirstLinkpathDest(path, "");
+        const inc_file = app.metadataCache.getFirstLinkpathDest(path, "");
         if (!inc_file) {
           this.include_depth -= 1;
           throw new TemplaterError(`File ${include_link} doesn't exist`);
         }
-        inc_file_content = yield this.app.vault.read(inc_file);
+        inc_file_content = await app.vault.read(inc_file);
         if (subpath) {
-          const cache = this.app.metadataCache.getFileCache(inc_file);
+          const cache = app.metadataCache.getFileCache(inc_file);
           if (cache) {
             const result = (0, import_obsidian8.resolveSubpath)(cache, subpath);
             if (result) {
-              inc_file_content = inc_file_content.slice(result.start.offset, (_a = result.end) == null ? void 0 : _a.offset);
+              inc_file_content = inc_file_content.slice(result.start.offset, result.end?.offset);
             }
           }
         }
       }
       try {
-        const parsed_content = yield this.plugin.templater.parser.parse_commands(inc_file_content, this.plugin.templater.current_functions_object);
+        const parsed_content = await this.plugin.templater.parser.parse_commands(inc_file_content, this.plugin.templater.current_functions_object);
         this.include_depth -= 1;
         return parsed_content;
       } catch (e) {
         this.include_depth -= 1;
         throw e;
       }
-    });
+    };
   }
   generate_last_modified_date() {
-    return (format2 = "YYYY-MM-DD HH:mm") => {
-      return window.moment(this.config.target_file.stat.mtime).format(format2);
+    return (format = "YYYY-MM-DD HH:mm") => {
+      return window.moment(this.config.target_file.stat.mtime).format(format);
     };
   }
   generate_move() {
-    return (path) => __async(this, null, function* () {
-      const new_path = (0, import_obsidian8.normalizePath)(`${path}.${this.config.target_file.extension}`);
-      yield this.app.fileManager.renameFile(this.config.target_file, new_path);
+    return async (path, file_to_move) => {
+      const file = file_to_move || this.config.target_file;
+      const new_path = (0, import_obsidian8.normalizePath)(`${path}.${file.extension}`);
+      const dirs = new_path.replace(/\\/g, "/").split("/");
+      dirs.pop();
+      if (dirs.length) {
+        const dir = dirs.join("/");
+        if (!window.app.vault.getAbstractFileByPath(dir)) {
+          await window.app.vault.createFolder(dir);
+        }
+      }
+      await app.fileManager.renameFile(file, new_path);
       return "";
-    });
+    };
   }
   generate_path() {
     return (relative = false) => {
+      let vault_path = "";
       if (import_obsidian8.Platform.isMobileApp) {
-        return UNSUPPORTED_MOBILE_TEMPLATE;
+        const vault_adapter = app.vault.adapter.fs.uri;
+        const vault_base = app.vault.adapter.basePath;
+        vault_path = `${vault_adapter}/${vault_base}`;
+      } else {
+        if (app.vault.adapter instanceof import_obsidian8.FileSystemAdapter) {
+          vault_path = app.vault.adapter.getBasePath();
+        } else {
+          throw new TemplaterError("app.vault is not a FileSystemAdapter instance");
+        }
       }
-      if (!(this.app.vault.adapter instanceof import_obsidian8.FileSystemAdapter)) {
-        throw new TemplaterError("app.vault is not a FileSystemAdapter instance");
-      }
-      const vault_path = this.app.vault.adapter.getBasePath();
       if (relative) {
         return this.config.target_file.path;
       } else {
@@ -2641,28 +2546,31 @@ var InternalModuleFile = class extends InternalModule {
     };
   }
   generate_rename() {
-    return (new_title) => __async(this, null, function* () {
+    return async (new_title) => {
       if (new_title.match(/[\\/:]+/g)) {
         throw new TemplaterError("File name cannot contain any of these characters: \\ / :");
       }
       const new_path = (0, import_obsidian8.normalizePath)(`${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`);
-      yield this.app.fileManager.renameFile(this.config.target_file, new_path);
+      await app.fileManager.renameFile(this.config.target_file, new_path);
       return "";
-    });
+    };
   }
   generate_selection() {
     return () => {
-      const active_view = this.app.workspace.getActiveViewOfType(import_obsidian8.MarkdownView);
-      if (active_view == null) {
-        throw new TemplaterError("Active view is null, can't read selection.");
+      const active_editor = app.workspace.activeEditor;
+      if (!active_editor || !active_editor.editor) {
+        throw new TemplaterError("Active editor is null, can't read selection.");
       }
-      const editor = active_view.editor;
+      const editor = active_editor.editor;
       return editor.getSelection();
     };
   }
   generate_tags() {
-    const cache = this.app.metadataCache.getFileCache(this.config.target_file);
-    return (0, import_obsidian8.getAllTags)(cache);
+    const cache = app.metadataCache.getFileCache(this.config.target_file);
+    if (cache) {
+      return (0, import_obsidian8.getAllTags)(cache);
+    }
+    return null;
   }
   generate_title() {
     return this.config.target_file.basename;
@@ -2675,42 +2583,91 @@ var InternalModuleWeb = class extends InternalModule {
     super(...arguments);
     this.name = "web";
   }
-  create_static_templates() {
-    return __async(this, null, function* () {
-      this.static_functions.set("daily_quote", this.generate_daily_quote());
-      this.static_functions.set("random_picture", this.generate_random_picture());
-    });
+  async create_static_templates() {
+    this.static_functions.set("daily_quote", this.generate_daily_quote());
+    this.static_functions.set("random_picture", this.generate_random_picture());
   }
-  create_dynamic_templates() {
-    return __async(this, null, function* () {
-    });
+  async create_dynamic_templates() {
   }
-  getRequest(url) {
-    return __async(this, null, function* () {
-      const response = yield fetch(url);
+  async teardown() {
+  }
+  async getRequest(url) {
+    try {
+      const response = await fetch(url);
       if (!response.ok) {
         throw new TemplaterError("Error performing GET request");
       }
       return response;
-    });
+    } catch (error) {
+      throw new TemplaterError("Error performing GET request");
+    }
   }
   generate_daily_quote() {
-    return () => __async(this, null, function* () {
-      const response = yield this.getRequest("https://api.quotable.io/random");
-      const json = yield response.json();
-      const author = json.author;
-      const quote = json.content;
-      const new_content = `> ${quote}
-> \u2014 <cite>${author}</cite>`;
-      return new_content;
-    });
+    return async () => {
+      try {
+        const response = await this.getRequest("https://api.quotable.io/random");
+        const json = await response.json();
+        const author = json.author;
+        const quote = json.content;
+        const new_content = `> [!quote] ${quote}
+> \u2014 ${author}`;
+        return new_content;
+      } catch (error) {
+        new TemplaterError("Error generating daily quote");
+        return "Error generating daily quote";
+      }
+    };
   }
   generate_random_picture() {
-    return (size, query) => __async(this, null, function* () {
-      const response = yield this.getRequest(`https://source.unsplash.com/random/${size != null ? size : ""}?${query != null ? query : ""}`);
-      const url = response.url;
-      return `![tp.web.random_picture](${url})`;
+    return async (size, query, include_size = false) => {
+      try {
+        const response = await this.getRequest(`https://templater-unsplash.fly.dev/${query ? "?q=" + query : ""}`).then((res) => res.json());
+        let url = response.full;
+        if (size && !include_size) {
+          if (size.includes("x")) {
+            const [width, height] = size.split("x");
+            url = url.concat(`&w=${width}&h=${height}`);
+          } else {
+            url = url.concat(`&w=${size}`);
+          }
+        }
+        if (include_size) {
+          return `![photo by ${response.photog} on Unsplash|${size}](${url})`;
+        }
+        return `![photo by ${response.photog} on Unsplash](${url})`;
+      } catch (error) {
+        new TemplaterError("Error generating random picture");
+        return "Error generating random picture";
+      }
+    };
+  }
+};
+
+// src/core/functions/internal_functions/hooks/InternalModuleHooks.ts
+var InternalModuleHooks = class extends InternalModule {
+  constructor() {
+    super(...arguments);
+    this.name = "hooks";
+    this.event_refs = [];
+  }
+  async create_static_templates() {
+    this.static_functions.set("on_all_templates_executed", this.generate_on_all_templates_executed());
+  }
+  async create_dynamic_templates() {
+  }
+  async teardown() {
+    this.event_refs.forEach((eventRef) => {
+      eventRef.e.offref(eventRef);
     });
+    this.event_refs = [];
+  }
+  generate_on_all_templates_executed() {
+    return (callback_function) => {
+      const event_ref = app.workspace.on("templater:all-templates-executed", () => callback_function());
+      if (event_ref) {
+        this.event_refs.push(event_ref);
+      }
+    };
   }
 };
 
@@ -2720,28 +2677,24 @@ var InternalModuleFrontmatter = class extends InternalModule {
     super(...arguments);
     this.name = "frontmatter";
   }
-  create_static_templates() {
-    return __async(this, null, function* () {
-    });
+  async create_static_templates() {
   }
-  create_dynamic_templates() {
-    return __async(this, null, function* () {
-      const cache = this.app.metadataCache.getFileCache(this.config.target_file);
-      this.dynamic_functions = new Map(Object.entries((cache == null ? void 0 : cache.frontmatter) || {}));
-    });
+  async create_dynamic_templates() {
+    const cache = app.metadataCache.getFileCache(this.config.target_file);
+    this.dynamic_functions = new Map(Object.entries(cache?.frontmatter || {}));
+  }
+  async teardown() {
   }
 };
-
-// src/core/functions/internal_functions/system/InternalModuleSystem.ts
-var import_obsidian11 = __toModule(require("obsidian"));
 
 // src/core/functions/internal_functions/system/PromptModal.ts
 var import_obsidian9 = __toModule(require("obsidian"));
 var PromptModal = class extends import_obsidian9.Modal {
-  constructor(app, prompt_text, default_value) {
+  constructor(prompt_text, default_value, multi_line) {
     super(app);
     this.prompt_text = prompt_text;
     this.default_value = default_value;
+    this.multi_line = multi_line;
     this.submitted = false;
   }
   onOpen() {
@@ -2751,47 +2704,75 @@ var PromptModal = class extends import_obsidian9.Modal {
   onClose() {
     this.contentEl.empty();
     if (!this.submitted) {
-      this.reject(new TemplaterError("Cancelled prompt"));
+      this.reject();
     }
   }
   createForm() {
-    var _a;
     const div = this.contentEl.createDiv();
     div.addClass("templater-prompt-div");
-    const form = div.createEl("form");
-    form.addClass("templater-prompt-form");
-    form.type = "submit";
-    form.onsubmit = (e) => {
-      this.submitted = true;
-      e.preventDefault();
-      this.resolve(this.promptEl.value);
-      this.close();
-    };
-    this.promptEl = form.createEl("input");
-    this.promptEl.type = "text";
-    this.promptEl.placeholder = "Type text here...";
-    this.promptEl.value = (_a = this.default_value) != null ? _a : "";
-    this.promptEl.addClass("templater-prompt-input");
-    this.promptEl.select();
+    let textInput;
+    if (this.multi_line) {
+      textInput = new import_obsidian9.TextAreaComponent(div);
+      const buttonDiv = this.contentEl.createDiv();
+      buttonDiv.addClass("templater-button-div");
+      const submitButton = new import_obsidian9.ButtonComponent(buttonDiv);
+      submitButton.buttonEl.addClass("mod-cta");
+      submitButton.setButtonText("Submit").onClick((evt) => {
+        this.resolveAndClose(evt);
+      });
+    } else {
+      textInput = new import_obsidian9.TextComponent(div);
+    }
+    this.value = this.default_value ?? "";
+    textInput.inputEl.addClass("templater-prompt-input");
+    textInput.setPlaceholder("Type text here");
+    textInput.setValue(this.value);
+    textInput.onChange((value) => this.value = value);
+    textInput.inputEl.addEventListener("keydown", (evt) => this.enterCallback(evt));
   }
-  openAndGetValue(resolve2, reject) {
-    return __async(this, null, function* () {
-      this.resolve = resolve2;
-      this.reject = reject;
-      this.open();
-    });
+  enterCallback(evt) {
+    if (evt.isComposing || evt.keyCode === 229)
+      return;
+    if (this.multi_line) {
+      if (import_obsidian9.Platform.isDesktop) {
+        if (evt.shiftKey && evt.key === "Enter") {
+        } else if (evt.key === "Enter") {
+          this.resolveAndClose(evt);
+        }
+      } else {
+        if (evt.key === "Enter") {
+          evt.preventDefault();
+        }
+      }
+    } else {
+      if (evt.key === "Enter") {
+        this.resolveAndClose(evt);
+      }
+    }
+  }
+  resolveAndClose(evt) {
+    this.submitted = true;
+    evt.preventDefault();
+    this.resolve(this.value);
+    this.close();
+  }
+  async openAndGetValue(resolve, reject) {
+    this.resolve = resolve;
+    this.reject = reject;
+    this.open();
   }
 };
 
 // src/core/functions/internal_functions/system/SuggesterModal.ts
 var import_obsidian10 = __toModule(require("obsidian"));
 var SuggesterModal = class extends import_obsidian10.FuzzySuggestModal {
-  constructor(app, text_items, items, placeholder) {
+  constructor(text_items, items, placeholder, limit) {
     super(app);
     this.text_items = text_items;
     this.items = items;
     this.submitted = false;
     this.setPlaceholder(placeholder);
+    limit && (this.limit = limit);
   }
   getItems() {
     return this.items;
@@ -2815,12 +2796,10 @@ var SuggesterModal = class extends import_obsidian10.FuzzySuggestModal {
   onChooseItem(item) {
     this.resolve(item);
   }
-  openAndGetValue(resolve2, reject) {
-    return __async(this, null, function* () {
-      this.resolve = resolve2;
-      this.reject = reject;
-      this.open();
-    });
+  async openAndGetValue(resolve, reject) {
+    this.resolve = resolve;
+    this.reject = reject;
+    this.open();
   }
 };
 
@@ -2830,52 +2809,47 @@ var InternalModuleSystem = class extends InternalModule {
     super(...arguments);
     this.name = "system";
   }
-  create_static_templates() {
-    return __async(this, null, function* () {
-      this.static_functions.set("clipboard", this.generate_clipboard());
-      this.static_functions.set("prompt", this.generate_prompt());
-      this.static_functions.set("suggester", this.generate_suggester());
-    });
+  async create_static_templates() {
+    this.static_functions.set("clipboard", this.generate_clipboard());
+    this.static_functions.set("prompt", this.generate_prompt());
+    this.static_functions.set("suggester", this.generate_suggester());
   }
-  create_dynamic_templates() {
-    return __async(this, null, function* () {
-    });
+  async create_dynamic_templates() {
+  }
+  async teardown() {
   }
   generate_clipboard() {
-    return () => __async(this, null, function* () {
-      if (import_obsidian11.Platform.isMobileApp) {
-        return UNSUPPORTED_MOBILE_TEMPLATE;
-      }
-      return yield navigator.clipboard.readText();
-    });
+    return async () => {
+      return await navigator.clipboard.readText();
+    };
   }
   generate_prompt() {
-    return (prompt_text, default_value, throw_on_cancel = false) => __async(this, null, function* () {
-      const prompt = new PromptModal(this.app, prompt_text, default_value);
-      const promise = new Promise((resolve2, reject) => prompt.openAndGetValue(resolve2, reject));
+    return async (prompt_text, default_value, throw_on_cancel = false, multi_line = false) => {
+      const prompt = new PromptModal(prompt_text, default_value, multi_line);
+      const promise = new Promise((resolve, reject) => prompt.openAndGetValue(resolve, reject));
       try {
-        return yield promise;
+        return await promise;
       } catch (error) {
         if (throw_on_cancel) {
           throw error;
         }
         return null;
       }
-    });
+    };
   }
   generate_suggester() {
-    return (text_items, items, throw_on_cancel = false, placeholder = "") => __async(this, null, function* () {
-      const suggester = new SuggesterModal(this.app, text_items, items, placeholder);
-      const promise = new Promise((resolve2, reject) => suggester.openAndGetValue(resolve2, reject));
+    return async (text_items, items, throw_on_cancel = false, placeholder = "", limit) => {
+      const suggester = new SuggesterModal(text_items, items, placeholder, limit);
+      const promise = new Promise((resolve, reject) => suggester.openAndGetValue(resolve, reject));
       try {
-        return yield promise;
+        return await promise;
       } catch (error) {
         if (throw_on_cancel) {
           throw error;
         }
         return null;
       }
-    });
+    };
   }
 };
 
@@ -2885,184 +2859,176 @@ var InternalModuleConfig = class extends InternalModule {
     super(...arguments);
     this.name = "config";
   }
-  create_static_templates() {
-    return __async(this, null, function* () {
-    });
+  async create_static_templates() {
   }
-  create_dynamic_templates() {
-    return __async(this, null, function* () {
-    });
+  async create_dynamic_templates() {
   }
-  generate_object(config2) {
-    return __async(this, null, function* () {
-      return config2;
-    });
+  async teardown() {
+  }
+  async generate_object(config) {
+    return config;
   }
 };
 
 // src/core/functions/internal_functions/InternalFunctions.ts
 var InternalFunctions = class {
-  constructor(app, plugin) {
-    this.app = app;
+  constructor(plugin) {
     this.plugin = plugin;
     this.modules_array = [];
-    this.modules_array.push(new InternalModuleDate(this.app, this.plugin));
-    this.modules_array.push(new InternalModuleFile(this.app, this.plugin));
-    this.modules_array.push(new InternalModuleWeb(this.app, this.plugin));
-    this.modules_array.push(new InternalModuleFrontmatter(this.app, this.plugin));
-    this.modules_array.push(new InternalModuleSystem(this.app, this.plugin));
-    this.modules_array.push(new InternalModuleConfig(this.app, this.plugin));
+    this.modules_array.push(new InternalModuleDate(this.plugin));
+    this.modules_array.push(new InternalModuleFile(this.plugin));
+    this.modules_array.push(new InternalModuleWeb(this.plugin));
+    this.modules_array.push(new InternalModuleFrontmatter(this.plugin));
+    this.modules_array.push(new InternalModuleHooks(this.plugin));
+    this.modules_array.push(new InternalModuleSystem(this.plugin));
+    this.modules_array.push(new InternalModuleConfig(this.plugin));
   }
-  init() {
-    return __async(this, null, function* () {
-      for (const mod of this.modules_array) {
-        yield mod.init();
-      }
-    });
+  async init() {
+    for (const mod of this.modules_array) {
+      await mod.init();
+    }
   }
-  generate_object(config2) {
-    return __async(this, null, function* () {
-      const internal_functions_object = {};
-      for (const mod of this.modules_array) {
-        internal_functions_object[mod.getName()] = yield mod.generate_object(config2);
-      }
-      return internal_functions_object;
-    });
+  async teardown() {
+    for (const mod of this.modules_array) {
+      await mod.teardown();
+    }
+  }
+  async generate_object(config) {
+    const internal_functions_object = {};
+    for (const mod of this.modules_array) {
+      internal_functions_object[mod.getName()] = await mod.generate_object(config);
+    }
+    return internal_functions_object;
   }
 };
-
-// src/core/functions/user_functions/UserFunctions.ts
-var import_obsidian13 = __toModule(require("obsidian"));
 
 // src/core/functions/user_functions/UserSystemFunctions.ts
 var import_child_process = __toModule(require("child_process"));
 var import_util = __toModule(require("util"));
-var import_obsidian12 = __toModule(require("obsidian"));
+var import_obsidian11 = __toModule(require("obsidian"));
 var UserSystemFunctions = class {
-  constructor(app, plugin) {
+  constructor(plugin) {
     this.plugin = plugin;
-    if (import_obsidian12.Platform.isMobileApp || !(app.vault.adapter instanceof import_obsidian12.FileSystemAdapter)) {
+    if (import_obsidian11.Platform.isMobileApp || !(app.vault.adapter instanceof import_obsidian11.FileSystemAdapter)) {
       this.cwd = "";
     } else {
       this.cwd = app.vault.adapter.getBasePath();
       this.exec_promise = (0, import_util.promisify)(import_child_process.exec);
     }
   }
-  generate_system_functions(config2) {
-    return __async(this, null, function* () {
-      const user_system_functions = new Map();
-      const internal_functions_object = yield this.plugin.templater.functions_generator.generate_object(config2, FunctionsMode.INTERNAL);
-      for (const template_pair of this.plugin.settings.templates_pairs) {
-        const template = template_pair[0];
-        let cmd = template_pair[1];
-        if (!template || !cmd) {
-          continue;
-        }
-        if (import_obsidian12.Platform.isMobileApp) {
-          user_system_functions.set(template, () => {
-            return new Promise((resolve2) => resolve2(UNSUPPORTED_MOBILE_TEMPLATE));
-          });
-        } else {
-          cmd = yield this.plugin.templater.parser.parse_commands(cmd, internal_functions_object);
-          user_system_functions.set(template, (user_args) => __async(this, null, function* () {
-            const process_env = __spreadValues(__spreadValues({}, process.env), user_args);
-            const cmd_options = __spreadValues({
-              timeout: this.plugin.settings.command_timeout * 1e3,
-              cwd: this.cwd,
-              env: process_env
-            }, this.plugin.settings.shell_path && {
-              shell: this.plugin.settings.shell_path
-            });
-            try {
-              const { stdout } = yield this.exec_promise(cmd, cmd_options);
-              return stdout.trimRight();
-            } catch (error) {
-              throw new TemplaterError(`Error with User Template ${template}`, error);
-            }
-          }));
-        }
+  async generate_system_functions(config) {
+    const user_system_functions = new Map();
+    const internal_functions_object = await this.plugin.templater.functions_generator.generate_object(config, FunctionsMode.INTERNAL);
+    for (const template_pair of this.plugin.settings.templates_pairs) {
+      const template = template_pair[0];
+      let cmd = template_pair[1];
+      if (!template || !cmd) {
+        continue;
       }
-      return user_system_functions;
-    });
+      if (import_obsidian11.Platform.isMobileApp) {
+        user_system_functions.set(template, () => {
+          return new Promise((resolve) => resolve(UNSUPPORTED_MOBILE_TEMPLATE));
+        });
+      } else {
+        cmd = await this.plugin.templater.parser.parse_commands(cmd, internal_functions_object);
+        user_system_functions.set(template, async (user_args) => {
+          const process_env = {
+            ...process.env,
+            ...user_args
+          };
+          const cmd_options = {
+            timeout: this.plugin.settings.command_timeout * 1e3,
+            cwd: this.cwd,
+            env: process_env,
+            ...this.plugin.settings.shell_path && {
+              shell: this.plugin.settings.shell_path
+            }
+          };
+          try {
+            const { stdout } = await this.exec_promise(cmd, cmd_options);
+            return stdout.trimRight();
+          } catch (error) {
+            throw new TemplaterError(`Error with User Template ${template}`, error);
+          }
+        });
+      }
+    }
+    return user_system_functions;
   }
-  generate_object(config2) {
-    return __async(this, null, function* () {
-      const user_system_functions = yield this.generate_system_functions(config2);
-      return Object.fromEntries(user_system_functions);
-    });
+  async generate_object(config) {
+    const user_system_functions = await this.generate_system_functions(config);
+    return Object.fromEntries(user_system_functions);
   }
 };
 
 // src/core/functions/user_functions/UserScriptFunctions.ts
 var UserScriptFunctions = class {
-  constructor(app, plugin) {
-    this.app = app;
+  constructor(plugin) {
     this.plugin = plugin;
   }
-  generate_user_script_functions() {
-    return __async(this, null, function* () {
-      const user_script_functions = new Map();
-      const files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder), `Couldn't find user script folder "${this.plugin.settings.user_scripts_folder}"`);
-      if (!files) {
-        return new Map();
+  async generate_user_script_functions() {
+    const user_script_functions = new Map();
+    const files = errorWrapperSync(() => get_tfiles_from_folder(this.plugin.settings.user_scripts_folder), `Couldn't find user script folder "${this.plugin.settings.user_scripts_folder}"`);
+    if (!files) {
+      return new Map();
+    }
+    for (const file of files) {
+      if (file.extension.toLowerCase() === "js") {
+        await this.load_user_script_function(file, user_script_functions);
       }
-      for (const file of files) {
-        if (file.extension.toLowerCase() === "js") {
-          yield this.load_user_script_function(file, user_script_functions);
-        }
-      }
-      return user_script_functions;
-    });
+    }
+    return user_script_functions;
   }
-  load_user_script_function(file, user_script_functions) {
-    return __async(this, null, function* () {
-      let req = (s) => {
-        return window.require && window.require(s);
-      };
-      let exp = {};
-      let mod = {
-        exports: exp
-      };
-      const file_content = yield this.app.vault.read(file);
-      const wrapping_fn = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+  async load_user_script_function(file, user_script_functions) {
+    const req = (s) => {
+      return window.require && window.require(s);
+    };
+    const exp = {};
+    const mod = {
+      exports: exp
+    };
+    const file_content = await app.vault.read(file);
+    const wrapping_fn = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+    try {
       wrapping_fn(req, mod, exp);
-      const user_function = exp["default"] || mod.exports;
-      if (!user_function) {
-        throw new TemplaterError(`Failed to load user script ${file.path}. No exports detected.`);
-      }
-      if (!(user_function instanceof Function)) {
-        throw new TemplaterError(`Failed to load user script ${file.path}. Default export is not a function.`);
-      }
-      user_script_functions.set(`${file.basename}`, user_function);
-    });
+    } catch (err) {
+      throw new TemplaterError(`Failed to load user script at "${file.path}".`, err.message);
+    }
+    const user_function = exp["default"] || mod.exports;
+    if (!user_function) {
+      throw new TemplaterError(`Failed to load user script at "${file.path}". No exports detected.`);
+    }
+    if (!(user_function instanceof Function)) {
+      throw new TemplaterError(`Failed to load user script at "${file.path}". Default export is not a function.`);
+    }
+    user_script_functions.set(`${file.basename}`, user_function);
   }
-  generate_object() {
-    return __async(this, null, function* () {
-      const user_script_functions = yield this.generate_user_script_functions();
-      return Object.fromEntries(user_script_functions);
-    });
+  async generate_object() {
+    const user_script_functions = await this.generate_user_script_functions();
+    return Object.fromEntries(user_script_functions);
   }
 };
 
 // src/core/functions/user_functions/UserFunctions.ts
 var UserFunctions = class {
-  constructor(app, plugin) {
+  constructor(plugin) {
     this.plugin = plugin;
-    this.user_system_functions = new UserSystemFunctions(app, plugin);
-    this.user_script_functions = new UserScriptFunctions(app, plugin);
+    this.user_system_functions = new UserSystemFunctions(plugin);
+    this.user_script_functions = new UserScriptFunctions(plugin);
   }
-  generate_object(config2) {
-    return __async(this, null, function* () {
-      let user_system_functions = {};
-      let user_script_functions = {};
-      if (this.plugin.settings.enable_system_commands) {
-        user_system_functions = yield this.user_system_functions.generate_object(config2);
-      }
-      if (import_obsidian13.Platform.isDesktopApp && this.plugin.settings.user_scripts_folder) {
-        user_script_functions = yield this.user_script_functions.generate_object(config2);
-      }
-      return __spreadValues(__spreadValues({}, user_system_functions), user_script_functions);
-    });
+  async generate_object(config) {
+    let user_system_functions = {};
+    let user_script_functions = {};
+    if (this.plugin.settings.enable_system_commands) {
+      user_system_functions = await this.user_system_functions.generate_object(config);
+    }
+    if (this.plugin.settings.user_scripts_folder) {
+      user_script_functions = await this.user_script_functions.generate_object();
+    }
+    return {
+      ...user_system_functions,
+      ...user_script_functions
+    };
   }
 };
 
@@ -3074,572 +3040,477 @@ var FunctionsMode;
   FunctionsMode2[FunctionsMode2["USER_INTERNAL"] = 1] = "USER_INTERNAL";
 })(FunctionsMode || (FunctionsMode = {}));
 var FunctionsGenerator = class {
-  constructor(app, plugin) {
-    this.app = app;
+  constructor(plugin) {
     this.plugin = plugin;
-    this.internal_functions = new InternalFunctions(this.app, this.plugin);
-    this.user_functions = new UserFunctions(this.app, this.plugin);
+    this.internal_functions = new InternalFunctions(this.plugin);
+    this.user_functions = new UserFunctions(this.plugin);
   }
-  init() {
-    return __async(this, null, function* () {
-      yield this.internal_functions.init();
-    });
+  async init() {
+    await this.internal_functions.init();
+  }
+  async teardown() {
+    await this.internal_functions.teardown();
   }
   additional_functions() {
     return {
       obsidian: obsidian_module
     };
   }
-  generate_object(config2, functions_mode = 1) {
-    return __async(this, null, function* () {
-      const final_object = {};
-      const additional_functions_object = this.additional_functions();
-      const internal_functions_object = yield this.internal_functions.generate_object(config2);
-      let user_functions_object = {};
-      Object.assign(final_object, additional_functions_object);
-      switch (functions_mode) {
-        case 0:
-          Object.assign(final_object, internal_functions_object);
-          break;
-        case 1:
-          user_functions_object = yield this.user_functions.generate_object(config2);
-          Object.assign(final_object, __spreadProps(__spreadValues({}, internal_functions_object), {
-            user: user_functions_object
-          }));
-          break;
-      }
-      return final_object;
-    });
+  async generate_object(config, functions_mode = 1) {
+    const final_object = {};
+    const additional_functions_object = this.additional_functions();
+    const internal_functions_object = await this.internal_functions.generate_object(config);
+    let user_functions_object = {};
+    Object.assign(final_object, additional_functions_object);
+    switch (functions_mode) {
+      case 0:
+        Object.assign(final_object, internal_functions_object);
+        break;
+      case 1:
+        user_functions_object = await this.user_functions.generate_object(config);
+        Object.assign(final_object, {
+          ...internal_functions_object,
+          user: user_functions_object
+        });
+        break;
+    }
+    return final_object;
   }
 };
 
-// node_modules/eta/dist/eta.es.js
-var import_fs = __toModule(require("fs"));
-var import_path = __toModule(require("path"));
-function setPrototypeOf(obj, proto) {
-  if (Object.setPrototypeOf) {
-    Object.setPrototypeOf(obj, proto);
-  } else {
-    obj.__proto__ = proto;
-  }
+// node_modules/@silentvoid13/rusty_engine/rusty_engine.js
+var import_meta = {};
+var wasm;
+var heap = new Array(32).fill(void 0);
+heap.push(void 0, null, true, false);
+function getObject(idx) {
+  return heap[idx];
 }
-function EtaErr(message) {
-  var err = new Error(message);
-  setPrototypeOf(err, EtaErr.prototype);
-  return err;
+var heap_next = heap.length;
+function dropObject(idx) {
+  if (idx < 36)
+    return;
+  heap[idx] = heap_next;
+  heap_next = idx;
 }
-EtaErr.prototype = Object.create(Error.prototype, {
-  name: { value: "Eta Error", enumerable: false }
-});
-function ParseErr(message, str, indx) {
-  var whitespace = str.slice(0, indx).split(/\n/);
-  var lineNo = whitespace.length;
-  var colNo = whitespace[lineNo - 1].length + 1;
-  message += " at line " + lineNo + " col " + colNo + ":\n\n  " + str.split(/\n/)[lineNo - 1] + "\n  " + Array(colNo).join(" ") + "^";
-  throw EtaErr(message);
+function takeObject(idx) {
+  const ret = getObject(idx);
+  dropObject(idx);
+  return ret;
 }
-var promiseImpl = new Function("return this")().Promise;
-function getAsyncFunctionConstructor() {
-  try {
-    return new Function("return (async function(){}).constructor")();
-  } catch (e) {
-    if (e instanceof SyntaxError) {
-      throw EtaErr("This environment doesn't support async/await");
-    } else {
-      throw e;
-    }
+var cachedTextDecoder = new TextDecoder("utf-8", { ignoreBOM: true, fatal: true });
+cachedTextDecoder.decode();
+var cachedUint8Memory0 = new Uint8Array();
+function getUint8Memory0() {
+  if (cachedUint8Memory0.byteLength === 0) {
+    cachedUint8Memory0 = new Uint8Array(wasm.memory.buffer);
   }
+  return cachedUint8Memory0;
 }
-function trimLeft(str) {
-  if (!!String.prototype.trimLeft) {
-    return str.trimLeft();
-  } else {
-    return str.replace(/^\s+/, "");
-  }
+function getStringFromWasm0(ptr, len) {
+  return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
-function trimRight(str) {
-  if (!!String.prototype.trimRight) {
-    return str.trimRight();
-  } else {
-    return str.replace(/\s+$/, "");
-  }
+function addHeapObject(obj) {
+  if (heap_next === heap.length)
+    heap.push(heap.length + 1);
+  const idx = heap_next;
+  heap_next = heap[idx];
+  heap[idx] = obj;
+  return idx;
 }
-function hasOwnProp(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-function copyProps(toObj, fromObj) {
-  for (var key in fromObj) {
-    if (hasOwnProp(fromObj, key)) {
-      toObj[key] = fromObj[key];
-    }
-  }
-  return toObj;
-}
-function trimWS(str, config2, wsLeft, wsRight) {
-  var leftTrim;
-  var rightTrim;
-  if (Array.isArray(config2.autoTrim)) {
-    leftTrim = config2.autoTrim[1];
-    rightTrim = config2.autoTrim[0];
-  } else {
-    leftTrim = rightTrim = config2.autoTrim;
-  }
-  if (wsLeft || wsLeft === false) {
-    leftTrim = wsLeft;
-  }
-  if (wsRight || wsRight === false) {
-    rightTrim = wsRight;
-  }
-  if (!rightTrim && !leftTrim) {
-    return str;
-  }
-  if (leftTrim === "slurp" && rightTrim === "slurp") {
-    return str.trim();
-  }
-  if (leftTrim === "_" || leftTrim === "slurp") {
-    str = trimLeft(str);
-  } else if (leftTrim === "-" || leftTrim === "nl") {
-    str = str.replace(/^(?:\r\n|\n|\r)/, "");
-  }
-  if (rightTrim === "_" || rightTrim === "slurp") {
-    str = trimRight(str);
-  } else if (rightTrim === "-" || rightTrim === "nl") {
-    str = str.replace(/(?:\r\n|\n|\r)$/, "");
-  }
-  return str;
-}
-var escMap = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;"
+var WASM_VECTOR_LEN = 0;
+var cachedTextEncoder = new TextEncoder("utf-8");
+var encodeString = typeof cachedTextEncoder.encodeInto === "function" ? function(arg, view) {
+  return cachedTextEncoder.encodeInto(arg, view);
+} : function(arg, view) {
+  const buf = cachedTextEncoder.encode(arg);
+  view.set(buf);
+  return {
+    read: arg.length,
+    written: buf.length
+  };
 };
-function replaceChar(s) {
-  return escMap[s];
+function passStringToWasm0(arg, malloc, realloc) {
+  if (realloc === void 0) {
+    const buf = cachedTextEncoder.encode(arg);
+    const ptr2 = malloc(buf.length);
+    getUint8Memory0().subarray(ptr2, ptr2 + buf.length).set(buf);
+    WASM_VECTOR_LEN = buf.length;
+    return ptr2;
+  }
+  let len = arg.length;
+  let ptr = malloc(len);
+  const mem = getUint8Memory0();
+  let offset2 = 0;
+  for (; offset2 < len; offset2++) {
+    const code = arg.charCodeAt(offset2);
+    if (code > 127)
+      break;
+    mem[ptr + offset2] = code;
+  }
+  if (offset2 !== len) {
+    if (offset2 !== 0) {
+      arg = arg.slice(offset2);
+    }
+    ptr = realloc(ptr, len, len = offset2 + arg.length * 3);
+    const view = getUint8Memory0().subarray(ptr + offset2, ptr + len);
+    const ret = encodeString(arg, view);
+    offset2 += ret.written;
+  }
+  WASM_VECTOR_LEN = offset2;
+  return ptr;
 }
-function XMLEscape(str) {
-  var newStr = String(str);
-  if (/[&<>"']/.test(newStr)) {
-    return newStr.replace(/[&<>"']/g, replaceChar);
+function isLikeNone(x) {
+  return x === void 0 || x === null;
+}
+var cachedInt32Memory0 = new Int32Array();
+function getInt32Memory0() {
+  if (cachedInt32Memory0.byteLength === 0) {
+    cachedInt32Memory0 = new Int32Array(wasm.memory.buffer);
+  }
+  return cachedInt32Memory0;
+}
+function debugString(val) {
+  const type = typeof val;
+  if (type == "number" || type == "boolean" || val == null) {
+    return `${val}`;
+  }
+  if (type == "string") {
+    return `"${val}"`;
+  }
+  if (type == "symbol") {
+    const description = val.description;
+    if (description == null) {
+      return "Symbol";
+    } else {
+      return `Symbol(${description})`;
+    }
+  }
+  if (type == "function") {
+    const name = val.name;
+    if (typeof name == "string" && name.length > 0) {
+      return `Function(${name})`;
+    } else {
+      return "Function";
+    }
+  }
+  if (Array.isArray(val)) {
+    const length = val.length;
+    let debug = "[";
+    if (length > 0) {
+      debug += debugString(val[0]);
+    }
+    for (let i = 1; i < length; i++) {
+      debug += ", " + debugString(val[i]);
+    }
+    debug += "]";
+    return debug;
+  }
+  const builtInMatches = /\[object ([^\]]+)\]/.exec(toString.call(val));
+  let className;
+  if (builtInMatches.length > 1) {
+    className = builtInMatches[1];
   } else {
-    return newStr;
+    return toString.call(val);
+  }
+  if (className == "Object") {
+    try {
+      return "Object(" + JSON.stringify(val) + ")";
+    } catch (_) {
+      return "Object";
+    }
+  }
+  if (val instanceof Error) {
+    return `${val.name}: ${val.message}
+${val.stack}`;
+  }
+  return className;
+}
+function _assertClass(instance, klass) {
+  if (!(instance instanceof klass)) {
+    throw new Error(`expected instance of ${klass.name}`);
+  }
+  return instance.ptr;
+}
+var stack_pointer = 32;
+function addBorrowedObject(obj) {
+  if (stack_pointer == 1)
+    throw new Error("out of js stack");
+  heap[--stack_pointer] = obj;
+  return stack_pointer;
+}
+function handleError(f, args) {
+  try {
+    return f.apply(this, args);
+  } catch (e) {
+    wasm.__wbindgen_exn_store(addHeapObject(e));
   }
 }
-var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g;
-var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
-var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
-function escapeRegExp(string) {
-  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&");
-}
-function parse(str, config2) {
-  var buffer = [];
-  var trimLeftOfNextStr = false;
-  var lastIndex = 0;
-  var parseOptions = config2.parse;
-  if (config2.plugins) {
-    for (var i = 0; i < config2.plugins.length; i++) {
-      var plugin = config2.plugins[i];
-      if (plugin.processTemplate) {
-        str = plugin.processTemplate(str, config2);
-      }
+var ParserConfig = class {
+  static __wrap(ptr) {
+    const obj = Object.create(ParserConfig.prototype);
+    obj.ptr = ptr;
+    return obj;
+  }
+  __destroy_into_raw() {
+    const ptr = this.ptr;
+    this.ptr = 0;
+    return ptr;
+  }
+  free() {
+    const ptr = this.__destroy_into_raw();
+    wasm.__wbg_parserconfig_free(ptr);
+  }
+  get interpolate() {
+    const ret = wasm.__wbg_get_parserconfig_interpolate(this.ptr);
+    return String.fromCodePoint(ret);
+  }
+  set interpolate(arg0) {
+    wasm.__wbg_set_parserconfig_interpolate(this.ptr, arg0.codePointAt(0));
+  }
+  get execution() {
+    const ret = wasm.__wbg_get_parserconfig_execution(this.ptr);
+    return String.fromCodePoint(ret);
+  }
+  set execution(arg0) {
+    wasm.__wbg_set_parserconfig_execution(this.ptr, arg0.codePointAt(0));
+  }
+  get single_whitespace() {
+    const ret = wasm.__wbg_get_parserconfig_single_whitespace(this.ptr);
+    return String.fromCodePoint(ret);
+  }
+  set single_whitespace(arg0) {
+    wasm.__wbg_set_parserconfig_single_whitespace(this.ptr, arg0.codePointAt(0));
+  }
+  get multiple_whitespace() {
+    const ret = wasm.__wbg_get_parserconfig_multiple_whitespace(this.ptr);
+    return String.fromCodePoint(ret);
+  }
+  set multiple_whitespace(arg0) {
+    wasm.__wbg_set_parserconfig_multiple_whitespace(this.ptr, arg0.codePointAt(0));
+  }
+  constructor(opt, clt, inte, ex, sw, mw, gv) {
+    const ptr0 = passStringToWasm0(opt, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(clt, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ptr2 = passStringToWasm0(gv, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len2 = WASM_VECTOR_LEN;
+    const ret = wasm.parserconfig_new(ptr0, len0, ptr1, len1, inte.codePointAt(0), ex.codePointAt(0), sw.codePointAt(0), mw.codePointAt(0), ptr2, len2);
+    return ParserConfig.__wrap(ret);
+  }
+  get opening_tag() {
+    try {
+      const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+      wasm.parserconfig_opening_tag(retptr, this.ptr);
+      var r0 = getInt32Memory0()[retptr / 4 + 0];
+      var r1 = getInt32Memory0()[retptr / 4 + 1];
+      return getStringFromWasm0(r0, r1);
+    } finally {
+      wasm.__wbindgen_add_to_stack_pointer(16);
+      wasm.__wbindgen_free(r0, r1);
     }
   }
-  if (config2.rmWhitespace) {
-    str = str.replace(/[\r\n]+/g, "\n").replace(/^\s+|\s+$/gm, "");
+  set opening_tag(val) {
+    const ptr0 = passStringToWasm0(val, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    wasm.parserconfig_set_opening_tag(this.ptr, ptr0, len0);
   }
-  templateLitReg.lastIndex = 0;
-  singleQuoteReg.lastIndex = 0;
-  doubleQuoteReg.lastIndex = 0;
-  function pushString(strng, shouldTrimRightOfString) {
-    if (strng) {
-      strng = trimWS(strng, config2, trimLeftOfNextStr, shouldTrimRightOfString);
-      if (strng) {
-        strng = strng.replace(/\\|'/g, "\\$&").replace(/\r\n|\n|\r/g, "\\n");
-        buffer.push(strng);
-      }
+  get closing_tag() {
+    try {
+      const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+      wasm.parserconfig_closing_tag(retptr, this.ptr);
+      var r0 = getInt32Memory0()[retptr / 4 + 0];
+      var r1 = getInt32Memory0()[retptr / 4 + 1];
+      return getStringFromWasm0(r0, r1);
+    } finally {
+      wasm.__wbindgen_add_to_stack_pointer(16);
+      wasm.__wbindgen_free(r0, r1);
     }
   }
-  var prefixes = [parseOptions.exec, parseOptions.interpolate, parseOptions.raw].reduce(function(accumulator, prefix2) {
-    if (accumulator && prefix2) {
-      return accumulator + "|" + escapeRegExp(prefix2);
-    } else if (prefix2) {
-      return escapeRegExp(prefix2);
-    } else {
-      return accumulator;
-    }
-  }, "");
-  var parseOpenReg = new RegExp("([^]*?)" + escapeRegExp(config2.tags[0]) + "(-|_)?\\s*(" + prefixes + ")?\\s*(?![\\s+\\-_" + prefixes + "])", "g");
-  var parseCloseReg = new RegExp("'|\"|`|\\/\\*|(\\s*(-|_)?" + escapeRegExp(config2.tags[1]) + ")", "g");
-  var m;
-  while (m = parseOpenReg.exec(str)) {
-    lastIndex = m[0].length + m.index;
-    var precedingString = m[1];
-    var wsLeft = m[2];
-    var prefix = m[3] || "";
-    pushString(precedingString, wsLeft);
-    parseCloseReg.lastIndex = lastIndex;
-    var closeTag = void 0;
-    var currentObj = false;
-    while (closeTag = parseCloseReg.exec(str)) {
-      if (closeTag[1]) {
-        var content = str.slice(lastIndex, closeTag.index);
-        parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex;
-        trimLeftOfNextStr = closeTag[2];
-        var currentType = prefix === parseOptions.exec ? "e" : prefix === parseOptions.raw ? "r" : prefix === parseOptions.interpolate ? "i" : "";
-        currentObj = { t: currentType, val: content };
-        break;
-      } else {
-        var char = closeTag[0];
-        if (char === "/*") {
-          var commentCloseInd = str.indexOf("*/", parseCloseReg.lastIndex);
-          if (commentCloseInd === -1) {
-            ParseErr("unclosed comment", str, closeTag.index);
-          }
-          parseCloseReg.lastIndex = commentCloseInd;
-        } else if (char === "'") {
-          singleQuoteReg.lastIndex = closeTag.index;
-          var singleQuoteMatch = singleQuoteReg.exec(str);
-          if (singleQuoteMatch) {
-            parseCloseReg.lastIndex = singleQuoteReg.lastIndex;
-          } else {
-            ParseErr("unclosed string", str, closeTag.index);
-          }
-        } else if (char === '"') {
-          doubleQuoteReg.lastIndex = closeTag.index;
-          var doubleQuoteMatch = doubleQuoteReg.exec(str);
-          if (doubleQuoteMatch) {
-            parseCloseReg.lastIndex = doubleQuoteReg.lastIndex;
-          } else {
-            ParseErr("unclosed string", str, closeTag.index);
-          }
-        } else if (char === "`") {
-          templateLitReg.lastIndex = closeTag.index;
-          var templateLitMatch = templateLitReg.exec(str);
-          if (templateLitMatch) {
-            parseCloseReg.lastIndex = templateLitReg.lastIndex;
-          } else {
-            ParseErr("unclosed string", str, closeTag.index);
-          }
-        }
-      }
-    }
-    if (currentObj) {
-      buffer.push(currentObj);
-    } else {
-      ParseErr("unclosed tag", str, m.index + precedingString.length);
+  set closing_tag(val) {
+    const ptr0 = passStringToWasm0(val, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    wasm.parserconfig_set_closing_tag(this.ptr, ptr0, len0);
+  }
+  get global_var() {
+    try {
+      const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+      wasm.parserconfig_global_var(retptr, this.ptr);
+      var r0 = getInt32Memory0()[retptr / 4 + 0];
+      var r1 = getInt32Memory0()[retptr / 4 + 1];
+      return getStringFromWasm0(r0, r1);
+    } finally {
+      wasm.__wbindgen_add_to_stack_pointer(16);
+      wasm.__wbindgen_free(r0, r1);
     }
   }
-  pushString(str.slice(lastIndex, str.length), false);
-  if (config2.plugins) {
-    for (var i = 0; i < config2.plugins.length; i++) {
-      var plugin = config2.plugins[i];
-      if (plugin.processAST) {
-        buffer = plugin.processAST(buffer, config2);
-      }
-    }
+  set global_var(val) {
+    const ptr0 = passStringToWasm0(val, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    wasm.parserconfig_set_global_var(this.ptr, ptr0, len0);
   }
-  return buffer;
-}
-function compileToString(str, config2) {
-  var buffer = parse(str, config2);
-  var res = "var tR='',__l,__lP" + (config2.include ? ",include=E.include.bind(E)" : "") + (config2.includeFile ? ",includeFile=E.includeFile.bind(E)" : "") + "\nfunction layout(p,d){__l=p;__lP=d}\n" + (config2.globalAwait ? "const _prs = [];\n" : "") + (config2.useWith ? "with(" + config2.varName + "||{}){" : "") + compileScope(buffer, config2) + (config2.includeFile ? "if(__l)tR=" + (config2.async ? "await " : "") + ("includeFile(__l,Object.assign(" + config2.varName + ",{body:tR},__lP))\n") : config2.include ? "if(__l)tR=" + (config2.async ? "await " : "") + ("include(__l,Object.assign(" + config2.varName + ",{body:tR},__lP))\n") : "") + "if(cb){cb(null,tR)} return tR" + (config2.useWith ? "}" : "");
-  if (config2.plugins) {
-    for (var i = 0; i < config2.plugins.length; i++) {
-      var plugin = config2.plugins[i];
-      if (plugin.processFnString) {
-        res = plugin.processFnString(res, config2);
-      }
-    }
-  }
-  return res;
-}
-function compileScope(buff, config2) {
-  var i;
-  var buffLength = buff.length;
-  var returnStr = "";
-  var REPLACEMENT_STR = "rJ2KqXzxQg";
-  for (i = 0; i < buffLength; i++) {
-    var currentBlock = buff[i];
-    if (typeof currentBlock === "string") {
-      var str = currentBlock;
-      returnStr += "tR+='" + str + "'\n";
-    } else {
-      var type = currentBlock.t;
-      var content = currentBlock.val || "";
-      if (type === "r") {
-        if (config2.globalAwait) {
-          returnStr += "_prs.push(" + content + ");\n";
-          returnStr += "tR+='" + REPLACEMENT_STR + "'\n";
-        } else {
-          if (config2.filter) {
-            content = "E.filter(" + content + ")";
-          }
-          returnStr += "tR+=" + content + "\n";
-        }
-      } else if (type === "i") {
-        if (config2.globalAwait) {
-          returnStr += "_prs.push(" + content + ");\n";
-          returnStr += "tR+='" + REPLACEMENT_STR + "'\n";
-        } else {
-          if (config2.filter) {
-            content = "E.filter(" + content + ")";
-          }
-          returnStr += "tR+=" + content + "\n";
-          if (config2.autoEscape) {
-            content = "E.e(" + content + ")";
-          }
-          returnStr += "tR+=" + content + "\n";
-        }
-      } else if (type === "e") {
-        returnStr += content + "\n";
-      }
-    }
-  }
-  if (config2.globalAwait) {
-    returnStr += "const _rst = await Promise.all(_prs);\ntR = tR.replace(/" + REPLACEMENT_STR + "/g, () => _rst.shift());\n";
-  }
-  return returnStr;
-}
-var Cacher = function() {
-  function Cacher2(cache) {
-    this.cache = cache;
-  }
-  Cacher2.prototype.define = function(key, val) {
-    this.cache[key] = val;
-  };
-  Cacher2.prototype.get = function(key) {
-    return this.cache[key];
-  };
-  Cacher2.prototype.remove = function(key) {
-    delete this.cache[key];
-  };
-  Cacher2.prototype.reset = function() {
-    this.cache = {};
-  };
-  Cacher2.prototype.load = function(cacheObj) {
-    copyProps(this.cache, cacheObj);
-  };
-  return Cacher2;
-}();
-var templates = new Cacher({});
-function includeHelper(templateNameOrPath, data) {
-  var template = this.templates.get(templateNameOrPath);
-  if (!template) {
-    throw EtaErr('Could not fetch template "' + templateNameOrPath + '"');
-  }
-  return template(data, this);
-}
-var config = {
-  async: false,
-  autoEscape: true,
-  autoTrim: [false, "nl"],
-  cache: false,
-  e: XMLEscape,
-  include: includeHelper,
-  parse: {
-    exec: "",
-    interpolate: "=",
-    raw: "~"
-  },
-  plugins: [],
-  rmWhitespace: false,
-  tags: ["<%", "%>"],
-  templates,
-  useWith: false,
-  varName: "it"
 };
-function getConfig(override, baseConfig) {
-  var res = {};
-  copyProps(res, config);
-  if (baseConfig) {
-    copyProps(res, baseConfig);
+var Renderer = class {
+  static __wrap(ptr) {
+    const obj = Object.create(Renderer.prototype);
+    obj.ptr = ptr;
+    return obj;
   }
-  if (override) {
-    copyProps(res, override);
+  __destroy_into_raw() {
+    const ptr = this.ptr;
+    this.ptr = 0;
+    return ptr;
   }
-  return res;
-}
-function compile(str, config2) {
-  var options = getConfig(config2 || {});
-  var ctor = options.async ? getAsyncFunctionConstructor() : Function;
-  try {
-    return new ctor(options.varName, "E", "cb", compileToString(str, options));
-  } catch (e) {
-    if (e instanceof SyntaxError) {
-      throw EtaErr("Bad template syntax\n\n" + e.message + "\n" + Array(e.message.length + 1).join("=") + "\n" + compileToString(str, options) + "\n");
-    } else {
-      throw e;
-    }
+  free() {
+    const ptr = this.__destroy_into_raw();
+    wasm.__wbg_renderer_free(ptr);
   }
-}
-var _BOM = /^\uFEFF/;
-function getWholeFilePath(name, parentfile, isDirectory) {
-  var includePath = (0, import_path.resolve)(isDirectory ? parentfile : (0, import_path.dirname)(parentfile), name) + ((0, import_path.extname)(name) ? "" : ".eta");
-  return includePath;
-}
-function getPath(path, options) {
-  var includePath = false;
-  var views = options.views;
-  var searchedPaths = [];
-  var pathOptions = JSON.stringify({
-    filename: options.filename,
-    path,
-    root: options.root,
-    views: options.views
-  });
-  if (options.cache && options.filepathCache && options.filepathCache[pathOptions]) {
-    return options.filepathCache[pathOptions];
+  constructor(config) {
+    _assertClass(config, ParserConfig);
+    var ptr0 = config.ptr;
+    config.ptr = 0;
+    const ret = wasm.renderer_new(ptr0);
+    return Renderer.__wrap(ret);
   }
-  function addPathToSearched(pathSearched) {
-    if (!searchedPaths.includes(pathSearched)) {
-      searchedPaths.push(pathSearched);
-    }
-  }
-  function searchViews(views2, path2) {
-    var filePath2;
-    if (Array.isArray(views2) && views2.some(function(v) {
-      filePath2 = getWholeFilePath(path2, v, true);
-      addPathToSearched(filePath2);
-      return (0, import_fs.existsSync)(filePath2);
-    })) {
-      return filePath2;
-    } else if (typeof views2 === "string") {
-      filePath2 = getWholeFilePath(path2, views2, true);
-      addPathToSearched(filePath2);
-      if ((0, import_fs.existsSync)(filePath2)) {
-        return filePath2;
+  render_content(content, context) {
+    try {
+      const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+      const ptr0 = passStringToWasm0(content, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+      const len0 = WASM_VECTOR_LEN;
+      wasm.renderer_render_content(retptr, this.ptr, ptr0, len0, addBorrowedObject(context));
+      var r0 = getInt32Memory0()[retptr / 4 + 0];
+      var r1 = getInt32Memory0()[retptr / 4 + 1];
+      var r2 = getInt32Memory0()[retptr / 4 + 2];
+      if (r2) {
+        throw takeObject(r1);
       }
-    }
-    return false;
-  }
-  var match = /^[A-Za-z]+:\\|^\//.exec(path);
-  if (match && match.length) {
-    var formattedPath = path.replace(/^\/*/, "");
-    includePath = searchViews(views, formattedPath);
-    if (!includePath) {
-      var pathFromRoot = getWholeFilePath(formattedPath, options.root || "/", true);
-      addPathToSearched(pathFromRoot);
-      includePath = pathFromRoot;
-    }
-  } else {
-    if (options.filename) {
-      var filePath = getWholeFilePath(path, options.filename);
-      addPathToSearched(filePath);
-      if ((0, import_fs.existsSync)(filePath)) {
-        includePath = filePath;
-      }
-    }
-    if (!includePath) {
-      includePath = searchViews(views, path);
-    }
-    if (!includePath) {
-      throw EtaErr('Could not find the template "' + path + '". Paths tried: ' + searchedPaths);
+      return takeObject(r0);
+    } finally {
+      wasm.__wbindgen_add_to_stack_pointer(16);
+      heap[stack_pointer++] = void 0;
     }
   }
-  if (options.cache && options.filepathCache) {
-    options.filepathCache[pathOptions] = includePath;
-  }
-  return includePath;
-}
-function readFile(filePath) {
-  try {
-    return (0, import_fs.readFileSync)(filePath).toString().replace(_BOM, "");
-  } catch (_a) {
-    throw EtaErr("Failed to read template at '" + filePath + "'");
-  }
-}
-function loadFile(filePath, options, noCache) {
-  var config2 = getConfig(options);
-  var template = readFile(filePath);
-  try {
-    var compiledTemplate = compile(template, config2);
-    if (!noCache) {
-      config2.templates.define(config2.filename, compiledTemplate);
-    }
-    return compiledTemplate;
-  } catch (e) {
-    throw EtaErr("Loading file: " + filePath + " failed:\n\n" + e.message);
-  }
-}
-function handleCache(options) {
-  var filename = options.filename;
-  if (options.cache) {
-    var func = options.templates.get(filename);
-    if (func) {
-      return func;
-    }
-    return loadFile(filename, options);
-  }
-  return loadFile(filename, options, true);
-}
-function includeFile(path, options) {
-  var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
-  return [handleCache(newFileOptions), newFileOptions];
-}
-function includeFileHelper(path, data) {
-  var templateAndConfig = includeFile(path, this);
-  return templateAndConfig[0](data, templateAndConfig[1]);
-}
-function handleCache$1(template, options) {
-  if (options.cache && options.name && options.templates.get(options.name)) {
-    return options.templates.get(options.name);
-  }
-  var templateFunc = typeof template === "function" ? template : compile(template, options);
-  if (options.cache && options.name) {
-    options.templates.define(options.name, templateFunc);
-  }
-  return templateFunc;
-}
-function render(template, data, config2, cb) {
-  var options = getConfig(config2 || {});
-  if (options.async) {
-    if (cb) {
+};
+async function load(module2, imports) {
+  if (typeof Response === "function" && module2 instanceof Response) {
+    if (typeof WebAssembly.instantiateStreaming === "function") {
       try {
-        var templateFn = handleCache$1(template, options);
-        templateFn(data, options, cb);
-      } catch (err) {
-        return cb(err);
-      }
-    } else {
-      if (typeof promiseImpl === "function") {
-        return new promiseImpl(function(resolve2, reject) {
-          try {
-            resolve2(handleCache$1(template, options)(data, options));
-          } catch (err) {
-            reject(err);
-          }
-        });
-      } else {
-        throw EtaErr("Please provide a callback function, this env doesn't support Promises");
+        return await WebAssembly.instantiateStreaming(module2, imports);
+      } catch (e) {
+        if (module2.headers.get("Content-Type") != "application/wasm") {
+          console.warn("`WebAssembly.instantiateStreaming` failed because your server does not serve wasm with `application/wasm` MIME type. Falling back to `WebAssembly.instantiate` which is slower. Original error:\n", e);
+        } else {
+          throw e;
+        }
       }
     }
+    const bytes = await module2.arrayBuffer();
+    return await WebAssembly.instantiate(bytes, imports);
   } else {
-    return handleCache$1(template, options)(data, options);
+    const instance = await WebAssembly.instantiate(module2, imports);
+    if (instance instanceof WebAssembly.Instance) {
+      return { instance, module: module2 };
+    } else {
+      return instance;
+    }
   }
 }
-function renderAsync(template, data, config2, cb) {
-  return render(template, data, Object.assign({}, config2, { async: true }), cb);
+function getImports() {
+  const imports = {};
+  imports.wbg = {};
+  imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
+    takeObject(arg0);
+  };
+  imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
+    const ret = getStringFromWasm0(arg0, arg1);
+    return addHeapObject(ret);
+  };
+  imports.wbg.__wbindgen_string_get = function(arg0, arg1) {
+    const obj = getObject(arg1);
+    const ret = typeof obj === "string" ? obj : void 0;
+    var ptr0 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len0 = WASM_VECTOR_LEN;
+    getInt32Memory0()[arg0 / 4 + 1] = len0;
+    getInt32Memory0()[arg0 / 4 + 0] = ptr0;
+  };
+  imports.wbg.__wbg_call_97ae9d8645dc388b = function() {
+    return handleError(function(arg0, arg1) {
+      const ret = getObject(arg0).call(getObject(arg1));
+      return addHeapObject(ret);
+    }, arguments);
+  };
+  imports.wbg.__wbg_new_8d2af00bc1e329ee = function(arg0, arg1) {
+    const ret = new Error(getStringFromWasm0(arg0, arg1));
+    return addHeapObject(ret);
+  };
+  imports.wbg.__wbg_message_fe2af63ccc8985bc = function(arg0) {
+    const ret = getObject(arg0).message;
+    return addHeapObject(ret);
+  };
+  imports.wbg.__wbg_newwithargs_8fe23e3842840c8e = function(arg0, arg1, arg2, arg3) {
+    const ret = new Function(getStringFromWasm0(arg0, arg1), getStringFromWasm0(arg2, arg3));
+    return addHeapObject(ret);
+  };
+  imports.wbg.__wbg_call_168da88779e35f61 = function() {
+    return handleError(function(arg0, arg1, arg2) {
+      const ret = getObject(arg0).call(getObject(arg1), getObject(arg2));
+      return addHeapObject(ret);
+    }, arguments);
+  };
+  imports.wbg.__wbg_call_3999bee59e9f7719 = function() {
+    return handleError(function(arg0, arg1, arg2, arg3) {
+      const ret = getObject(arg0).call(getObject(arg1), getObject(arg2), getObject(arg3));
+      return addHeapObject(ret);
+    }, arguments);
+  };
+  imports.wbg.__wbindgen_debug_string = function(arg0, arg1) {
+    const ret = debugString(getObject(arg1));
+    const ptr0 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    getInt32Memory0()[arg0 / 4 + 1] = len0;
+    getInt32Memory0()[arg0 / 4 + 0] = ptr0;
+  };
+  imports.wbg.__wbindgen_throw = function(arg0, arg1) {
+    throw new Error(getStringFromWasm0(arg0, arg1));
+  };
+  return imports;
 }
-config.includeFile = includeFileHelper;
-config.filepathCache = {};
+function initMemory(imports, maybe_memory) {
+}
+function finalizeInit(instance, module2) {
+  wasm = instance.exports;
+  init.__wbindgen_wasm_module = module2;
+  cachedInt32Memory0 = new Int32Array();
+  cachedUint8Memory0 = new Uint8Array();
+  return wasm;
+}
+async function init(input) {
+  if (typeof input === "undefined") {
+    input = new URL("rusty_engine_bg.wasm", import_meta.url);
+  }
+  const imports = getImports();
+  if (typeof input === "string" || typeof Request === "function" && input instanceof Request || typeof URL === "function" && input instanceof URL) {
+    input = fetch(input);
+  }
+  initMemory(imports);
+  const { instance, module: module2 } = await load(await input, imports);
+  return finalizeInit(instance, module2);
+}
+var rusty_engine_default = init;
+
+// wasm-embed:/home/runner/work/Templater/Templater/node_modules/@silentvoid13/rusty_engine/rusty_engine_bg.wasm
+var rusty_engine_bg_default = __toBinary("AGFzbQEAAAABvwEaYAJ/fwBgAn9/AX9gAX8Bf2ADf39/AX9gA39/fwBgAX8AYAV/f39/fwBgBH9/f38AYAR/f39/AX9gAABgBX9/f39/AX9gAX8BfmAAAX9gBn9/f39/fwBgB39/f39/f38AYAV/f35/fwBgBX9/fX9/AGAFf398f38AYAR/fn9/AGAFf35/f38AYAR/fX9/AGAEf3x/fwBgBn9/f39/fwF/YAd/f39/f39/AX9gCn9/f39/f39/f38Bf2ACfn8BfwLkAgsDd2JnGl9fd2JpbmRnZW5fb2JqZWN0X2Ryb3BfcmVmAAUDd2JnFV9fd2JpbmRnZW5fc3RyaW5nX25ldwABA3diZxVfX3diaW5kZ2VuX3N0cmluZ19nZXQAAAN3YmcbX193YmdfY2FsbF85N2FlOWQ4NjQ1ZGMzODhiAAEDd2JnGl9fd2JnX25ld184ZDJhZjAwYmMxZTMyOWVlAAEDd2JnHl9fd2JnX21lc3NhZ2VfZmUyYWY2M2NjYzg5ODViYwACA3diZyJfX3diZ19uZXd3aXRoYXJnc184ZmUyM2UzODQyODQwYzhlAAgDd2JnG19fd2JnX2NhbGxfMTY4ZGE4ODc3OWUzNWY2MQADA3diZxtfX3diZ19jYWxsXzM5OTliZWU1OWU5Zjc3MTkACAN3YmcXX193YmluZGdlbl9kZWJ1Z19zdHJpbmcAAAN3YmcQX193YmluZGdlbl90aHJvdwAAA7kBtwECBwAGAgYEBAcBBQMKCAAEBgYAAwcCAAEADgETAQQXAQICAQAAAwcZAQAFAQwABgACAgAAAgAEBAAGAQAAAAAEBw0CAQUEBQYCDBgAAQAAAAQBAQEAAQABBAQEBgMDBwMJAwQIAAAABQkAAgEAAAAABwAAAgICAgAFBQMEFgoGEQ8QAAUHAwIBAgABBQEBCAACAQEBBQEAAgECAgACAQEBAgAJCQICAgIAAAAAAwMDAQECAgsLCwUEBQFwATs7BQMBABEGCQF/AUGAgMAACwfcBRkGbWVtb3J5AgAXX193YmdfcGFyc2VyY29uZmlnX2ZyZWUAUSJfX3diZ19nZXRfcGFyc2VyY29uZmlnX2ludGVycG9sYXRlAH4iX193Ymdfc2V0X3BhcnNlcmNvbmZpZ19pbnRlcnBvbGF0ZQB3IF9fd2JnX2dldF9wYXJzZXJjb25maWdfZXhlY3V0aW9uAH8gX193Ymdfc2V0X3BhcnNlcmNvbmZpZ19leGVjdXRpb24AeChfX3diZ19nZXRfcGFyc2VyY29uZmlnX3NpbmdsZV93aGl0ZXNwYWNlAIABKF9fd2JnX3NldF9wYXJzZXJjb25maWdfc2luZ2xlX3doaXRlc3BhY2UAeSpfX3diZ19nZXRfcGFyc2VyY29uZmlnX211bHRpcGxlX3doaXRlc3BhY2UAgQEqX193Ymdfc2V0X3BhcnNlcmNvbmZpZ19tdWx0aXBsZV93aGl0ZXNwYWNlAHoQcGFyc2VyY29uZmlnX25ldwBVGHBhcnNlcmNvbmZpZ19vcGVuaW5nX3RhZwBGHHBhcnNlcmNvbmZpZ19zZXRfb3BlbmluZ190YWcAYxhwYXJzZXJjb25maWdfY2xvc2luZ190YWcARxxwYXJzZXJjb25maWdfc2V0X2Nsb3NpbmdfdGFnAGQXcGFyc2VyY29uZmlnX2dsb2JhbF92YXIASBtwYXJzZXJjb25maWdfc2V0X2dsb2JhbF92YXIAZRNfX3diZ19yZW5kZXJlcl9mcmVlAE8McmVuZGVyZXJfbmV3ACAXcmVuZGVyZXJfcmVuZGVyX2NvbnRlbnQAORFfX3diaW5kZ2VuX21hbGxvYwB1El9fd2JpbmRnZW5fcmVhbGxvYwCFAR9fX3diaW5kZ2VuX2FkZF90b19zdGFja19wb2ludGVyAKsBD19fd2JpbmRnZW5fZnJlZQCaARRfX3diaW5kZ2VuX2V4bl9zdG9yZQCfAQllAQBBAQs6mAGdAaoBPzzBAZUBlgFOkgGOAWotYsEBwQFnKl3BAXaIAUyJAYgBhwGQAY8BiQGJAYwBigGLAZgBX8EBaKABXo4BvwG+AYQBOElwoQHBAWioAWCjAVclqQGcAcEBwAEK2dYCtwG8IAIPfwF+IwBBEGsiCyQAAkACQCAAQfUBTwRAQYCAfEEIQQgQlwFBFEEIEJcBakEQQQgQlwFqa0F3cUF9aiICQQBBEEEIEJcBQQJ0ayIBIAEgAksbIABNDQIgAEEEakEIEJcBIQRBrK7AACgCAEUNAUEAIARrIQMCQAJAAn9BACAEQYACSQ0AGkEfIARB////B0sNABogBEEGIARBCHZnIgBrdkEBcSAAQQF0a0E+agsiBkECdEG4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EBBBIAQoAgAiBSAAKAIAaiIGQdSDwAApAAA3AAAgBCAFQRBqNgIAIAZBCGpB3IPAACkAADcAACADQQE2AiwgAyABKAIIQShqIgU2AiggAyAANgIYIANB3ABqQQE2AgAgA0ICNwJMIANB8IPAADYCSCADIANBKGo2AlgCQAJAAkACQAJAAkAgA0EYakGYisAAIANByABqEB5FBEAgAigCACEIAkAgAigCCCIBRQ0AIAFBBHQhCkGQhMAAIQZBACEBQQAhBANAAn8gASAIaiIHQQRqIgkgBygCAEUNABoCQCAERQ0AIANBEGogBCgCACAEKAIEQQAgBiAGLQAAQQJGG0EBEBAgA0EIaiADKAIQIAMoAhRBACAHQQ1qIgQgBC0AAEECRhtBABAQIANBGGogAygCCCADKAIMEBIgA0EBNgI0IANBATYCLCADIAU2AiggAyADQRhqNgIwIAMgADYCRCADQQI2AlwgA0IDNwJMIANBmITAADYCSCADIANBKGo2AlggA0HEAGpBmIrAACADQcgAahAeDQUgAygCHEUNACADKAIYEBULIAdBDmohBgJAIAdBDGotAABFBEAgA0ECNgIsIAMgCTYCKCADIAA2AhggA0EBNgJcIANCAjcCTCADQfSEwAA2AkggAyADQShqNgJYIANBGGpBmIrAACADQcgAahAeDQcgA0ECNgI0IANBoIXAADYCMCADQQE2AiwgAyAFNgIoIAMgADYCGCADQQI2AlwgA0IDNwJMIANBmITAADYCSCADIANBKGo2AlggA0EYakGYisAAIANByABqEB5FDQFBq4HAAEErIANByABqQdiBwABBqIXAABBSAAsgA0ECNgIsIAMgCTYCKCADIAA2AhggA0EBNgJcIANCAjcCTCADQcSEwAA2AkggAyADQShqNgJYIANBGGpBmIrAACADQcgAahAeDQcLQQALIQQgCiABQRBqIgFHDQALIARFDQAgAyAEKAIAIAQoAgRBACAGIAYtAABBAkYbQQEQECADQRhqIAMoAgAgAygCBBASIANBNGpBATYCACADQQE2AiwgAyAFNgIoIAMgA0EYajYCMCADIAA2AkQgA0HcAGpBAjYCACADQgM3AkwgA0GYhMAANgJIIAMgA0EoajYCWCADQcQAakGYisAAIANByABqEB4NBSADKAIcRQ0AIAMoAhgQFQsgAEEEaigCACAAQQhqIgQoAgAiAWtBJ00EQCAAIAFBKBBBIAQoAgAhAQsgBCABQShqNgIAIAAoAgAgAWoiAUHIhcAAKQAANwAAIAFBCGpB0IXAACkAADcAACABQRBqQdiFwAApAAA3AAAgAUEYakHghcAAKQAANwAAIAFBIGpB6IXAACkAADcAACADQTxqQQI2AgAgA0E0akEBNgIAIANBoIXAADYCOCADIAU2AjAgA0EBNgIsIAMgBTYCKCADIAA2AhggA0HcAGoiAUEDNgIAIANCBDcCTCADQZiGwAA2AkggAyADQShqNgJYIANBGGpBmIrAACADQcgAahAeDQUgA0EBNgIsIAMgBTYCKCADIAA2AhggAUEBNgIAIANCAjcCTCADQdCGwAA2AkggAyADQShqNgJYIANBGGpBmIrAACADQcgAahAeDQYgAkEEaigCAARAIAgQFQsgA0HgAGokAA8LQauBwABBKyADQcgAakHYgcAAQYCEwAAQUgALQauBwABBKyADQcgAakHYgcAAQbCEwAAQUgALQauBwABBKyADQcgAakHYgcAAQYSFwAAQUgALQauBwABBKyADQcgAakHYgcAAQdSEwAAQUgALQauBwABBKyADQcgAakHYgcAAQbiFwAAQUgALQauBwABBKyADQcgAakHYgcAAQbiGwAAQUgALQauBwABBKyADQcgAakHYgcAAQeCGwAAQUgAL7QkCCH8GfiMAQdAAayIDJAACQAJAAkAQVCIEBEAgA0EgakIANwMAIANBHGpBkIrAADYCACAEIAQpAwAiC0IBfDcDACADQQA2AhggAyALNwMIIAMgBEEIaikDADcDECADQqeAgIDwBDcDSCADQo2AgICgDjcDQCADQoqAgIDgDTcDOCADQtyAgIDACzcDMCADQQhqIANBMGoQGSADQQA2AjggA0IENwMwIAJFBEAgAEEANgIIIABCATcCAEEEIQRBBCEBDAQLIAEgAmohCEEAIQIDQAJ/IAEsAAAiBEF/SgRAIARB/wFxIQQgAUEBagwBCyABLQABQT9xIQUgBEEfcSEGIARBX00EQCAGQQZ0IAVyIQQgAUECagwBCyABLQACQT9xIAVBBnRyIQUgBEFwSQRAIAUgBkEMdHIhBCABQQNqDAELIAZBEnRBgIDwAHEgAS0AA0E/cSAFQQZ0cnIiBEGAgMQA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ASACIANqQQFqIgM2AhAgAyAHT0EAIAMgDE0bRQRAIAYgA08NAQwDCwsgB0EEELUBAAsgASAGNgIQCyABLQAkIAEoAgAiAiABKAIEIgRHckUNASABQQE6ACUgBCACawshAyAIRQ0AIAIgCGohCyADRQRAQQAhAgwBCyADQX9qIgEgAyABIAtqLQAAQQ1GGyECCyAAIAI2AgQgACALNgIAIAVBEGokAAv+BAEKfyMAQTBrIgMkACADQSRqIAE2AgAgA0EDOgAoIANCgICAgIAENwMIIAMgADYCICADQQA2AhggA0EANgIQAkACQAJAIAIoAggiCkUEQCACQRRqKAIAIgRFDQEgAigCACEBIAIoAhAhACAEQX9qQf////8BcUEBaiIHIQQDQCABQQRqKAIAIgUEQCADKAIgIAEoAgAgBSADKAIkKAIMEQMADQQLIAAoAgAgA0EIaiAAQQRqKAIAEQEADQMgAEEIaiEAIAFBCGohASAEQX9qIgQNAAsMAQsgAkEMaigCACIARQ0AIABBBXQhCyAAQX9qQf///z9xQQFqIQcgAigCACEBA0AgAUEEaigCACIABEAgAygCICABKAIAIAAgAygCJCgCDBEDAA0DCyADIAQgCmoiBUEcai0AADoAKCADIAVBBGopAgBCIIk3AwggBUEYaigCACEGIAIoAhAhCEEAIQlBACEAAkACQAJAIAVBFGooAgBBAWsOAgACAQsgBkEDdCAIaiIMKAIEQTdHDQEgDCgCACgCACEGC0EBIQALIAMgBjYCFCADIAA2AhAgBUEQaigCACEAAkACQAJAIAVBDGooAgBBAWsOAgACAQsgAEEDdCAIaiIGKAIEQTdHDQEgBigCACgCACEAC0EBIQkLIAMgADYCHCADIAk2AhggCCAFKAIAQQN0aiIAKAIAIANBCGogACgCBBEBAA0CIAFBCGohASALIARBIGoiBEcNAAsLQQAhACAHIAIoAgRJIgFFDQEgAygCICACKAIAIAdBA3RqQQAgARsiASgCACABKAIEIAMoAiQoAgwRAwBFDQELQQEhAAsgA0EwaiQAIAALwgQBCH8jAEHQAGsiBCQAIARBEGogASACIAMoAgAgA0EIaigCABAOAkACQAJAAkACQAJAIAQoAhBFBEAgBEEeai0AAA0EIARBxABqKAIAIQYgBCgCQCEHIARBHGotAABFIQggBCgCFCEDA0ACQCADRQ0AIAYgA00EQCADIAZGDQEMCQsgAyAHaiwAAEFASA0ICyADIAZGDQICfyADIAdqIgksAAAiBUF/TARAIAktAAFBP3EiCiAFQR9xIgtBBnRyIAVBYEkNARogCS0AAkE/cSAKQQZ0ciIKIAtBDHRyIAVBcEkNARogC0ESdEGAgPAAcSAJLQADQT9xIApBBnRycgwBCyAFQf8BcQshBSAIRQRAIAMhBgwECyAFQYCAxABGDQQCf0EBIAVBgAFJDQAaQQIgBUGAEEkNABpBA0EEIAVBgIAESRsLIANqIQNBACEIDAALAAsgBEEYaiEDIARBzABqKAIAIQYgBEHEAGooAgAhBSAEKAJIIQcgBCgCQCEIIARBNGooAgBBf0cEQCAEIAMgCCAFIAcgBkEAECQMBQsgBCADIAggBSAHIAZBARAkDAQLIAgNAQsgBEEIaiAGNgIAIAQgBjYCBCAEQQE2AgAMAgsgBEEBOgAeCyAEQQA2AgALAkAgBCgCAARAIAQoAgQhAyAAQQxqIAIgBEEIaigCACICazYCACAAQQhqIAEgAmo2AgAgACADNgIEIAAgATYCAAwBCyAAQQA2AgALIARB0ABqJAAPCyAHIAYgAyAGEHsAC5QEAQ1/IwBBsAFrIgEkAAJAAkAgAARAIAAoAgANASAAQQA2AgAgAUGIAWoiAiAAQRBqKQIANwMAIAFBgAFqIgMgAEEIaikCADcDACABQZABaiIEIABBGGopAgA3AwAgAUGYAWoiBSAAQSBqKQIANwMAIAFBoAFqIgYgAEEoaikCADcDACABQagBaiIHIABBMGopAgA3AwAgAUEQaiIIIAFBhAFqKQIANwMAIAFBGGoiCSABQYwBaikCADcDACABQSBqIgogAUGUAWopAgA3AwAgAUEoaiILIAFBnAFqKQIANwMAIAFBMGoiDCABQaQBaikCADcDACABQThqIg0gAUGsAWooAgA2AgAgASAAKQIANwN4IAEgASkCfDcDCCAAEBUgAUHwAGogDSgCADYCACABQegAaiAMKQMANwMAIAFB4ABqIAspAwA3AwAgAUHYAGogCikDADcDACABQdAAaiAJKQMANwMAIAFByABqIAgpAwA3AwAgASABKQMINwNAIAFB+ABqIAFBQGsQOkE8QQQQngEiAEUNAiAAQQA2AgAgACABKQN4NwIEIABBDGogAykDADcCACAAQRRqIAIpAwA3AgAgAEEcaiAEKQMANwIAIABBJGogBSkDADcCACAAQSxqIAYpAwA3AgAgAEE0aiAHKQMANwIAIAFBsAFqJAAgAA8LEK0BAAsQrgEAC0E8QQQQswEAC9cEAQR/IAAgARC6ASECAkACQAJAIAAQsAENACAAKAIAIQMCQCAAEKUBRQRAIAEgA2ohASAAIAMQuwEiAEHAscAAKAIARw0BIAIoAgRBA3FBA0cNAkG4scAAIAE2AgAgACABIAIQhgEPCyABIANqQRBqIQAMAgsgA0GAAk8EQCAAEDUMAQsgAEEMaigCACIEIABBCGooAgAiBUcEQCAFIAQ2AgwgBCAFNgIIDAELQaiuwABBqK7AACgCAEF+IANBA3Z3cTYCAAsgAhCiAQRAIAAgASACEIYBDAILAkBBxLHAACgCACACRwRAIAJBwLHAACgCAEcNAUHAscAAIAA2AgBBuLHAAEG4scAAKAIAIAFqIgE2AgAgACABEJQBDwtBxLHAACAANgIAQbyxwABBvLHAACgCACABaiIBNgIAIAAgAUEBcjYCBCAAQcCxwAAoAgBHDQFBuLHAAEEANgIAQcCxwABBADYCAA8LIAIQrwEiAyABaiEBAkAgA0GAAk8EQCACEDUMAQsgAkEMaigCACIEIAJBCGooAgAiAkcEQCACIAQ2AgwgBCACNgIIDAELQaiuwABBqK7AACgCAEF+IANBA3Z3cTYCAAsgACABEJQBIABBwLHAACgCAEcNAUG4scAAIAE2AgALDwsgAUGAAk8EQCAAIAEQNA8LIAFBA3YiAkEDdEGwrsAAaiEBAn9BqK7AACgCACIDQQEgAnQiAnEEQCABKAIIDAELQaiuwAAgAiADcjYCACABCyECIAEgADYCCCACIAA2AgwgACABNgIMIAAgAjYCCAuYBAIDfwZ+IABBHGooAgBFBEBBAA8LIABBEGooAgAiAiAAQQhqKQMAIgUgASgCACIErUKAgICAgICAgASEIgaFQvPK0cunjNmy9ACFIgdCEIkgByAAKQMAIghC4eSV89bs2bzsAIV8IgeFIgkgBULt3pHzlszct+QAhSIFIAhC9crNg9es27fzAIV8IghCIIl8IgogBoUgByAFQg2JIAiFIgV8IgYgBUIRiYUiBXwiByAFQg2JhSIFIAlCFYkgCoUiCCAGQiCJQv8BhXwiBnwiCSAFQhGJhSIFQg2JIAUgCEIQiSAGhSIGIAdCIIl8Igd8IgWFIghCEYkgCCAGQhWJIAeFIgYgCUIgiXwiB3wiCIUiCUINiSAJIAZCEIkgB4UiBiAFQiCJfCIFfIUiByAGQhWJIAWFIgUgCEIgiXwiBnwiCCAFQhCJIAaFQhWJhSAHQhGJhSAIQiCIhSIFp3EhASAFQhmIQv8Ag0KBgoSIkKDAgAF+IQcgAEEUaigCACEAA0AgACABaikAACIGIAeFIgVCf4UgBUL//fv379+//358g0KAgYKEiJCgwIB/gyEFAkADQCAFUARAIAYgBkIBhoNCgIGChIiQoMCAf4NQDQJBAA8LIAV6IQggBUJ/fCAFgyEFIAAgCKdBA3YgAWogAnFBA3RrQXhqKAIAIARHDQALQQEPCyABIANBCGoiA2ogAnEhAQwACwAL4QMBCH8jAEEgayIEJAAgAUEUaigCACEJIAEoAgAhBQJAIAFBBGooAgAiB0EDdEUEQAwBCyAHQX9qQf////8BcSICQQFqIgNBB3EhBgJ/IAJBB0kEQEEAIQMgBQwBCyAFQTxqIQIgA0H4////A3EhCEEAIQMDQCACKAIAIAJBeGooAgAgAkFwaigCACACQWhqKAIAIAJBYGooAgAgAkFYaigCACACQVBqKAIAIAJBSGooAgAgA2pqampqampqIQMgAkFAayECIAhBeGoiCA0ACyACQURqCyAGRQ0AQQRqIQIDQCACKAIAIANqIQMgAkEIaiECIAZBf2oiBg0ACwsCQAJAAkAgCUUEQCADIQIMAQsCQCAHRQ0AIAUoAgQNACADQRBJDQILIAMgA2oiAiADSQ0BCyACRQ0AAkAgAkF/SgRAIAJBARCeASIDRQ0BDAMLEHMACyACQQEQswEAC0EBIQNBACECCyAAQQA2AgggACACNgIEIAAgAzYCACAEIAA2AgQgBEEYaiABQRBqKQIANwMAIARBEGogAUEIaikCADcDACAEIAEpAgA3AwggBEEEakG0kcAAIARBCGoQHkUEQCAEQSBqJAAPC0GkksAAQTMgBEEIakHMkcAAQfCSwAAQUgALzwMCDX8BfgJAIAVBf2oiDSABKAIUIghqIgcgA0kEQEEAIAEoAggiCmshDiAFIAEoAhAiD2shECABKAIcIQsgASkDACEUA0ACQAJAAkAgFCACIAdqMQAAiEIBg1BFBEAgCiAKIAsgCiALSxsgBhsiCSAFIAkgBUsbIQwgAiAIaiERIAkhBwJAA0AgByAMRgRAQQAgCyAGGyEMIAohBwJAAkACQANAIAwgB08EQCABIAUgCGoiAjYCFCAGRQ0CDA4LIAdBf2oiByAFTw0CIAcgCGoiCSADTw0DIAQgB2otAAAgAiAJai0AAEYNAAsgASAIIA9qIgg2AhQgECEHIAZFDQgMCQsgAUEANgIcDAsLIAcgBUHggMAAEFsACyAJIANB8IDAABBbAAsgByAIaiADTw0BIAcgEWohEiAEIAdqIAdBAWohBy0AACASLQAARg0ACyAIIA5qIAdqIQgMAgsgAyAIIAlqIgAgAyAASxsgA0HQgMAAEFsACyABIAUgCGoiCDYCFAtBACEHIAYNAQsgASAHNgIcIAchCwsgCCANaiIHIANJDQALCyABIAM2AhQgAEEANgIADwsgACAINgIEIABBCGogAjYCACAAQQE2AgALqwQCBX8BfkEBIQMCQCABKAIYIgRBJyABQRxqKAIAKAIQIgURAQANAEECIQFBMCECAkACfgJAAkACQAJAAkACQAJAIAAoAgAiAA4oCAEBAQEBAQEBAgQBAQMBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBBQALIABB3ABGDQQLIAAQK0UNBCAAQQFyZ0ECdkEHc61CgICAgNAAhAwFC0H0ACECDAULQfIAIQIMBAtB7gAhAgwDCyAAIQIMAgsgABA7BEBBASEBIAAhAgwCCyAAQQFyZ0ECdkEHc61CgICAgNAAhAshB0EDIQEgACECCwNAIAEhBkEAIQEgAiEAAkACQAJAAkACQCAGQQFrDgMEAgABCwJAAkACQAJAAkAgB0IgiKdB/wFxQQFrDgUABAECAwULIAdC/////49ggyEHQf0AIQBBAyEBDAcLIAdC/////49gg0KAgICAIIQhB0H7ACEAQQMhAQwGCyAHQv////+PYINCgICAgDCEIQdB9QAhAEEDIQEMBQsgB0L/////j2CDQoCAgIDAAIQhB0HcACEAQQMhAQwEC0EwQdcAIAIgB6ciAUECdHZBD3EiAEEKSRsgAGohACABRQ0CIAdCf3xC/////w+DIAdCgICAgHCDhCEHQQMhAQwDCyAEQScgBREBACEDDAQLQdwAIQBBASEBDAELIAdC/////49gg0KAgICAEIQhB0EDIQELIAQgACAFEQEARQ0ACwsgAwu7AwEGfyMAQRBrIgkkACAAQQRqKAIAIgYgACgCACIIIAGnIgpxIgdqKQAAQoCBgoSIkKDAgH+DIgFQBEBBCCEFA0AgBSAHaiEHIAVBCGohBSAGIAcgCHEiB2opAABCgIGChIiQoMCAf4MiAVANAAsLAkAgACgCCCAGIAF6p0EDdiAHaiAIcSIFaiwAACIHQX9KBH8gBiAGKQMAQoCBgoSIkKDAgH+DeqdBA3YiBWotAAAFIAcLQQFxIgdFcg0AIAlBCGogAEEBIAQQDCAAQQRqKAIAIgYgACgCACIIIApxIgRqKQAAQoCBgoSIkKDAgH+DIgFQBEBBCCEFA0AgBCAFaiEEIAVBCGohBSAGIAQgCHEiBGopAABCgIGChIiQoMCAf4MiAVANAAsLIAYgAXqnQQN2IARqIAhxIgVqLAAAQX9MDQAgBikDAEKAgYKEiJCgwIB/g3qnQQN2IQULIAUgBmogCkEZdiIEOgAAIAVBeGogCHEgBmpBCGogBDoAACAAIAAoAgggB2s2AgggACAAKAIMQQFqNgIMIAYgBUEDdGsiAEF4aiACNgIAIABBfGogAzYCACAJQRBqJAALgwMBA38CQAJAAkACQCABQQlPBEBBEEEIEJcBIAFLDQEMAgsgABALIQMMAgtBEEEIEJcBIQELQYCAfEEIQQgQlwFBFEEIEJcBakEQQQgQlwFqa0F3cUF9aiIEQQBBEEEIEJcBQQJ0ayICIAIgBEsbIAFrIABNDQAgAUEQIABBBGpBEEEIEJcBQXtqIABLG0EIEJcBIgRqQRBBCBCXAWpBfGoQCyICRQ0AIAIQvQEhAAJAIAFBf2oiAyACcUUEQCAAIQEMAQsgAiADakEAIAFrcRC9ASECQRBBCBCXASEDIAAQrwEgAkEAIAEgAiAAayADSxtqIgEgAGsiAmshAyAAEKUBRQRAIAEgAxCCASAAIAIQggEgACACECEMAQsgACgCACEAIAEgAzYCBCABIAAgAmo2AgALIAEQpQENASABEK8BIgJBEEEIEJcBIARqTQ0BIAEgBBC6ASEAIAEgBBCCASAAIAIgBGsiBBCCASAAIAQQIQwBCyADDwsgARC8ASABEKUBGgv3AgEEfyMAQRBrIgMkACAAIAFHBEAgAkEIaiEEA0AgAEEEagJAAn8CQAJAIAAoAgAiAEGAAU8EQCADQQA2AgwgAEGAEEkNASAAQYCABE8NAiADIABBP3FBgAFyOgAOIAMgAEEMdkHgAXI6AAwgAyAAQQZ2QT9xQYABcjoADUEDDAMLIAQoAgAiBSACQQRqKAIARgR/IAIgBRBAIAQoAgAFIAULIAIoAgBqIAA6AAAgBCAEKAIAQQFqNgIADAMLIAMgAEE/cUGAAXI6AA0gAyAAQQZ2QcABcjoADEECDAELIAMgAEE/cUGAAXI6AA8gAyAAQQZ2QT9xQYABcjoADiADIABBDHZBP3FBgAFyOgANIAMgAEESdkEHcUHwAXI6AAxBBAshACACQQRqKAIAIAQoAgAiBWsgAEkEQCACIAUgABBBIAQoAgAhBQsgAigCACAFaiADQQxqIAAQuQEaIAQgACAFajYCAAsiACABRw0ACwsgA0EQaiQAC9QCAQd/QQEhCQJAAkAgAkUNACABIAJBAXRqIQogAEGA/gNxQQh2IQsgAEH/AXEhDQJAA0AgAUECaiEMIAcgAS0AASICaiEIIAsgAS0AACIBRwRAIAEgC0sNAyAIIQcgDCIBIApHDQEMAwsgCCAHTwRAIAggBEsNAiADIAdqIQECQANAIAJFDQEgAkF/aiECIAEtAAAgAUEBaiEBIA1HDQALQQAhCQwFCyAIIQcgDCIBIApHDQEMAwsLIAcgCBC2AQALIAggBBC1AQALIAZFDQAgBSAGaiEDIABB//8DcSEBA0ACQCAFQQFqIQACfyAAIAUtAAAiAkEYdEEYdSIEQQBODQAaIAAgA0YNASAFLQABIARB/wBxQQh0ciECIAVBAmoLIQUgASACayIBQQBIDQIgCUEBcyEJIAMgBUcNAQwCCwtB0JPAAEGMm8AAEG8ACyAJQQFxC+ICAQN/IwBBEGsiAiQAIAAoAgAhAAJAAn8CQAJAIAFBgAFPBEAgAkEANgIMIAFBgBBJDQEgAUGAgARPDQIgAiABQT9xQYABcjoADiACIAFBDHZB4AFyOgAMIAIgAUEGdkE/cUGAAXI6AA1BAwwDCyAAKAIIIgMgAEEEaigCAEYEfyAAIAMQQCAAKAIIBSADCyAAKAIAaiABOgAAIAAgACgCCEEBajYCCAwDCyACIAFBP3FBgAFyOgANIAIgAUEGdkHAAXI6AAxBAgwBCyACIAFBP3FBgAFyOgAPIAIgAUEGdkE/cUGAAXI6AA4gAiABQQx2QT9xQYABcjoADSACIAFBEnZBB3FB8AFyOgAMQQQLIQEgAEEEaigCACAAQQhqIgQoAgAiA2sgAUkEQCAAIAMgARBBIAQoAgAhAwsgACgCACADaiACQQxqIAEQuQEaIAQgASADajYCAAsgAkEQaiQAQQAL4QIBBX8gAEELdCEEQSAhAkEgIQMCQANAAkACQCACQQF2IAFqIgJBAnRB6KbAAGooAgBBC3QiBSAETwRAIAQgBUYNAiACIQMMAQsgAkEBaiEBCyADIAFrIQIgAyABSw0BDAILCyACQQFqIQELAkACQCABQR9NBEAgAUECdCEEQcMFIQMgAUEfRwRAIARB7KbAAGooAgBBFXYhAwtBACEFIAFBf2oiAiABTQRAIAJBIE8NAiACQQJ0QeimwABqKAIAQf///wBxIQULAkAgAyAEQeimwABqKAIAQRV2IgFBf3NqRQ0AIAAgBWshBCABQcMFIAFBwwVLGyECIANBf2ohAEEAIQMDQCABIAJGDQQgAyABQeinwABqLQAAaiIDIARLDQEgACABQQFqIgFHDQALIAAhAQsgAUEBcQ8LIAFBIEGwpsAAEFsACyACQSBB0KbAABBbAAsgAkHDBUHApsAAEFsAC90CAQV/IABBC3QhBEEEIQJBBCEDAkADQAJAAkAgAkEBdiABaiICQQJ0QaytwABqKAIAQQt0IgUgBE8EQCAEIAVGDQIgAiEDDAELIAJBAWohAQsgAyABayECIAMgAUsNAQwCCwsgAkEBaiEBCwJAAkAgAUEDTQRAIAFBAnQhBEEVIQMgAUEDRwRAIARBsK3AAGooAgBBFXYhAwtBACEFIAFBf2oiAiABTQRAIAJBBE8NAiACQQJ0QaytwABqKAIAQf///wBxIQULAkAgAyAEQaytwABqKAIAQRV2IgFBf3NqRQ0AIAAgBWshBCABQRUgAUEVSxshAiADQX9qIQBBACEDA0AgASACRg0EIAMgAUG8rcAAai0AAGoiAyAESw0BIAAgAUEBaiIBRw0ACyAAIQELIAFBAXEPCyABQQRBsKbAABBbAAsgAkEEQdCmwAAQWwALIAJBFUHApsAAEFsAC9sCAQN/IwBBEGsiAiQAAkACfwJAAkAgAUGAAU8EQCACQQA2AgwgAUGAEEkNASABQYCABE8NAiACIAFBP3FBgAFyOgAOIAIgAUEMdkHgAXI6AAwgAiABQQZ2QT9xQYABcjoADUEDDAMLIAAoAggiAyAAQQRqKAIARgR/IAAgAxBAIAAoAggFIAMLIAAoAgBqIAE6AAAgACAAKAIIQQFqNgIIDAMLIAIgAUE/cUGAAXI6AA0gAiABQQZ2QcABcjoADEECDAELIAIgAUE/cUGAAXI6AA8gAiABQQZ2QT9xQYABcjoADiACIAFBDHZBP3FBgAFyOgANIAIgAUESdkEHcUHwAXI6AAxBBAshASAAQQRqKAIAIABBCGoiBCgCACIDayABSQRAIAAgAyABEEEgBCgCACEDCyAAKAIAIANqIAJBDGogARC5ARogBCABIANqNgIACyACQRBqJABBAAvVAgEDfyMAQRBrIgIkAAJAAn8CQCABQYABTwRAIAJBADYCDCABQYAQTw0BIAIgAUE/cUGAAXI6AA0gAiABQQZ2QcABcjoADEECDAILIAAoAggiAyAAQQRqKAIARgRAIAAgAxBDIAAoAgghAwsgACADQQFqNgIIIAAoAgAgA2ogAToAAAwCCyABQYCABE8EQCACIAFBP3FBgAFyOgAPIAIgAUEGdkE/cUGAAXI6AA4gAiABQQx2QT9xQYABcjoADSACIAFBEnZBB3FB8AFyOgAMQQQMAQsgAiABQT9xQYABcjoADiACIAFBDHZB4AFyOgAMIAIgAUEGdkE/cUGAAXI6AA1BAwshASAAQQRqKAIAIABBCGoiBCgCACIDayABSQRAIAAgAyABEEIgBCgCACEDCyAAKAIAIANqIAJBDGogARC5ARogBCABIANqNgIACyACQRBqJAAL1wIBA38jAEEQayICJAACQAJ/AkACQCABQYABTwRAIAJBADYCDCABQYAQSQ0BIAFBgIAETw0CIAIgAUE/cUGAAXI6AA4gAiABQQx2QeABcjoADCACIAFBBnZBP3FBgAFyOgANQQMMAwsgACgCCCIDIABBBGooAgBGBEAgACADEEMgACgCCCEDCyAAIANBAWo2AgggACgCACADaiABOgAADAMLIAIgAUE/cUGAAXI6AA0gAiABQQZ2QcABcjoADEECDAELIAIgAUE/cUGAAXI6AA8gAiABQQZ2QT9xQYABcjoADiAC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AiADKAIIIgRNBEAgASECDAELIARFBEBBASECIAEQFQwBCyABIAJBASAEEJkBIgJFDQMLIAAgBDYCBCAAIAI2AgAgA0EQaiQADwsQrQEACxCuAQALIARBARCzAQALrAEBA38jAEEQayIDJAACQAJAIAEEQCABKAIAIgJBf0YNASABIAJBAWo2AgAgAyABQRBqEGEgASABKAIAQX9qNgIAIAMoAgAhAQJAIAMoAgQiAiADKAIIIgRNBEAgASECDAELIARFBEBBASECIAEQFQwBCyABIAJBASAEEJkBIgJFDQMLIAAgBDYCBCAAIAI2AgAgA0EQaiQADwsQrQEACxCuAQALIARBARCzAQALrAEBA38jAEEQayIDJAACQAJAIAEEQCABKAIAIgJBf0YNASABIAJBAWo2AgAgAyABQSxqEGEgASABKAIAQX9qNgIAIAMoAgAhAQJAIAMoAgQiAiADKAIIIgRNBEAgASECDAELIARFBEBBASECIAEQFQwBCyABIAJBASAEEJkBIgJFDQMLIAAgBDYCBCAAIAI2AgAgA0EQaiQADwsQrQEACxCuAQALIARBARCzAQALrAEBA38jAEEwayICJAAgAUEEaiEDIAEoAgRFBEAgASgCACEBIAJBEGoiBEEANgIAIAJCATcDCCACIAJBCGo2AhQgAkEoaiABQRBqKQIANwMAIAJBIGogAUEIaikCADcDACACIAEpAgA3AxggAkEUakGAjsAAIAJBGGoQHhogA0EIaiAEKAIANgIAIAMgAikDCDcCAAsgAEHoj8AANgIEIAAgAzYCACACQTBqJAALkAEBAn8CQAJ/AkACQAJAAn9BASIDIAFBAEgNABogAigCCEUNAiACKAIEIgQNASABDQNBAQwECyEDQQAhAQwECyACKAIAIARBASABEJkBDAILIAENAEEBDAELIAFBARCeAQsiAgRAIAAgAjYCBEEAIQMMAQsgACABNgIEQQEhAQsgACADNgIAIABBCGogATYCAAunAQECfwJAAkACQAJAAkACQAJAAn8gAgRAQQEiBCABQQBIDQEaIAMoAghFDQMgAygCBCIFDQIgAQ0EDAYLIAAgATYCBEEBCyEEQQAhAQwGCyADKAIAIAUgAiABEJkBIgNFDQIMBAsgAUUNAgsgASACEJ4BIgMNAgsgACABNgIEIAIhAQwCCyACIQML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AX8jAEEwayICJAAgAiABNgIEIAIgADYCACACQRxqQQI2AgAgAkEsakEDNgIAIAJCAjcCDCACQfSWwAA2AgggAkEDNgIkIAIgAkEgajYCGCACIAJBBGo2AiggAiACNgIgIAJBCGpBhJfAABB0AAtsAQF/IwBBMGsiAyQAIAMgATYCBCADIAA2AgAgA0EcakECNgIAIANBLGpBAzYCACADQgI3AgwgA0HAk8AANgIIIANBAzYCJCADIANBIGo2AhggAyADNgIoIAMgA0EEajYCICADQQhqIAIQdAALVgECfyMAQSBrIgIkACAAQRxqKAIAIQMgACgCGCACQRhqIAFBEGopAgA3AwAgAkEQaiABQQhqKQIANwMAIAIgASkCADcDCCADIAJBCGoQHiACQSBqJAALWQEBfyMAQSBrIgIkACACIAAoAgA2AgQgAkEYaiABQRBqKQIANwMAIAJBEGogAUEIaikCADcDACACIAEpAgA3AwggAkEEakGYisAAIAJBCGoQHiACQSBqJAALWQEBfyMAQSBrIgIkACACIAAoAgA2AgQgAkEYaiABQRBqKQIANwMAIAJBEGogAUEIaikCADcDACACIAEpAgA3AwggAkEEakGAjsAAIAJBCGoQHiACQSBqJAALZwAjAEEwayIBJABB2K3AAC0AAARAIAFBHGpBATYCACABQgI3AgwgAUH0jsAANgIIIAFBAzYCJCABIAA2AiwgASABQSBqNgIYIAEgAUEsajYCICABQQhqQZyPwAAQdAALIAFBMGokAAtZAQF/IwBBIGsiAiQAIAIgACgCADYCBCACQRhqIAFBEGopAgA3AwAgAkEQaiABQQhqKQIANwMAIAIgASkCADcDCCACQQRqQbSRwAAgAkEIahAeIAJBIGokAAtnAQJ/IAEoAgAhAwJAAkACQCABQQhqKAIAIgFFBEBBASECDAELIAFBf0wNASABQQEQngEiAkUNAgsgAiADIAEQuQEhAiAAIAE2AgggACABNgIEIAAgAjYCAA8LEHMACyABQQEQswEAC1YBAX8jAEEgayICJAAgAiAANgIEIAJBGGogAUEQaikCADcDACACQRBqIAFBCGopAgA3AwAgAiABKQIANwMIIAJBBGpBmIrAACACQQhqEB4gAkEgaiQAC1YBAX8CQCAABEAgACgCAA0BIABBfzYCACAAQQhqIgMoAgAEQCAAKAIEEBULIAAgATYCBCAAQQA2AgAgAEEMaiACNgIAIAMgAjYCAA8LEK0BAAsQrgEAC1YBAX8CQCAABEAgACgCAA0BIABBfzYCACAAQRRqIgMoAgAEQCAAKAIQEBULIAAgATYCECAAQQA2AgAgAEEYaiACNgIAIAMgAjYCAA8LEK0BAAsQrgEAC1YBAX8CQCAABEAgACgCAA0BIABBfzYCACAAQTBqIgMoAgAEQCAAKAIsEBULIAAgATYCLCAAQQA2AgAgAEE0aiACNgIAIAMgAjYCAA8LEK0BAAsQrgEAC1YBAX8jAEEQayIFJAAgASgCACACKAIAIAMoAgAgBCgCABAIIQEgBUEIahCDASAFKAIMIQIgACAFKAIIIgNBAEc2AgAgACACIAEgAxs2AgQgBUEQaiQAC08BAn8gACgCACIDQQRqKAIAIANBCGoiBCgCACIAayACSQRAIAMgACACEEEgBCgCACEACyADKAIAIABqIAEgAhC5ARogBCAAIAJqNgIAQQALTwECfyAAKAIAIgNBBGooAgAgA0EIaiIEKAIAIgBrIAJJBEAgAyAAIAIQQiAEKAIAIQALIAMoAgAgAGogASACELkBGiAEIAAgAmo2AgBBAAtRAQF/IwBBEGsiBCQAIAEoAgAgAigCACADKAIAEAchASAEQQhqEIMBIAQoAgwhAiAAIAQoAggiA0EARzYCACAAIAIgASADGzYCBCAEQRBqJAALSgECfyAAQQRqKAIAIABBCGoiBCgCACIDayACSQRAIAAgAyACEEEgBCgCACEDCyAAKAIAIANqIAEgAhC5ARogBCACIANqNgIAQQALPwEBfyMAQSBrIgAkACAAQRxqQQA2AgAgAEGwkMAANgIYIABCATcCDCAAQcyQwAA2AgggAEEIakGkkcAAEHQAC0MBA38CQCACRQ0AA0AgAC0AACIEIAEtAAAiBUYEQCAAQQFqIQAgAUEBaiEBIAJBf2oiAg0BDAILCyAEIAVrIQMLIAMLTAECfyMAQRBrIgMkACABKAIAIAIoAgAQAyEBIANBCGoQgwEgAygCDCECIAAgAygCCCIEQQBHNgIAIAAgAiABIAQbNgIEIANBEGokAAtLAAJAAn8gAUGAgMQARwRAQQEgACgCGCABIABBHGooAgAoAhARAQANARoLIAINAUEACw8LIAAoAhggAiADIABBHGooAgAoAgwRAwALRwEBfyMAQSBrIgIkACACQRRqQQA2AgAgAkGAk8AANgIQIAJCATcCBCACQSs2AhwgAiAANgIYIAIgAkEYajYCACACIAEQdAALRgECfyABKAIEIQIgASgCACEDQQhBBBCeASIBRQRAQQhBBBCzAQALIAEgAjYCBCABIAM2AgAgAEH4j8AANgIEIAAgATYCAAs5AQF/IAFBEHZAACECIABBADYCCCAAQQAgAUGAgHxxIAJBf0YiARs2AgQgAEEAIAJBEHQgARs2AgALZAEDfyMAQRBrIgEkACAAKAIMIgJFBEBBmI7AAEHIj8AAEG8ACyAAKAIIIgNFBEBBmI7AAEHYj8AAEG8ACyABIAI2AgggASAANgIEIAEgAzYCACABKAIAIAEoAgQgASgCCBBQAAs/AQF/IwBBIGsiACQAIABBHGpBADYCACAAQcyRwAA2AhggAEIBNwIMIABBjJLAADYCCCAAQQhqQZSSwAAQdAALPgEBfyMAQSBrIgIkACACQQE6ABggAiABNgIUIAIgADYCECACQfyTwAA2AgwgAkGAk8AANgIIIAJBCGoQcgALKwACQCAAQXxLDQAgAEUEQEEEDwsgACAAQX1JQQJ0EJ4BIgBFDQAgAA8LAAsiACMAQRBrIgAkACAAQQhqIAEQfSAAQQhqEFMgAEEQaiQACysAAkAgAARAIAAoAgANASAAQQA2AgAgAEEcaiABNgIADwsQrQEACxCuAQALKwACQCAABEAgACgCAA0BIABBADYCACAAQSBqIAE2AgAPCxCtAQALEK4BAAsrAAJAIAAEQCAAKAIADQEgAEEANgIAIABBJGogATYCAA8LEK0BAAsQrgEACysAAkAgAARAIAAoAgANASAAQQA2AgAgAEEoaiABNgIADwsQrQEACxCuAQALQAEBfyMAQRBrIgQkACAEIAM2AgwgBCACNgIIIAQgATYCBCAEIAA2AgAgBCgCACAEKAIEIAQoAgggBCgCDBATAAs3ACAAQQM6ACAgAEKAgICAgAQ3AgAgACABNgIYIABBADYCECAAQQA2AgggAEEcakHEh8AANgIACzUBAX8gASgCGEHDjsAAQQsgAUEcaigCACgCDBEDACECIABBADoABSAAIAI6AAQgACABNgIACyUAAkAgAARAIAAoAgBBf0YNASAAQRxqKAIADwsQrQEACxCuAQALJQACQCAABEAgACgCAEF/Rg0BIABBIGooAgAPCxCtAQALEK4BAAslAAJAIAAEQCAAKAIAQX9GDQEgAEEkaigCAA8LEK0BAAsQrgEACyUAAkAgAARAIAAoAgBBf0YNASAAQShqKAIADwsQrQEACxCuAQALJwAgACAAKAIEQQFxIAFyQQJyNgIEIAAgAWoiACAAKAIEQQFyNgIECzoBAn9B3K3AAC0AACEBQdytwABBADoAAEHgrcAAKAIAIQJB4K3AAEEANgIAIAAgAjYCBCAAIAE2AgALIAEBfwJAIAAoAgQiAUUNACAAQQhqKAIARQ0AIAEQFQsLHwACQCABQXxNBEAgACABQQQgAhCZASIADQELAAsgAAsjACACIAIoAgRBfnE2AgQgACABQQFyNgIEIAAgAWogATYCAAslACAARQRAQciMwABBMBCsAQALIAAgAiADIAQgBSABKAIQEQoACyMAIABFBEBByIzAAEEwEKwBAAsgACACIAMgBCABKAIQEQgACyMAIABFBEBByIzAAEEwEKwBAAsgACACIAMgBCABKAIQEQcACyMAIABFBEBByIzAAEEwEKwBAAsgACACIAMgBCABKAIQERUACyMAIABFBEBByIzAAEEwEKwBAAsgACACIAMgBCABKAIQERIACyMAIABFBEBByIzAAEEwEKwBAAsgACACIAMgBCABKAIQERQACx4AIAAgAUEDcjYCBCAAIAFqIgAgACgCBEEBcjYCBAsUACAAQQRqKAIABEAgACgCABAVCwshACAARQRAQciMwABBMBCsAQALIAAgAiADIAEoAhARBAALHwAgAEUEQEHIjMAAQTAQrAEACyAAIAIgASgCEBEBAAsZAQF/IAAoAhAiAQR/IAEFIABBFGooAgALCxkAIAAoAgAiACgCACAAQQhqKAIAIAEQtwELEgBBAEEZIABBAXZrIABBH0YbCxYAIAAgAUEBcjYCBCAAIAFqIAE2AgALHAAgASgCGEHgpsAAQQUgAUEcaigCACgCDBEDAAsTACAAKAIAIgBBJE8EQCAAEAALCxAAIAAgAWpBf2pBACABa3ELFAAgACgCACAAQQhqKAIAIAEQtwELDAAgACABIAIgAxAYCwsAIAEEQCAAEBULCw8AIABBAXQiAEEAIABrcgsUACAAKAIAIAEg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BAAAAAQAAAARAAAAEgAAABMAAABjYW5ub3QgYWNjZXNzIGEgVGhyZWFkIExvY2FsIFN0b3JhZ2UgdmFsdWUgZHVyaW5nIG9yIGFmdGVyIGRlc3RydWN0aW9uL3J1c3RjL2E1NWRkNzFkNWZiMGVjNWE2YTNhOWU4YzI3YjIxMjdiYTQ5MWNlNTIvbGlicmFyeS9zdGQvc3JjL3RocmVhZC9sb2NhbC5ycwAAAHYFEABPAAAApQEAABoAAAAUAAAAAAAAAAEAAAAVAAAAL3J1c3RjL2E1NWRkNzFkNWZiMGVjNWE2YTNhOWU4YzI3YjIxMjdiYTQ5MWNlNTIvbGlicmFyeS9jb3JlL3NyYy9zdHIvcGF0dGVybi5ycwDoBRAATwAAALcBAAAmAAAAY2xvc3VyZSBpbnZva2VkIHJlY3Vyc2l2ZWx5IG9yIGRlc3Ryb3llZCBhbHJlYWR5SnNWYWx1ZSgpAAAAeAYQAAgAAACABhAAAQAAAG51bGwgcG9pbnRlciBwYXNzZWQgdG8gcnVzdHJlY3Vyc2l2ZSB1c2Ugb2YgYW4gb2JqZWN0IGRldGVjdGVkIHdoaWNoIHdvdWxkIGxlYWQgdG8gdW5zYWZlIGFsaWFzaW5nIGluIHJ1c3QAACQAAAAEAAAABAAAACUAAAAmAAAAJwAAAGNhbGxlZCBgT3B0aW9uOjp1bndyYXAoKWAgb24gYSBgTm9uZWAgdmFsdWVBY2Nlc3NFcnJvcm1lbW9yeSBhbGxvY2F0aW9uIG9mICBieXRlcyBmYWlsZWQKAAAATgcQABUAAABjBxAADgAAAGxpYnJhcnkvc3RkL3NyYy9hbGxvYy5yc4QHEAAYAAAAUgEAAAkAAABsaWJyYXJ5L3N0ZC9zcmMvcGFuaWNraW5nLnJzrAcQABwAAABGAgAAHwAAAKwHEAAcAAAARwIAAB4AAAAoAAAADAAAAAQAAAApAAAAJAAAAAgAAAAEAAAAKgAAACsAAAAQAAAABAAAACwAAAAtAAAAJAAAAAgAAAAEAAAALgAAAC8AAABIYXNoIHRhYmxlIGNhcGFjaXR5IG92ZXJmbG93MAgQABwAAAAvY2FyZ28vcmVnaXN0cnkvc3JjL2dpdGh1Yi5jb20tMWVjYzYyOTlkYjllYzgyMy9oYXNoYnJvd24tMC4xMi4zL3NyYy9yYXcvbW9kLnJzAFQIEABPAAAAWgAAACgAAAAwAAAABAAAAAQAAAAxAAAAMgAAADMAAAAwAAAAAAAAAAEAAAAHAAAAbGlicmFyeS9hbGxvYy9zcmMvcmF3X3ZlYy5yc2NhcGFjaXR5IG92ZXJmbG93AAAA+AgQABEAAADcCBAAHAAAAAYCAAAFAAAAYSBmb3JtYXR0aW5nIHRyYWl0IGltcGxlbWVudGF0aW9uIHJldHVybmVkIGFuIGVycm9ybGlicmFyeS9hbGxvYy9zcmMvZm10LnJzAFcJEAAYAAAAZAIAACAAAAAuLgAAgAkQAAIAAABpbmRleCBvdXQgb2YgYm91bmRzOiB0aGUgbGVuIGlzICBidXQgdGhlIGluZGV4IGlzIAAAjAkQACAAAACsCRAAEgAAAGNhbGxlZCBgT3B0aW9uOjp1bndyYXAoKWAgb24gYSBgTm9uZWAgdmFsdWUAOQAAAAAAAAABAAAAOgAAAGA6IACACRAAAAAAAA0KEAACAAAAfSB9MHgwMDAxMDIwMzA0MDUwNjA3MDgwOTEwMTExMjEzMTQxNTE2MTcxODE5MjAyMTIyMjMyNDI1MjYyNzI4MjkzMDMxMzIzMzM0MzUzNjM3MzgzOTQwNDE0MjQzNDQ0NTQ2NDc0ODQ5NTA1MTUyNTM1NDU1NTY1NzU4NTk2MDYxNjI2MzY0NjU2NjY3Njg2OTcwNzE3MjczNzQ3NTc2Nzc3ODc5ODA4MTgyODM4NDg1ODY4Nzg4ODk5MDkxOTI5Mzk0OTU5Njk3OTg5OXJhbmdlIHN0YXJ0IGluZGV4ICBvdXQgb2YgcmFuZ2UgZm9yIHNsaWNlIG9mIGxlbmd0aCAAAADtChAAEgAAAP8KEAAiAAAAbGlicmFyeS9jb3JlL3NyYy9zbGljZS9pbmRleC5ycwA0CxAAHwAAADQAAAAFAAAAcmFuZ2UgZW5kIGluZGV4IGQLEAAQAAAA/woQACIAAAA0CxAAHwAAAEkAAAAFAAAAc2xpY2UgaW5kZXggc3RhcnRzIGF0ICBidXQgZW5kcyBhdCAAlAsQABYAAACqCxAADQAAADQLEAAfAAAAXAAAAAUAAABsaWJyYXJ5L2NvcmUvc3JjL3N0ci9wYXR0ZXJuLnJzANgLEAAfAAAAGgYAABUAAADYCxAAHwAAAEgGAAAVAAAA2AsQAB8AAABJBgAA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");
 
 // src/core/parser/Parser.ts
 var Parser = class {
-  parse_commands(content, object) {
-    return __async(this, null, function* () {
-      content = yield renderAsync(content, object, {
-        varName: "tp",
-        parse: {
-          exec: "*",
-          interpolate: "~",
-          raw: ""
-        },
-        autoTrim: false,
-        globalAwait: true
-      });
-      return content;
-    });
+  async init() {
+    await rusty_engine_default(rusty_engine_bg_default);
+    const config = new ParserConfig("<%", "%>", "\0", "*", "-", "_", "tR");
+    this.renderer = new Renderer(config);
+  }
+  async parse_commands(content, context) {
+    return this.renderer.render_content(content, context);
   }
 };
 
@@ -3654,20 +3525,19 @@ var RunMode;
   RunMode2[RunMode2["StartupTemplate"] = 5] = "StartupTemplate";
 })(RunMode || (RunMode = {}));
 var Templater = class {
-  constructor(app, plugin) {
-    this.app = app;
+  constructor(plugin) {
     this.plugin = plugin;
-    this.functions_generator = new FunctionsGenerator(this.app, this.plugin);
+    this.functions_generator = new FunctionsGenerator(this.plugin);
     this.parser = new Parser();
   }
-  setup() {
-    return __async(this, null, function* () {
-      yield this.functions_generator.init();
-      this.plugin.registerMarkdownPostProcessor((el, ctx) => this.process_dynamic_templates(el, ctx));
-    });
+  async setup() {
+    this.templater_task_counter = 0;
+    await this.parser.init();
+    await this.functions_generator.init();
+    this.plugin.registerMarkdownPostProcessor((el, ctx) => this.process_dynamic_templates(el, ctx));
   }
   create_running_config(template_file, target_file, run_mode) {
-    const active_file = this.app.workspace.getActiveFile();
+    const active_file = get_active_file(app);
     return {
       template_file,
       target_file,
@@ -3675,169 +3545,201 @@ var Templater = class {
       active_file
     };
   }
-  read_and_parse_template(config2) {
-    return __async(this, null, function* () {
-      const template_content = yield this.app.vault.read(config2.template_file);
-      return this.parse_template(config2, template_content);
-    });
+  async read_and_parse_template(config) {
+    const template_content = await app.vault.read(config.template_file);
+    return this.parse_template(config, template_content);
   }
-  parse_template(config2, template_content) {
-    return __async(this, null, function* () {
-      const functions_object = yield this.functions_generator.generate_object(config2, FunctionsMode.USER_INTERNAL);
-      this.current_functions_object = functions_object;
-      const content = yield this.parser.parse_commands(template_content, functions_object);
-      return content;
-    });
+  async parse_template(config, template_content) {
+    const functions_object = await this.functions_generator.generate_object(config, FunctionsMode.USER_INTERNAL);
+    this.current_functions_object = functions_object;
+    const content = await this.parser.parse_commands(template_content, functions_object);
+    return content;
   }
-  create_new_note_from_template(template, folder, filename, open_new_note = true) {
-    return __async(this, null, function* () {
-      if (!folder) {
-        const new_file_location = this.app.vault.getConfig("newFileLocation");
-        switch (new_file_location) {
-          case "current": {
-            const active_file = this.app.workspace.getActiveFile();
-            if (active_file) {
-              folder = active_file.parent;
-            }
-            break;
+  start_templater_task() {
+    this.templater_task_counter++;
+  }
+  async end_templater_task() {
+    this.templater_task_counter--;
+    if (this.templater_task_counter === 0) {
+      app.workspace.trigger("templater:all-templates-executed");
+      await this.functions_generator.teardown();
+    }
+  }
+  async create_new_note_from_template(template, folder, filename, open_new_note = true) {
+    this.start_templater_task();
+    if (!folder) {
+      const new_file_location = app.vault.getConfig("newFileLocation");
+      switch (new_file_location) {
+        case "current": {
+          const active_file = get_active_file(app);
+          if (active_file) {
+            folder = active_file.parent;
           }
-          case "folder":
-            folder = this.app.fileManager.getNewFileParent("");
-            break;
-          case "root":
-            folder = this.app.vault.getRoot();
-            break;
-          default:
-            break;
+          break;
         }
+        case "folder":
+          folder = app.fileManager.getNewFileParent("");
+          break;
+        case "root":
+          folder = app.vault.getRoot();
+          break;
+        default:
+          break;
       }
-      const created_note = yield this.app.fileManager.createNewMarkdownFile(folder, filename != null ? filename : "Untitled");
-      let running_config;
-      let output_content;
-      if (template instanceof import_obsidian14.TFile) {
-        running_config = this.create_running_config(template, created_note, 0);
-        output_content = yield errorWrapper(() => __async(this, null, function* () {
-          return this.read_and_parse_template(running_config);
-        }), "Template parsing error, aborting.");
-      } else {
-        running_config = this.create_running_config(void 0, created_note, 0);
-        output_content = yield errorWrapper(() => __async(this, null, function* () {
-          return this.parse_template(running_config, template);
-        }), "Template parsing error, aborting.");
-      }
-      if (output_content == null) {
-        yield this.app.vault.delete(created_note);
-        return;
-      }
-      yield this.app.vault.modify(created_note, output_content);
-      if (open_new_note) {
-        const active_leaf = this.app.workspace.activeLeaf;
-        if (!active_leaf) {
-          log_error(new TemplaterError("No active leaf"));
-          return;
-        }
-        yield active_leaf.openFile(created_note, {
-          state: { mode: "source" },
-          eState: { rename: "all" }
-        });
-        yield this.plugin.editor_handler.jump_to_next_cursor_location(created_note, true);
-      }
-      return created_note;
-    });
-  }
-  append_template_to_active_file(template_file) {
-    return __async(this, null, function* () {
-      const active_view = this.app.workspace.getActiveViewOfType(import_obsidian14.MarkdownView);
-      if (active_view === null) {
-        log_error(new TemplaterError("No active view, can't append templates."));
-        return;
-      }
-      const running_config = this.create_running_config(template_file, active_view.file, 1);
-      const output_content = yield errorWrapper(() => __async(this, null, function* () {
-        return this.read_and_parse_template(running_config);
-      }), "Template parsing error, aborting.");
-      if (output_content == null) {
-        return;
-      }
-      const editor = active_view.editor;
-      const doc = editor.getDoc();
-      doc.replaceSelection(output_content);
-      yield this.plugin.editor_handler.jump_to_next_cursor_location(active_view.file, true);
-    });
-  }
-  write_template_to_file(template_file, file) {
-    return __async(this, null, function* () {
-      const running_config = this.create_running_config(template_file, file, 2);
-      const output_content = yield errorWrapper(() => __async(this, null, function* () {
-        return this.read_and_parse_template(running_config);
-      }), "Template parsing error, aborting.");
-      if (output_content == null) {
-        return;
-      }
-      yield this.app.vault.modify(file, output_content);
-      yield this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
-    });
-  }
-  overwrite_active_file_commands() {
-    const active_view = this.app.workspace.getActiveViewOfType(import_obsidian14.MarkdownView);
-    if (active_view === null) {
-      log_error(new TemplaterError("Active view is null, can't overwrite content"));
+    }
+    const created_note = await errorWrapper(async () => app.fileManager.createNewMarkdownFile(folder, filename ?? "Untitled"), "Couldn't create markdown file.");
+    if (created_note == null) {
+      await this.end_templater_task();
       return;
     }
-    this.overwrite_file_commands(active_view.file, true);
-  }
-  overwrite_file_commands(file, active_file = false) {
-    return __async(this, null, function* () {
-      const running_config = this.create_running_config(file, file, active_file ? 3 : 2);
-      const output_content = yield errorWrapper(() => __async(this, null, function* () {
-        return this.read_and_parse_template(running_config);
-      }), "Template parsing error, aborting.");
-      if (output_content == null) {
+    let running_config;
+    let output_content;
+    if (template instanceof import_obsidian12.TFile) {
+      running_config = this.create_running_config(template, created_note, 0);
+      output_content = await errorWrapper(async () => this.read_and_parse_template(running_config), "Template parsing error, aborting.");
+    } else {
+      running_config = this.create_running_config(void 0, created_note, 0);
+      output_content = await errorWrapper(async () => this.parse_template(running_config, template), "Template parsing error, aborting.");
+    }
+    if (output_content == null) {
+      await app.vault.delete(created_note);
+      await this.end_templater_task();
+      return;
+    }
+    await app.vault.modify(created_note, output_content);
+    app.workspace.trigger("templater:new-note-from-template", {
+      file: created_note,
+      content: output_content
+    });
+    if (open_new_note) {
+      const active_leaf = app.workspace.getLeaf(false);
+      if (!active_leaf) {
+        log_error(new TemplaterError("No active leaf"));
         return;
       }
-      yield this.app.vault.modify(file, output_content);
-      yield this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
-    });
+      await active_leaf.openFile(created_note, {
+        state: { mode: "source" }
+      });
+      await this.plugin.editor_handler.jump_to_next_cursor_location(created_note, true);
+      active_leaf.setEphemeralState({
+        rename: "all"
+      });
+    }
+    await this.end_templater_task();
+    return created_note;
   }
-  process_dynamic_templates(el, ctx) {
-    return __async(this, null, function* () {
-      const dynamic_command_regex = generate_dynamic_command_regex();
-      const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
-      let node;
-      let pass = false;
-      let functions_object;
-      while (node = walker.nextNode()) {
-        let content = node.nodeValue;
-        let match;
-        if ((match = dynamic_command_regex.exec(content)) != null) {
-          const file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
-          if (!file || !(file instanceof import_obsidian14.TFile)) {
+  async append_template_to_active_file(template_file) {
+    this.start_templater_task();
+    const active_view = app.workspace.getActiveViewOfType(import_obsidian12.MarkdownView);
+    const active_editor = app.workspace.activeEditor;
+    if (!active_editor || !active_editor.file || !active_editor.editor) {
+      log_error(new TemplaterError("No active editor, can't append templates."));
+      await this.end_templater_task();
+      return;
+    }
+    const running_config = this.create_running_config(template_file, active_editor.file, 1);
+    const output_content = await errorWrapper(async () => this.read_and_parse_template(running_config), "Template parsing error, aborting.");
+    if (output_content == null) {
+      await this.end_templater_task();
+      return;
+    }
+    const editor = active_editor.editor;
+    const doc = editor.getDoc();
+    const oldSelections = doc.listSelections();
+    doc.replaceSelection(output_content);
+    app.workspace.trigger("templater:template-appended", {
+      view: active_view,
+      editor: active_editor,
+      content: output_content,
+      oldSelections,
+      newSelections: doc.listSelections()
+    });
+    await this.plugin.editor_handler.jump_to_next_cursor_location(active_editor.file, true);
+    await this.end_templater_task();
+  }
+  async write_template_to_file(template_file, file) {
+    this.start_templater_task();
+    const active_editor = app.workspace.activeEditor;
+    const running_config = this.create_running_config(template_file, file, 2);
+    const output_content = await errorWrapper(async () => this.read_and_parse_template(running_config), "Template parsing error, aborting.");
+    if (output_content == null) {
+      return;
+    }
+    await app.vault.modify(file, output_content);
+    if (active_editor && active_editor.editor) {
+      const editor = active_editor.editor;
+      editor.setSelection({ line: 0, ch: 0 }, { line: 0, ch: 0 });
+    }
+    app.workspace.trigger("templater:new-note-from-template", {
+      file,
+      content: output_content
+    });
+    await this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
+    await this.end_templater_task();
+  }
+  overwrite_active_file_commands() {
+    const active_editor = app.workspace.activeEditor;
+    if (!active_editor || !active_editor.file) {
+      log_error(new TemplaterError("Active editor is null, can't overwrite content"));
+      return;
+    }
+    this.overwrite_file_commands(active_editor.file, true);
+  }
+  async overwrite_file_commands(file, active_file = false) {
+    this.start_templater_task();
+    const running_config = this.create_running_config(file, file, active_file ? 3 : 2);
+    const output_content = await errorWrapper(async () => this.read_and_parse_template(running_config), "Template parsing error, aborting.");
+    if (output_content == null) {
+      await this.end_templater_task();
+      return;
+    }
+    await app.vault.modify(file, output_content);
+    app.workspace.trigger("templater:overwrite-file", {
+      file,
+      content: output_content
+    });
+    await this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
+    await this.end_templater_task();
+  }
+  async process_dynamic_templates(el, ctx) {
+    const dynamic_command_regex = generate_dynamic_command_regex();
+    const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
+    let node;
+    let pass = false;
+    let functions_object;
+    while (node = walker.nextNode()) {
+      let content = node.nodeValue;
+      if (content !== null) {
+        let match = dynamic_command_regex.exec(content);
+        if (match !== null) {
+          const file = app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
+          if (!file || !(file instanceof import_obsidian12.TFile)) {
             return;
           }
           if (!pass) {
             pass = true;
-            const config2 = this.create_running_config(file, file, 4);
-            functions_object = yield this.functions_generator.generate_object(config2, FunctionsMode.USER_INTERNAL);
+            const config = this.create_running_config(file, file, 4);
+            functions_object = await this.functions_generator.generate_object(config, FunctionsMode.USER_INTERNAL);
             this.current_functions_object = functions_object;
           }
-          while (match != null) {
-            const complete_command = match[1] + match[2];
-            const command_output = yield errorWrapper(() => __async(this, null, function* () {
-              return yield this.parser.parse_commands(complete_command, functions_object);
-            }), `Command Parsing error in dynamic command '${complete_command}'`);
-            if (command_output == null) {
-              return;
-            }
-            const start2 = dynamic_command_regex.lastIndex - match[0].length;
-            const end2 = dynamic_command_regex.lastIndex;
-            content = content.substring(0, start2) + command_output + content.substring(end2);
-            dynamic_command_regex.lastIndex += command_output.length - match[0].length;
-            match = dynamic_command_regex.exec(content);
-          }
-          node.nodeValue = content;
         }
+        while (match != null) {
+          const complete_command = match[1] + match[2];
+          const command_output = await errorWrapper(async () => {
+            return await this.parser.parse_commands(complete_command, functions_object);
+          }, `Command Parsing error in dynamic command '${complete_command}'`);
+          if (command_output == null) {
+            return;
+          }
+          const start2 = dynamic_command_regex.lastIndex - match[0].length;
+          const end2 = dynamic_command_regex.lastIndex;
+          content = content.substring(0, start2) + command_output + content.substring(end2);
+          dynamic_command_regex.lastIndex += command_output.length - match[0].length;
+          match = dynamic_command_regex.exec(content);
+        }
+        node.nodeValue = content;
       }
-    });
+    }
   }
   get_new_file_template_for_folder(folder) {
     do {
@@ -3848,100 +3750,90 @@ var Templater = class {
       folder = folder.parent;
     } while (folder);
   }
-  static on_file_creation(templater, file) {
-    return __async(this, null, function* () {
-      if (!(file instanceof import_obsidian14.TFile) || file.extension !== "md") {
+  static async on_file_creation(templater, file) {
+    if (!(file instanceof import_obsidian12.TFile) || file.extension !== "md") {
+      return;
+    }
+    const template_folder = (0, import_obsidian12.normalizePath)(templater.plugin.settings.templates_folder);
+    if (file.path.includes(template_folder) && template_folder !== "/") {
+      return;
+    }
+    await delay(300);
+    if (file.stat.size == 0 && templater.plugin.settings.enable_folder_templates) {
+      const folder_template_match = templater.get_new_file_template_for_folder(file.parent);
+      if (!folder_template_match) {
         return;
       }
-      const template_folder = (0, import_obsidian14.normalizePath)(templater.plugin.settings.templates_folder);
-      if (file.path.includes(template_folder) && template_folder !== "/") {
+      const template_file = await errorWrapper(async () => {
+        return resolve_tfile(folder_template_match);
+      }, `Couldn't find template ${folder_template_match}`);
+      if (template_file == null) {
         return;
       }
-      yield delay(300);
-      if (file.stat.size == 0 && templater.plugin.settings.enable_folder_templates) {
-        const folder_template_match = templater.get_new_file_template_for_folder(file.parent);
-        if (!folder_template_match) {
-          return;
-        }
-        const template_file = yield errorWrapper(() => __async(this, null, function* () {
-          return resolve_tfile(templater.app, folder_template_match);
-        }), `Couldn't find template ${folder_template_match}`);
-        if (template_file == null) {
-          return;
-        }
-        yield templater.write_template_to_file(template_file, file);
+      await templater.write_template_to_file(template_file, file);
+    } else {
+      if (file.stat.size <= 1e5) {
+        await templater.overwrite_file_commands(file);
       } else {
-        yield templater.overwrite_file_commands(file);
+        console.log(`Templater skipped parsing ${file.path} because file size exceeds 10000`);
       }
-    });
+    }
   }
-  execute_startup_scripts() {
-    return __async(this, null, function* () {
-      for (const template of this.plugin.settings.startup_templates) {
-        if (!template) {
-          continue;
-        }
-        const file = errorWrapperSync(() => resolve_tfile(this.app, template), `Couldn't find startup template "${template}"`);
-        if (!file) {
-          continue;
-        }
-        const running_config = this.create_running_config(file, file, 5);
-        yield errorWrapper(() => __async(this, null, function* () {
-          return this.read_and_parse_template(running_config);
-        }), `Startup Template parsing error, aborting.`);
+  async execute_startup_scripts() {
+    for (const template of this.plugin.settings.startup_templates) {
+      if (!template) {
+        continue;
       }
-    });
+      const file = errorWrapperSync(() => resolve_tfile(template), `Couldn't find startup template "${template}"`);
+      if (!file) {
+        continue;
+      }
+      this.start_templater_task();
+      const running_config = this.create_running_config(file, file, 5);
+      await errorWrapper(async () => this.read_and_parse_template(running_config), `Startup Template parsing error, aborting.`);
+      await this.end_templater_task();
+    }
   }
 };
 
 // src/handlers/EventHandler.ts
-var import_obsidian15 = __toModule(require("obsidian"));
+var import_obsidian13 = __toModule(require("obsidian"));
 var EventHandler = class {
-  constructor(app, plugin, templater, settings) {
-    this.app = app;
+  constructor(plugin, templater, settings) {
     this.plugin = plugin;
     this.templater = templater;
     this.settings = settings;
   }
   setup() {
-    this.app.workspace.onLayoutReady(() => {
+    this.plugin.app.workspace.onLayoutReady(() => {
       this.update_trigger_file_on_creation();
     });
     this.update_syntax_highlighting();
     this.update_file_menu();
   }
   update_syntax_highlighting() {
-    if (this.plugin.settings.syntax_highlighting) {
-      this.syntax_highlighting_event = this.app.workspace.on("codemirror", (cm) => {
-        cm.setOption("mode", "templater");
-      });
-      this.app.workspace.iterateCodeMirrors((cm) => {
-        cm.setOption("mode", "templater");
-      });
-      this.plugin.registerEvent(this.syntax_highlighting_event);
+    const desktopShouldHighlight = this.plugin.editor_handler.desktopShouldHighlight();
+    const mobileShouldHighlight = this.plugin.editor_handler.mobileShouldHighlight();
+    if (desktopShouldHighlight || mobileShouldHighlight) {
+      this.plugin.editor_handler.enable_highlighter();
     } else {
-      if (this.syntax_highlighting_event) {
-        this.app.vault.offref(this.syntax_highlighting_event);
-      }
-      this.app.workspace.iterateCodeMirrors((cm) => {
-        cm.setOption("mode", "hypermd");
-      });
+      this.plugin.editor_handler.disable_highlighter();
     }
   }
   update_trigger_file_on_creation() {
     if (this.settings.trigger_on_file_creation) {
-      this.trigger_on_file_creation_event = this.app.vault.on("create", (file) => Templater.on_file_creation(this.templater, file));
+      this.trigger_on_file_creation_event = this.plugin.app.vault.on("create", (file) => Templater.on_file_creation(this.templater, file));
       this.plugin.registerEvent(this.trigger_on_file_creation_event);
     } else {
       if (this.trigger_on_file_creation_event) {
-        this.app.vault.offref(this.trigger_on_file_creation_event);
+        this.plugin.app.vault.offref(this.trigger_on_file_creation_event);
         this.trigger_on_file_creation_event = void 0;
       }
     }
   }
   update_file_menu() {
-    this.plugin.registerEvent(this.app.workspace.on("file-menu", (menu, file) => {
-      if (file instanceof import_obsidian15.TFolder) {
+    this.plugin.registerEvent(this.plugin.app.workspace.on("file-menu", (menu, file) => {
+      if (file instanceof import_obsidian13.TFolder) {
         menu.addItem((item) => {
           item.setTitle("Create new note from template").setIcon("templater-icon").onClick(() => {
             this.plugin.fuzzy_suggester.create_new_note_from_template(file);
@@ -3954,14 +3846,14 @@ var EventHandler = class {
 
 // src/handlers/CommandHandler.ts
 var CommandHandler = class {
-  constructor(app, plugin) {
-    this.app = app;
+  constructor(plugin) {
     this.plugin = plugin;
   }
   setup() {
     this.plugin.addCommand({
       id: "insert-templater",
       name: "Open Insert Template modal",
+      icon: "templater-icon",
       hotkeys: [
         {
           modifiers: ["Alt"],
@@ -3975,6 +3867,7 @@ var CommandHandler = class {
     this.plugin.addCommand({
       id: "replace-in-file-templater",
       name: "Replace templates in the active file",
+      icon: "templater-icon",
       hotkeys: [
         {
           modifiers: ["Alt"],
@@ -3988,6 +3881,7 @@ var CommandHandler = class {
     this.plugin.addCommand({
       id: "jump-to-next-cursor-location",
       name: "Jump to next cursor location",
+      icon: "text-cursor",
       hotkeys: [
         {
           modifiers: ["Alt"],
@@ -4001,6 +3895,7 @@ var CommandHandler = class {
     this.plugin.addCommand({
       id: "create-new-note-from-template",
       name: "Create new note from template",
+      icon: "templater-icon",
       hotkeys: [
         {
           modifiers: ["Alt"],
@@ -4026,8 +3921,9 @@ var CommandHandler = class {
       this.plugin.addCommand({
         id: new_template,
         name: `Insert ${new_template}`,
+        icon: "templater-icon",
         callback: () => {
-          const template = errorWrapperSync(() => resolve_tfile(this.app, new_template), `Couldn't find the template file associated with this hotkey`);
+          const template = errorWrapperSync(() => resolve_tfile(new_template), `Couldn't find the template file associated with this hotkey`);
           if (!template) {
             return;
           }
@@ -4038,35 +3934,43 @@ var CommandHandler = class {
   }
   remove_template_hotkey(template) {
     if (template) {
-      this.app.commands.removeCommand(`${this.plugin.manifest.id}:${template}`);
+      app.commands.removeCommand(`${this.plugin.manifest.id}:${template}`);
     }
   }
 };
 
 // src/editor/Editor.ts
-var import_obsidian18 = __toModule(require("obsidian"));
+var import_obsidian16 = __toModule(require("obsidian"));
 
 // src/editor/CursorJumper.ts
-var import_obsidian16 = __toModule(require("obsidian"));
+var import_obsidian14 = __toModule(require("obsidian"));
 var CursorJumper = class {
-  constructor(app) {
-    this.app = app;
+  constructor() {
   }
-  jump_to_next_cursor_location() {
-    return __async(this, null, function* () {
-      const active_view = this.app.workspace.getActiveViewOfType(import_obsidian16.MarkdownView);
-      if (!active_view) {
-        return;
+  async jump_to_next_cursor_location() {
+    const active_editor = app.workspace.activeEditor;
+    if (!active_editor || !active_editor.editor) {
+      return;
+    }
+    const content = active_editor.editor.getValue();
+    const { new_content, positions } = this.replace_and_get_cursor_positions(content);
+    if (positions) {
+      const fold_info = active_editor instanceof import_obsidian14.MarkdownView ? active_editor.currentMode.getFoldInfo() : null;
+      active_editor.editor.setValue(new_content);
+      if (fold_info && Array.isArray(fold_info.folds)) {
+        positions.forEach((position) => {
+          fold_info.folds = fold_info.folds.filter((fold) => fold.from > position.line || fold.to < position.line);
+        });
+        if (active_editor instanceof import_obsidian14.MarkdownView) {
+          active_editor.currentMode.applyFoldInfo(fold_info);
+        }
       }
-      const active_file = active_view.file;
-      yield active_view.save();
-      const content = yield this.app.vault.read(active_file);
-      const { new_content, positions } = this.replace_and_get_cursor_positions(content);
-      if (positions) {
-        yield this.app.vault.modify(active_file, new_content);
-        this.set_cursor_location(positions);
-      }
-    });
+      this.set_cursor_location(positions);
+    }
+    if (app.vault.getConfig("vimMode")) {
+      const cm = active_editor.editor.cm.cm;
+      window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping");
+    }
   }
   get_editor_position_from_index(content, index) {
     const substr = content.slice(0, index);
@@ -4082,7 +3986,7 @@ var CursorJumper = class {
   replace_and_get_cursor_positions(content) {
     let cursor_matches = [];
     let match;
-    const cursor_regex = new RegExp("<%\\s*tp.file.cursor\\((?<order>[0-9]{0,2})\\)\\s*%>", "g");
+    const cursor_regex = new RegExp("<%\\s*tp.file.cursor\\((?<order>[0-9]*)\\)\\s*%>", "g");
     while ((match = cursor_regex.exec(content)) != null) {
       cursor_matches.push(match);
     }
@@ -4090,7 +3994,7 @@ var CursorJumper = class {
       return {};
     }
     cursor_matches.sort((m1, m2) => {
-      return Number(m1.groups["order"]) - Number(m2.groups["order"]);
+      return Number(m1.groups && m1.groups["order"]) - Number(m2.groups && m2.groups["order"]);
     });
     const match_str = cursor_matches[0][0];
     cursor_matches = cursor_matches.filter((m) => {
@@ -4110,12 +4014,11 @@ var CursorJumper = class {
     return { new_content: content, positions };
   }
   set_cursor_location(positions) {
-    const active_view = this.app.workspace.getActiveViewOfType(import_obsidian16.MarkdownView);
-    if (!active_view) {
+    const active_editor = app.workspace.activeEditor;
+    if (!active_editor || !active_editor.editor) {
       return;
     }
-    const editor = active_view.editor;
-    editor.focus();
+    const editor = active_editor.editor;
     const selections = [];
     for (const pos of positions) {
       selections.push({ from: pos });
@@ -4128,14 +4031,24 @@ var CursorJumper = class {
 };
 
 // src/editor/Autocomplete.ts
-var import_obsidian17 = __toModule(require("obsidian"));
+var import_obsidian15 = __toModule(require("obsidian"));
 
 // toml:/home/runner/work/Templater/Templater/docs/documentation.toml
-var tp = { config: { name: "config", description: "This module exposes Templater's running configuration.\n\nThis is mostly useful when writing scripts requiring some context informations.\n", functions: { template_file: { name: "template_file", description: "The `TFile` object representing the template file.", definition: "tp.file.template_file" }, target_file: { name: "target_file", description: "The `TFile` object representing the target file where the template will be inserted.", definition: "tp.config.target_file" }, run_mode: { name: "run_mode", description: "The `RunMode`, representing the way Templater was launched (Create new from template, Append to active file, ...)", definition: "tp.config.run_mode" }, active_file: { name: "active_file", description: "The active file (if existing) when launching Templater.", definition: "tp.config.active_file?" } } }, date: { name: "date", description: "This module contains every internal function related to dates.", functions: { now: { name: "now", description: "Retrieves the date.", definition: 'tp.date.now(format: string = "YYYY-MM-DD", offset?: number\u23AEstring, reference?: string, reference_format?: string)', args: { format: { name: "format", description: "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)" }, offset: { name: "offset", description: "Offset for the day, e.g. set this to `-7` to get last week's date. You can also specify the offset as a string using the ISO 8601 format" }, reference: { name: "reference", description: "The date referential, e.g. set this to the note's title" }, reference_format: { name: "reference_format", description: "The date reference format." } } }, tomorrow: { name: "tomorrow", description: "Retrieves tomorrow's date.", definition: 'tp.date.tomorrow(format: string = "YYYY-MM-DD")', args: { format: { name: "format", description: "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)" } } }, yesterday: { name: "yesterday", description: "Retrieves yesterday's date.", definition: 'tp.date.yesterday(format: string = "YYYY-MM-DD")', args: { format: { name: "format", description: "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)" } } }, weekday: { name: "weekday", description: "", definition: 'tp.date.weekday(format: string = "YYYY-MM-DD", weekday: number, reference?: string, reference_format?: string)', args: { format: { name: "format", description: "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)" }, weekday: { name: "weekday", description: "Week day number. If the locale assigns Monday as the first day of the week, `0` will be Monday, `-7` will be last week's day." }, reference: { name: "reference", description: "The date referential, e.g. set this to the note's title" }, reference_format: { name: "reference_format", description: "The date reference format." } } } } }, file: { name: "file", description: "This module contains every internal function related to files.", functions: { content: { name: "content", description: "Retrieves the file's content", definition: "tp.file.content" }, create_new: { name: "create_new", description: "Creates a new file using a specified template or with a specified content.", definition: "tp.file.create_new(template: TFile \u23AE string, filename?: string, open_new: boolean = false, folder?: TFolder)", args: { template: { name: "template", description: "Either the template used for the new file content, or the file content as a string." }, filename: { name: "filename", description: 'The filename of the new file, defaults to "Untitled".' }, open_new: { name: "open_new", description: "Whether to open or not the newly created file. Warning: if you use this option, since commands are executed asynchronously, the file can be opened first and then other commands are appended to that new file and not the previous file." }, folder: { name: "folder", description: "The folder to put the new file in, defaults to obsidian's default location." } } }, creation_date: { name: "creation_date", description: "Retrieves the file's creation date.", definition: 'tp.file.creation_date(format: string = "YYYY-MM-DD HH:mm")', args: { format: { name: "format", description: "Format for the date, refer to format reference" } } }, cursor: { name: "cursor", description: "Sets the cursor to this location after the template has been inserted. \n\nYou can navigate between the different tp.file.cursor using the configured hotkey in obsidian settings.\n", definition: "tp.file.cursor(order?: number)", args: { order: { name: "order", description: "The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and so on.\nIf you specify multiple tp.file.cursor with the same order, the editor will switch to multi-cursor.\n" } } }, cursor_append: { name: "cursor_append", description: "Appends some content after the active cursor in the file.", definition: "tp.file.cursor_append(content: string)", args: { content: { name: "content", description: "The content to append after the active cursor" } } }, exists: { name: "exists", description: "Checks if a file exists or not. Returns a true / false boolean.", definition: "tp.file.exists(filename: string)", args: { filename: { name: "filename", description: "The filename of the file we want to check existence, e.g. MyFile." } } }, find_tfile: { name: "find_tfile", description: "Retrieves the file's folder name.", definition: "tp.file.folder(relative: boolean = false)", args: { relative: { name: "relative", description: "If set to true, appends the vault relative path to the folder name." } } }, include: { name: "include", description: "Includes the file's link content. Templates in the included content will be resolved.", definition: "tp.file.include(include_link: string \u23AE TFile)", args: { include_link: { name: "include_link", description: "The link to the file to include, e.g. [[MyFile]], or a TFile object. Also supports sections or blocks inclusions, e.g. [[MyFile#Section1]]" } } }, last_modified_date: { name: "last_modified_date", description: "Retrieves the file's last modification date.", definition: 'tp.file.last_modified_date(format: string = "YYYY-MM-DD HH:mm")', args: { format: { name: "format", description: "Format for the date, refer to format reference." } } }, move: { name: "functions.move", description: "Moves the file to the desired vault location.", definition: "tp.file.move(new_path: string)", args: { new_path: { name: "new_path", description: "The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. /Notes/MyNote" } } }, path: { name: "path", description: "Retrieves the file's absolute path on the system.", definition: "tp.file.path(relative: boolean = false)", args: { relative: { name: "relative", description: "If set to true, only retrieves the vault's relative path." } } }, rename: { name: "rename", description: "Renames the file (keeps the same file extension).", definition: "tp.file.rename(new_title: string)", args: { new_title: { name: "new_title", description: "The new file title." } } }, selection: { name: "selection", description: "Retrieves the active file's text selection.", definition: "tp.file.selection()" }, tags: { name: "tags", description: "Retrieves the file's tags (array of string)", definition: "tp.file.tags" }, title: { name: "title", definition: "tp.file.title", description: "Retrieves the file's title." } } }, frontmatter: { name: "frontmatter", description: "This modules exposes all the frontmatter variables of a file as variables." }, obsidian: { name: "obsidian", description: "This module exposes all the functions and classes from the obsidian API." }, system: { name: "system", description: "This module contains system related functions.", functions: { clipboard: { name: "clipboard", description: "Retrieves the clipboard's content", definition: "tp.system.clipboard()" }, prompt: { name: "prompt", description: "Spawns a prompt modal and returns the user's input.", definition: "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false)", args: { prompt_text: { name: "prompt_text", description: "Text placed above the input field" }, default_value: { name: "default_value", description: "A default value for the input field" }, throw_on_cancel: { name: "throw_on_cancel", description: "Throws an error if the prompt is canceled, instead of returning a `null` value" } } }, suggester: { name: "suggester", description: "Spawns a suggester prompt and returns the user's chosen item.", definition: 'tp.system.suggester(text_items: string[] \u23AE ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = "")', args: { text_items: { name: "text_items", description: "Array of strings representing the text that will be displayed for each item in the suggester prompt. This can also be a function that maps an item to its text representation." }, items: { name: "items", description: "Array containing the values of each item in the correct order." }, throw_on_cancel: { name: "throw_on_cancel", description: "Throws an error if the prompt is canceled, instead of returning a `null` value" }, placeholder: { name: "placeholder", description: "Placeholder string of the prompt" } } } } }, web: { name: "web", description: "This modules contains every internal function related to the web (making web requests).", functions: { daily_quote: { name: "daily_quote", description: "Retrieves and parses the daily quote from the API https://api.quotable.io", definition: "tp.web.daily_quote()" }, random_picture: { name: "random_picture", description: "Gets a random image from https://unsplash.com/", definition: "tp.web.random_picture(size?: string, query?: string)", args: { size: { name: "size", description: "Image size in the format `<width>x<height>`" }, query: { name: "query", description: "Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,`" } } } } } };
+var tp = { config: { name: "config", description: "This module exposes Templater's running configuration.\n\nThis is mostly useful when writing scripts requiring some context information.\n", functions: { template_file: { name: "template_file", description: "The `TFile` object representing the template file.", definition: "tp.config.template_file" }, target_file: { name: "target_file", description: "The `TFile` object representing the target file where the template will be inserted.", definition: "tp.config.target_file" }, run_mode: { name: "run_mode", description: "The `RunMode`, representing the way Templater was launched (Create new from template, Append to active file, ...).", definition: "tp.config.run_mode" }, active_file: { name: "active_file", description: "The active file (if existing) when launching Templater.", definition: "tp.config.active_file?" } } }, date: { name: "date", description: "This module contains every internal function related to dates.", functions: { now: { name: "now", description: "Retrieves the date.", definition: 'tp.date.now(format: string = "YYYY-MM-DD", offset?: number\u23AEstring, reference?: string, reference_format?: string)', args: [{ name: "format", description: 'The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/).' }, { name: "offset", description: "Duration to offset the date from. If a number is provided, duration will be added to the date in days. You can also specify the offset as a string using the ISO 8601 format." }, { name: "reference", description: "The date referential, e.g. set this to the note's title." }, { name: "reference_format", description: "The format for the reference date. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)." }], examples: [{ name: "Date now", example: "<% tp.date.now() %>" }, { name: "Date now with format", example: '<% tp.date.now("Do MMMM YYYY") %>' }, { name: "Last week", example: '<% tp.date.now("YYYY-MM-DD", -7) %>' }, { name: "Next week", example: '<% tp.date.now("YYYY-MM-DD", 7) %>' }, { name: "Last month", example: '<% tp.date.now("YYYY-MM-DD", "P-1M") %>' }, { name: "Next year", example: '<% tp.date.now("YYYY-MM-DD", "P1Y") %>' }, { name: "File's title date + 1 day (tomorrow)", example: '<% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>' }, { name: "File's title date - 1 day (yesterday)", example: '<% tp.date.now("YYYY-MM-DD", -1, tp.file.title, "YYYY-MM-DD") %>' }] }, tomorrow: { name: "tomorrow", description: "Retrieves tomorrow's date.", definition: 'tp.date.tomorrow(format: string = "YYYY-MM-DD")', args: [{ name: "format", description: 'The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/).' }], examples: [{ name: "Date tomorrow", example: "<% tp.date.tomorrow() %>" }, { name: "Date tomorrow with format", example: '<% tp.date.tomorrow("Do MMMM YYYY") %>' }] }, yesterday: { name: "yesterday", description: "Retrieves yesterday's date.", definition: 'tp.date.yesterday(format: string = "YYYY-MM-DD")', args: [{ name: "format", description: 'The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/).' }], examples: [{ name: "Date yesterday", example: "<% tp.date.yesterday() %>" }, { name: "Date yesterday with format", example: '<% tp.date.yesterday("Do MMMM YYYY") %>' }] }, weekday: { name: "weekday", description: "", definition: 'tp.date.weekday(format: string = "YYYY-MM-DD", weekday: number, reference?: string, reference_format?: string)', args: [{ name: "format", description: 'The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/).' }, { name: "weekday", description: "Week day number. If the locale assigns Monday as the first day of the week, `0` will be Monday, `-7` will be last week's day." }, { name: "reference", description: "The date referential, e.g. set this to the note's title." }, { name: "reference_format", description: "The format for the reference date. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)." }], examples: [{ name: "This week's Monday", example: '<% tp.date.weekday("YYYY-MM-DD", 0) %>' }, { name: "Next Monday", example: '<% tp.date.weekday("YYYY-MM-DD", 7) %>' }, { name: "File's title Monday", example: '<% tp.date.weekday("YYYY-MM-DD", 0, tp.file.title, "YYYY-MM-DD") %>' }, { name: "File's title previous Monday", example: '<% tp.date.weekday("YYYY-MM-DD", -7, tp.file.title, "YYYY-MM-DD") %>' }] } } }, file: { name: "file", description: "This module contains every internal function related to files.", functions: { content: { name: "content", description: "The string contents of the file at the time that Templater was executed. Manipulating this string will *not* update the current file.", definition: "tp.file.content", examples: [{ name: "Retrieve file content", example: "<% tp.file.content %>" }] }, create_new: { name: "create_new", description: "Creates a new file using a specified template or with a specified content.", definition: "tp.file.create_new(template: TFile \u23AE string, filename?: string, open_new: boolean = false, folder?: TFolder)", args: [{ name: "template", description: "Either the template used for the new file content, or the file content as a string. If it is the template to use, you retrieve it with `tp.file.find_tfile(TEMPLATENAME)`." }, { name: "filename", description: 'The filename of the new file, defaults to "Untitled".' }, { name: "open_new", description: "Whether to open or not the newly created file. Warning: if you use this option, since commands are executed asynchronously, the file can be opened first and then other commands are appended to that new file and not the previous file." }, { name: "folder", description: 'The folder to put the new file in, defaults to Obsidian\'s default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath("FOLDERNAME")`.' }], examples: [{ name: "File creation", example: '<%* await tp.file.create_new("MyFileContent", "MyFilename") %>' }, { name: "File creation with template", example: '<%* await tp.file.create_new(tp.file.find_tfile("MyTemplate"), "MyFilename") %>' }, { name: "File creation and open created note", example: '<%* await tp.file.create_new("MyFileContent", "MyFilename", true) %>' }, { name: "File creation in current folder", example: '<%* await tp.file.create_new("MyFileContent", "MyFilename", false, tp.file.folder()) %>' }, { name: "File creation in specified folder", example: '<%* await tp.file.create_new("MyFileContent", "MyFilename", false, app.vault.getAbstractFileByPath("MyFolder")) %>' }, { name: "File creation and append link to current note", example: '[[<% (await tp.file.create_new("MyFileContent", "MyFilename")).basename %>]]' }] }, creation_date: { name: "creation_date", description: "Retrieves the file's creation date.", definition: 'tp.file.creation_date(format: string = "YYYY-MM-DD HH:mm")', args: [{ name: "format", description: 'The format for the date. Defaults to `"YYYY-MM-DD HH:mm"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/).' }], examples: [{ name: "File creation date", example: "<% tp.file.creation_date() %>" }, { name: "File creation date with format", example: '<% tp.file.creation_date("dddd Do MMMM YYYY HH:mm") %>' }] }, cursor: { name: "cursor", description: "Sets the cursor to this location after the template has been inserted. \n\nYou can navigate between the different cursors using the configured hotkey in Obsidian settings.\n", definition: "tp.file.cursor(order?: number)", args: [{ name: "order", description: "The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and so on.\nIf you specify multiple tp.file.cursor with the same order, the editor will switch to multi-cursor.\n" }], examples: [{ name: "File cursor", example: "<% tp.file.cursor() %>" }, { name: "File multi-cursor", example: "<% tp.file.cursor(1) %>Content<% tp.file.cursor(1) %>" }] }, cursor_append: { name: "cursor_append", description: "Appends some content after the active cursor in the file.", definition: "tp.file.cursor_append(content: string)", args: [{ name: "content", description: "The content to append after the active cursor." }], examples: [{ name: "File cursor append", example: '<% tp.file.cursor_append("Some text") %>' }] }, exists: { name: "exists", description: "Check to see if a file exists by it's file path. The full path to the file, relative to the Vault and containing the extension, must be provided.", definition: "tp.file.exists(filepath: string)", args: [{ name: "filepath", description: "The full file path of the file we want to check existence for." }], examples: [{ name: "File existence", example: '<% await tp.file.exists("MyFolder/MyFile.md") %>' }, { name: "File existence of current file", example: '<% await tp.file.exists(tp.file.folder(true) + "/" + tp.file.title + ".md") %>' }] }, find_tfile: { name: "find_tfile", description: "Search for a file and returns its `TFile` instance.", definition: "tp.file.find_tfile(filename: string)", args: [{ name: "filename", description: "The filename we want to search and resolve as a `TFile`." }], examples: [{ name: "File find TFile", example: '<% tp.file.find_tfile("MyFile").basename %>' }] }, folder: { name: "folder", description: "Retrieves the file's folder name.", definition: "tp.file.folder(relative: boolean = false)", args: [{ name: "relative", description: "If set to `true`, appends the vault relative path to the folder name. If `false`, only retrieves name of folder. Defaults to `false`." }], examples: [{ name: "File folder (Folder)", example: "<% tp.file.folder() %>" }, { name: "File folder with relative path (Path/To/Folder)", example: "<% tp.file.folder(true) %>" }] }, include: { name: "include", description: "Includes the file's link content. Templates in the included content will be resolved.", definition: "tp.file.include(include_link: string \u23AE TFile)", args: [{ name: "include_link", description: 'The link to the file to include, e.g. `"[[MyFile]]"`, or a TFile object. Also supports sections or blocks inclusions.' }], examples: [{ name: "File include", example: '<% tp.file.include("[[Template1]]") %>' }, { name: "File include TFile", example: '<% tp.file.include(tp.file.find_tfile("MyFile")) %>' }, { name: "File include section", example: '<% tp.file.include("[[MyFile#Section1]]") %>' }, { name: "File include block", example: '<% tp.file.include("[[MyFile#^block1]]") %>' }] }, last_modified_date: { name: "last_modified_date", description: "Retrieves the file's last modification date.", definition: 'tp.file.last_modified_date(format: string = "YYYY-MM-DD HH:mm")', args: [{ name: "format", description: 'The format for the date. Defaults to `"YYYY-MM-DD HH:mm"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/).' }], examples: [{ name: "File last modified date", example: "<% tp.file.last_modified_date() %>" }, { name: "File last modified date with format", example: '<% tp.file.last_modified_date("dddd Do MMMM YYYY HH:mm") %>' }] }, move: { name: "move", description: "Moves the file to the desired vault location.", definition: "tp.file.move(new_path: string, file_to_move?: TFile)", args: [{ name: "new_path", description: 'The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. `"/Notes/MyNote"`.' }, { name: "file_to_move", description: "The file to move, defaults to the current file." }], examples: [{ name: "File move", example: '<% await tp.file.move("/A/B/" + tp.file.title) %>' }, { name: "File move and rename", example: '<% await tp.file.move("/A/B/NewTitle") %>' }] }, path: { name: "path", description: "Retrieves the file's absolute path on the system.", definition: "tp.file.path(relative: boolean = false)", args: [{ name: "relative", description: "If set to `true`, only retrieves the vault's relative path." }], examples: [{ name: "File path", example: "<% tp.file.path() %>" }, { name: "File relative path (relative to vault root)", example: "<% tp.file.path(true) %>" }] }, rename: { name: "rename", description: "Renames the file (keeps the same file extension).", definition: "tp.file.rename(new_title: string)", args: [{ name: "new_title", description: "The new file title." }], examples: [{ name: "File rename", example: '<% await tp.file.rename("MyNewName") %>' }, { name: "File append a 2 to the file name", example: '<% await tp.file.rename(tp.file.title + "2") %>' }] }, selection: { name: "selection", description: "Retrieves the active file's text selection.", definition: "tp.file.selection()", examples: [{ name: "File selection", example: "<% tp.file.selection() %>" }] }, tags: { name: "tags", description: "Retrieves the file's tags (array of string).", definition: "tp.file.tags", examples: [{ name: "File tags", example: "<% tp.file.tags %>" }] }, title: { name: "title", definition: "tp.file.title", description: "Retrieves the file's title.", examples: [{ name: "File title", example: "<% tp.file.title %>" }, { name: "Strip the Zettelkasten ID of title (if space separated)", example: '<% tp.file.title.split(" ")[1] %>' }] } } }, frontmatter: { name: "frontmatter", description: "This modules exposes all the frontmatter variables of a file as variables." }, hooks: { name: "hooks", description: "This module exposes hooks that allow you to execute code when a Templater event occurs.", functions: { on_all_templates_executed: { name: "on_all_templates_executed", description: "Hooks into when all actively running templates have finished executing. Most of the time this will be a single template, unless you are using `tp.file.include` or `tp.file.create_new`.\n\nMultiple invokations of this method will have their callback functions run in parallel.", definition: "tp.hooks.on_all_templates_executed(callback_function: () => any)", args: [{ name: "callback_function", description: "Callback function that will be executed when all actively running templates have finished executing." }] } } }, obsidian: { name: "obsidian", description: "This module exposes all the functions and classes from the Obsidian API." }, system: { name: "system", description: "This module contains system related functions.", functions: { clipboard: { name: "clipboard", description: "Retrieves the clipboard's content.", definition: "tp.system.clipboard()", examples: [{ name: "Clipboard", example: "<% tp.system.clipboard() %>" }] }, prompt: { name: "prompt", description: "Spawns a prompt modal and returns the user's input.", definition: "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)", args: [{ name: "prompt_text", description: "Text placed above the input field." }, { name: "default_value", description: "A default value for the input field." }, { name: "throw_on_cancel", description: "Throws an error if the prompt is canceled, instead of returning a `null` value." }, { name: "multiline", description: "If set to `true`, the input field will be a multiline textarea. Defaults to `false`." }], examples: [{ name: "Prompt", example: '<% tp.system.prompt("Please enter a value") %>' }, { name: "Prompt with default value", example: '<% tp.system.prompt("What is your mood today?", "happy") %>' }] }, suggester: { name: "suggester", description: "Spawns a suggester prompt and returns the user's chosen item.", definition: 'tp.system.suggester(text_items: string[] \u23AE ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = "", limit?: number = undefined)', args: [{ name: "text_items", description: "Array of strings representing the text that will be displayed for each item in the suggester prompt. This can also be a function that maps an item to its text representation." }, { name: "items", description: "Array containing the values of each item in the correct order." }, { name: "throw_on_cancel", description: "Throws an error if the prompt is canceled, instead of returning a `null` value." }, { name: "placeholder", description: "Placeholder string of the prompt." }, { name: "limit", description: "Limit the number of items rendered at once (useful to improve performance when displaying large lists)." }], examples: [{ name: "Suggester", example: '<% tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>' }, { name: "Suggester with mapping function (same as above example)", example: '<% tp.system.suggester((item) => item, ["Happy", "Sad", "Confused"]) %>' }, { name: "Suggester for files", example: "[[<% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]" }, { name: "Suggester for tags", example: '<% tp.system.suggester(item => item, Object.keys(app.metadataCache.getTags()).map(x => x.replace("#", ""))) %>' }] } } }, web: { name: "web", description: "This modules contains every internal function related to the web (making web requests).", functions: { daily_quote: { name: "daily_quote", description: "Retrieves and parses the daily quote from the API `https://api.quotable.io` as a callout.", definition: "tp.web.daily_quote()", examples: [{ name: "Daily quote", example: "<% tp.web.daily_quote() %>" }] }, random_picture: { name: "random_picture", description: "Gets a random image from `https://unsplash.com/`.", definition: "tp.web.random_picture(size?: string, query?: string, include_size?: boolean)", args: [{ name: "size", description: "Image size in the format `<width>x<height>`." }, { name: "query", description: "Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma." }, { name: "include_size", description: "Optional argument to include the specified size in the image link markdown. Defaults to false." }], examples: [{ name: "Random picture", example: "<% tp.web.random_picture() %>" }, { name: "Random picture with size", example: '<% tp.web.random_picture("200x200") %>' }, { name: "Random picture with size and query", example: '<% tp.web.random_picture("200x200", "landscape,water") %>' }] } } } };
 var documentation_default = { tp };
 
 // src/editor/TpDocumentation.ts
-var module_names = ["config", "date", "file", "frontmatter", "obsidian", "system", "user", "web"];
+var module_names = [
+  "config",
+  "date",
+  "file",
+  "frontmatter",
+  "hooks",
+  "obsidian",
+  "system",
+  "user",
+  "web"
+];
 var module_names_checker = new Set(module_names);
 function is_module_name(x) {
   return typeof x === "string" && module_names_checker.has(x);
@@ -4147,16 +4060,36 @@ function is_function_documentation(x) {
   return false;
 }
 var Documentation = class {
-  constructor(app) {
-    this.app = app;
+  constructor(settings) {
+    this.settings = settings;
     this.documentation = documentation_default;
   }
   get_all_modules_documentation() {
     return Object.values(this.documentation.tp);
   }
   get_all_functions_documentation(module_name) {
+    if (module_name === "user") {
+      if (!this.settings || !this.settings.user_scripts_folder)
+        return;
+      const files = errorWrapperSync(() => get_tfiles_from_folder(this.settings.user_scripts_folder), `User Scripts folder doesn't exist`);
+      if (!files || files.length === 0)
+        return;
+      return files.reduce((processedFiles, file) => {
+        if (file.extension !== "js")
+          return processedFiles;
+        return [
+          ...processedFiles,
+          {
+            name: file.basename,
+            definition: "",
+            description: "",
+            example: ""
+          }
+        ];
+      }, []);
+    }
     if (!this.documentation.tp[module_name].functions) {
-      return null;
+      return;
     }
     return Object.values(this.documentation.tp[module_name].functions);
   }
@@ -4176,26 +4109,24 @@ var Documentation = class {
 };
 
 // src/editor/Autocomplete.ts
-var Autocomplete = class extends import_obsidian17.EditorSuggest {
-  constructor(app, plugin) {
+var Autocomplete = class extends import_obsidian15.EditorSuggest {
+  constructor(settings) {
     super(app);
-    this.app = app;
-    this.plugin = plugin;
     this.tp_keyword_regex = /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-z_]*)?)?$/;
-    this.documentation = new Documentation(this.app);
+    this.documentation = new Documentation(settings);
   }
-  onTrigger(cursor, editor, file) {
+  onTrigger(cursor, editor, _file) {
     const range = editor.getRange({ line: cursor.line, ch: 0 }, { line: cursor.line, ch: cursor.ch });
     const match = this.tp_keyword_regex.exec(range);
     if (!match) {
       return null;
     }
     let query;
-    const module_name = match.groups["module"] || "";
+    const module_name = match.groups && match.groups["module"] || "";
     this.module_name = module_name;
-    if (match.groups["fn_trigger"]) {
+    if (match.groups && match.groups["fn_trigger"]) {
       if (module_name == "" || !is_module_name(module_name)) {
-        return;
+        return null;
       }
       this.function_trigger = true;
       this.function_name = match.groups["fn"] || "";
@@ -4234,16 +4165,16 @@ var Autocomplete = class extends import_obsidian17.EditorSuggest {
       el.createEl("div", { text: value.description });
     }
   }
-  selectSuggestion(value, evt) {
-    const active_view = this.app.workspace.getActiveViewOfType(import_obsidian17.MarkdownView);
-    if (!active_view) {
+  selectSuggestion(value, _evt) {
+    const active_editor = app.workspace.activeEditor;
+    if (!active_editor || !active_editor.editor) {
       return;
     }
-    active_view.editor.replaceRange(value.name, this.latest_trigger_info.start, this.latest_trigger_info.end);
+    active_editor.editor.replaceRange(value.name, this.latest_trigger_info.start, this.latest_trigger_info.end);
     if (this.latest_trigger_info.start.ch == this.latest_trigger_info.end.ch) {
       const cursor_pos = this.latest_trigger_info.end;
       cursor_pos.ch += value.name.length;
-      active_view.editor.setCursor(cursor_pos);
+      active_editor.editor.setCursor(cursor_pos);
     }
   }
 };
@@ -4253,8 +4184,8 @@ var Autocomplete = class extends import_obsidian17.EditorSuggest {
   mod(window.CodeMirror);
 })(function(CodeMirror) {
   "use strict";
-  CodeMirror.defineMode("javascript", function(config2, parserConfig) {
-    var indentUnit = config2.indentUnit;
+  CodeMirror.defineMode("javascript", function(config, parserConfig) {
+    var indentUnit = config.indentUnit;
     var statementIndent = parserConfig.statementIndent;
     var jsonldMode = parserConfig.jsonld;
     var jsonMode = parserConfig.json || jsonldMode;
@@ -5505,7 +5436,7 @@ var Autocomplete = class extends import_obsidian17.EditorSuggest {
         return { state: state.base, mode: base };
       },
       blankLine: function(state) {
-        var baseToken, overlayToken;
+        let baseToken, overlayToken;
         if (base.blankLine)
           baseToken = base.blankLine(state.base);
         if (overlay.blankLine)
@@ -5517,174 +5448,177 @@ var Autocomplete = class extends import_obsidian17.EditorSuggest {
 });
 
 // src/editor/Editor.ts
+var import_language = __toModule(require("@codemirror/language"));
+var import_state = __toModule(require("@codemirror/state"));
+var TEMPLATER_MODE_NAME = "templater";
 var TP_CMD_TOKEN_CLASS = "templater-command";
 var TP_INLINE_CLASS = "templater-inline";
 var TP_OPENING_TAG_TOKEN_CLASS = "templater-opening-tag";
 var TP_CLOSING_TAG_TOKEN_CLASS = "templater-closing-tag";
 var TP_INTERPOLATION_TAG_TOKEN_CLASS = "templater-interpolation-tag";
-var TP_RAW_TAG_TOKEN_CLASS = "templater-raw-tag";
 var TP_EXEC_TAG_TOKEN_CLASS = "templater-execution-tag";
 var Editor2 = class {
-  constructor(app, plugin) {
-    this.app = app;
+  constructor(plugin) {
     this.plugin = plugin;
-    this.cursor_jumper = new CursorJumper(this.app);
+    this.cursor_jumper = new CursorJumper();
+    this.activeEditorExtensions = [];
   }
-  setup() {
-    return __async(this, null, function* () {
-      yield this.registerCodeMirrorMode();
-      this.plugin.registerEditorSuggest(new Autocomplete(this.app, this.plugin));
-    });
+  desktopShouldHighlight() {
+    return import_obsidian16.Platform.isDesktopApp && this.plugin.settings.syntax_highlighting;
   }
-  jump_to_next_cursor_location(file = null, auto_jump = false) {
-    return __async(this, null, function* () {
-      if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
-        return;
-      }
-      if (file && this.app.workspace.getActiveFile() !== file) {
-        return;
-      }
-      this.cursor_jumper.jump_to_next_cursor_location();
-    });
+  mobileShouldHighlight() {
+    return import_obsidian16.Platform.isMobileApp && this.plugin.settings.syntax_highlighting_mobile;
   }
-  registerCodeMirrorMode() {
-    return __async(this, null, function* () {
-      if (!this.plugin.settings.syntax_highlighting) {
-        return;
-      }
-      if (import_obsidian18.Platform.isMobileApp) {
-        return;
-      }
-      const js_mode = window.CodeMirror.getMode({}, "javascript");
-      if (js_mode.name === "null") {
-        log_error(new TemplaterError("Javascript syntax mode couldn't be found, can't enable syntax highlighting."));
-        return;
-      }
-      const overlay_mode = window.CodeMirror.customOverlayMode;
-      if (overlay_mode == null) {
-        log_error(new TemplaterError("Couldn't find customOverlayMode, can't enable syntax highlighting."));
-        return;
-      }
-      window.CodeMirror.defineMode("templater", function(config2) {
-        const templaterOverlay = {
-          startState: function() {
-            const js_state = window.CodeMirror.startState(js_mode);
-            return __spreadProps(__spreadValues({}, js_state), {
-              inCommand: false,
-              tag_class: "",
-              freeLine: false
-            });
-          },
-          copyState: function(state) {
-            const js_state = window.CodeMirror.startState(js_mode);
-            const new_state = __spreadProps(__spreadValues({}, js_state), {
-              inCommand: state.inCommand,
-              tag_class: state.tag_class,
-              freeLine: state.freeLine
-            });
-            return new_state;
-          },
-          blankLine: function(state) {
-            if (state.inCommand) {
-              return `line-background-templater-command-bg`;
-            }
-            return null;
-          },
-          token: function(stream, state) {
-            if (stream.sol() && state.inCommand) {
-              state.freeLine = true;
-            }
-            if (state.inCommand) {
-              let keywords = "";
-              if (stream.match(/[-_]{0,1}%>/, true)) {
-                state.inCommand = false;
-                state.freeLine = false;
-                const tag_class = state.tag_class;
-                state.tag_class = "";
-                return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
-              }
-              const js_result = js_mode.token(stream, state);
-              if (stream.peek() == null && state.freeLine) {
-                keywords += ` line-background-templater-command-bg`;
-              }
-              if (!state.freeLine) {
-                keywords += ` line-${TP_INLINE_CLASS}`;
-              }
-              return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
-            }
-            const match = stream.match(/<%[-_]{0,1}\s*([*~+]{0,1})/, true);
-            if (match != null) {
-              switch (match[1]) {
-                case "*":
-                  state.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
-                  break;
-                case "~":
-                  state.tag_class = TP_RAW_TAG_TOKEN_CLASS;
-                  break;
-                default:
-                  state.tag_class = TP_INTERPOLATION_TAG_TOKEN_CLASS;
-                  break;
-              }
-              state.inCommand = true;
-              return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_OPENING_TAG_TOKEN_CLASS} ${state.tag_class}`;
-            }
-            while (stream.next() != null && !stream.match(/<%/, false))
-              ;
-            return null;
+  async setup() {
+    this.plugin.registerEditorSuggest(new Autocomplete(this.plugin.settings));
+    await this.registerCodeMirrorMode();
+    this.templaterLanguage = import_state.Prec.high(import_language.StreamLanguage.define(window.CodeMirror.getMode({}, TEMPLATER_MODE_NAME)));
+    if (this.templaterLanguage === void 0) {
+      log_error(new TemplaterError("Unable to enable syntax highlighting. Could not define language."));
+    }
+    this.plugin.registerEditorExtension(this.activeEditorExtensions);
+    if (this.desktopShouldHighlight() || this.mobileShouldHighlight()) {
+      await this.enable_highlighter();
+    }
+  }
+  async enable_highlighter() {
+    if (this.activeEditorExtensions.length === 0 && this.templaterLanguage) {
+      this.activeEditorExtensions.push(this.templaterLanguage);
+      this.plugin.app.workspace.updateOptions();
+    }
+  }
+  async disable_highlighter() {
+    if (this.activeEditorExtensions.length > 0) {
+      this.activeEditorExtensions.pop();
+      this.plugin.app.workspace.updateOptions();
+    }
+  }
+  async jump_to_next_cursor_location(file = null, auto_jump = false) {
+    if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
+      return;
+    }
+    if (file && get_active_file(this.plugin.app) !== file) {
+      return;
+    }
+    await this.cursor_jumper.jump_to_next_cursor_location();
+  }
+  async registerCodeMirrorMode() {
+    if (!this.desktopShouldHighlight() && !this.mobileShouldHighlight()) {
+      return;
+    }
+    const js_mode = window.CodeMirror.getMode({}, "javascript");
+    if (js_mode.name === "null") {
+      log_error(new TemplaterError("Javascript syntax mode couldn't be found, can't enable syntax highlighting."));
+      return;
+    }
+    const overlay_mode = window.CodeMirror.customOverlayMode;
+    if (overlay_mode == null) {
+      log_error(new TemplaterError("Couldn't find customOverlayMode, can't enable syntax highlighting."));
+      return;
+    }
+    window.CodeMirror.defineMode(TEMPLATER_MODE_NAME, function(config) {
+      const templaterOverlay = {
+        startState: function() {
+          const js_state = window.CodeMirror.startState(js_mode);
+          return {
+            ...js_state,
+            inCommand: false,
+            tag_class: "",
+            freeLine: false
+          };
+        },
+        copyState: function(state) {
+          const js_state = window.CodeMirror.startState(js_mode);
+          const new_state = {
+            ...js_state,
+            inCommand: state.inCommand,
+            tag_class: state.tag_class,
+            freeLine: state.freeLine
+          };
+          return new_state;
+        },
+        blankLine: function(state) {
+          if (state.inCommand) {
+            return `line-background-templater-command-bg`;
           }
-        };
-        return overlay_mode(window.CodeMirror.getMode(config2, "hypermd"), templaterOverlay);
-      });
+          return null;
+        },
+        token: function(stream, state) {
+          if (stream.sol() && state.inCommand) {
+            state.freeLine = true;
+          }
+          if (state.inCommand) {
+            let keywords = "";
+            if (stream.match(/[-_]{0,1}%>/, true)) {
+              state.inCommand = false;
+              state.freeLine = false;
+              const tag_class = state.tag_class;
+              state.tag_class = "";
+              return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
+            }
+            const js_result = js_mode.token && js_mode.token(stream, state);
+            if (stream.peek() == null && state.freeLine) {
+              keywords += ` line-background-templater-command-bg`;
+            }
+            if (!state.freeLine) {
+              keywords += ` line-${TP_INLINE_CLASS}`;
+            }
+            return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
+          }
+          const match = stream.match(/<%[-_]{0,1}\s*([*+]{0,1})/, true);
+          if (match != null) {
+            switch (match[1]) {
+              case "*":
+                state.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
+                break;
+              default:
+                state.tag_class = TP_INTERPOLATION_TAG_TOKEN_CLASS;
+                break;
+            }
+            state.inCommand = true;
+            return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_OPENING_TAG_TOKEN_CLASS} ${state.tag_class}`;
+          }
+          while (stream.next() != null && !stream.match(/<%/, false))
+            ;
+          return null;
+        }
+      };
+      return overlay_mode(window.CodeMirror.getMode(config, "hypermd"), templaterOverlay);
     });
   }
 };
 
 // src/main.ts
-var TemplaterPlugin = class extends import_obsidian19.Plugin {
-  onload() {
-    return __async(this, null, function* () {
-      yield this.load_settings();
-      this.templater = new Templater(this.app, this);
-      yield this.templater.setup();
-      this.editor_handler = new Editor2(this.app, this);
-      yield this.editor_handler.setup();
-      this.fuzzy_suggester = new FuzzySuggester(this.app, this);
-      this.event_handler = new EventHandler(this.app, this, this.templater, this.settings);
-      this.event_handler.setup();
-      this.command_handler = new CommandHandler(this.app, this);
-      this.command_handler.setup();
-      (0, import_obsidian19.addIcon)("templater-icon", ICON_DATA);
-      this.addRibbonIcon("templater-icon", "Templater", () => __async(this, null, function* () {
+var TemplaterPlugin = class extends import_obsidian17.Plugin {
+  async onload() {
+    await this.load_settings();
+    this.templater = new Templater(this);
+    await this.templater.setup();
+    this.editor_handler = new Editor2(this);
+    await this.editor_handler.setup();
+    this.fuzzy_suggester = new FuzzySuggester(this);
+    this.event_handler = new EventHandler(this, this.templater, this.settings);
+    this.event_handler.setup();
+    this.command_handler = new CommandHandler(this);
+    this.command_handler.setup();
+    (0, import_obsidian17.addIcon)("templater-icon", ICON_DATA);
+    if (this.settings.enable_ribbon_icon) {
+      this.addRibbonIcon("templater-icon", "Templater", async () => {
         this.fuzzy_suggester.insert_template();
-      }));
-      this.addSettingTab(new TemplaterSettingTab(this.app, this));
-      this.app.workspace.onLayoutReady(() => {
-        this.templater.execute_startup_scripts();
-      });
+      }).setAttribute("id", "rb-templater-icon");
+    }
+    this.addSettingTab(new TemplaterSettingTab(this));
+    app.workspace.onLayoutReady(() => {
+      this.templater.execute_startup_scripts();
     });
   }
-  save_settings() {
-    return __async(this, null, function* () {
-      yield this.saveData(this.settings);
-    });
+  onunload() {
+    this.templater.functions_generator.teardown();
   }
-  load_settings() {
-    return __async(this, null, function* () {
-      this.settings = Object.assign({}, DEFAULT_SETTINGS, yield this.loadData());
-    });
+  async save_settings() {
+    await this.saveData(this.settings);
+  }
+  async load_settings() {
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 };
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */

@@ -1,4 +1,6 @@
-.clickable-icon.mod-error, .modal .community-plugin-info button.mod-error {
+.clickable-icon.mod-error,
+.modal .community-plugin-info button.mod-error,
+.modal-container .mod-community-plugin .community-modal-button-container button.mod-error {
     background-color: var(--background-modifier-error);
 }
 

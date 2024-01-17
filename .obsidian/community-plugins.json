@@ -2,10 +2,12 @@
   "calendar",
   "cm-editor-syntax-highlight-obsidian",
   "note-refactor-obsidian",
-  "sliding-panes-obsidian",
   "templater-obsidian",
   "periodic-notes",
   "dataview",
   "hotkey-helper",
-  "tag-wrangler"
+  "tag-wrangler",
+  "obsidian-style-settings",
+  "obsidian-minimal-settings",
+  "buttons"
 ]
