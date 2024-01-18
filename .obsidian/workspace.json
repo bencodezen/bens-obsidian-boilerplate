@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "5d7066bc4d23a8ec",
+        "id": "33d3d21a1fd6ff00",
         "type": "tabs",
         "children": [
           {
-            "id": "f8c8ecf70c03bb98",
+            "id": "49a351728be3089d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "templates/Frontmatter (Template).md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -93,7 +89,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "templates/Frontmatter (Template).md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -110,7 +105,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "templates/Frontmatter (Template).md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -144,9 +138,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "templates/Frontmatter (Template).md"
-              }
+              "state": {}
             }
           }
         ]
@@ -158,21 +150,22 @@
   "left-ribbon": {
     "hiddenItems": {
       "obsidian-excalidraw-plugin:Create new drawing": false,
-      "templater-obsidian:Templater": false,
-      "obsidian-omnivore:Omnivore": false,
+      "templater-obsidian:Templater": true,
+      "obsidian-omnivore:Omnivore": true,
       "obsidian-projects:Open projects": false,
-      "switcher:Open quick switcher": false,
+      "switcher:Open quick switcher": true,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
-      "command-palette:Open command palette": false,
+      "command-palette:Open command palette": true,
       "random-note:Open random note": false,
       "workspaces:Manage workspace layouts": false,
       "publish:Publish changes...": false,
       "periodic-notes:Open today": false
     }
   },
-  "active": "f8c8ecf70c03bb98",
+  "active": "fb856f856aa3f888",
   "lastOpenFiles": [
+    "templates/Frontmatter (Template).md",
     "notes/Obsidian Theme Demo File.md",
     "notes/Hello World.md",
     "README.md",
@@ -199,7 +192,6 @@
     "zettelkasten/marcusolssonobsidian-projects by marcusolsson.md",
     "zettelkasten/marcusolssonobsidian-projects Plain text project planning in Obsidian by Natalie Kraneiß.md",
     "zettelkasten/Waybound by Will Wight.md",
-    "zettelkasten/The Minimalist Entrepreneur by Sahil Lavingia.md",
     "zettelkasten"
   ]
 }
