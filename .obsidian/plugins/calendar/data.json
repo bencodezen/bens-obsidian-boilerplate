@@ -1,10 +1,10 @@
 {
-  "shouldConfirmBeforeCreate": true,
-  "weekStart": "monday",
-  "wordsPerDot": 250,
+  "shouldConfirmBeforeCreate": false,
+  "weekStart": "sunday",
+  "wordsPerDot": 1000,
   "showWeeklyNote": true,
   "weeklyNoteFormat": "",
-  "weeklyNoteTemplate": "templates/Weekly Note — Template",
-  "weeklyNoteFolder": "reports/Weekly Notes",
+  "weeklyNoteTemplate": "templates/3 - Pages/Weekly Report Note (Page Template)",
+  "weeklyNoteFolder": "reports/timeline/Weekly Notes",
   "localeOverride": "system-default"
 }

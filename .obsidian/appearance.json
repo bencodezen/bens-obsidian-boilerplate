@@ -1,11 +1,16 @@
 {
+  "accentColor": "",
   "cssTheme": "Minimal",
-  "theme": "obsidian",
+  "baseFontSize": 20,
+  "interfaceFontFamily": "Inter",
+  "showViewHeader": true,
+  "nativeMenus": true,
+  "textFontFamily": "Karla",
+  "monospaceFontFamily": "IBM Plex Mono",
   "enabledCssSnippets": [
-    "dracula-custom-edits",
-    "style-settings"
+    "night-owl"
   ],
   "translucency": false,
-  "baseFontSize": 21,
-  "accentColor": ""
+  "baseFontSizeAction": false,
+  "theme": "obsidian"
 }

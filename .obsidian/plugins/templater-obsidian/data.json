@@ -11,21 +11,18 @@
   "auto_jump_to_cursor": true,
   "enable_system_commands": false,
   "shell_path": "",
-  "user_scripts_folder": "",
+  "user_scripts_folder": "scripts",
   "enable_folder_templates": true,
-  "folder_templates": [
-    {
-      "folder": "/",
-      "template": "templates/Base Note (Template).md"
-    }
-  ],
+  "folder_templates": [],
   "syntax_highlighting": true,
-  "enabled_templates_hotkeys": [
-    ""
-  ],
+  "syntax_highlighting_mobile": false,
+  "enabled_templates_hotkeys": [],
   "startup_templates": [
     ""
   ],
+  "enable_ribbon_icon": true,
   "template_folder": "templates",
+  "script_folder": "scripts",
+  "empty_file_template": "templates/Base Note (Page Template)",
   "locale": "en"
 }

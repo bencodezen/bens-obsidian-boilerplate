@@ -1,0 +1,283 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "fieldConfig": {
+        "status": {
+          "options": [
+            "Backlog",
+            "In Progress",
+            "Done"
+          ],
+          "richText": false
+        }
+      },
+      "defaultName": "",
+      "templates": [
+        "templates/New Project (Page Template).md"
+      ],
+      "excludedNotes": [],
+      "isDefault": false,
+      "dataSource": {
+        "kind": "folder",
+        "config": {
+          "path": "Projects - Demo Project",
+          "recursive": false
+        }
+      },
+      "newNotesFolder": "",
+      "views": [
+        {
+          "config": {
+            "fieldConfig": {
+              "name": {
+                "width": 383
+              },
+              "path": {
+                "hide": false
+              },
+              "image": {
+                "hide": true
+              },
+              "tags": {
+                "hide": true
+              },
+              "status": {
+                "hide": true
+              },
+              "published": {
+                "hide": true
+              },
+              "dates": {
+                "hide": false
+              }
+            },
+            "orderFields": [
+              "name",
+              "aliases",
+              "dates",
+              "due",
+              "uuid",
+              "weight"
+            ]
+          },
+          "filter": {
+            "conditions": []
+          },
+          "colors": {
+            "conditions": [
+              {
+                "color": "#ff8080",
+                "condition": {
+                  "field": "published",
+                  "operator": "is-not-checked",
+                  "enabled": true
+                }
+              },
+              {
+                "color": "#80ff9f",
+                "condition": {
+                  "field": "published",
+                  "operator": "is-checked",
+                  "enabled": true
+                }
+              }
+            ]
+          },
+          "sort": {
+            "criteria": []
+          },
+          "name": "Table",
+          "id": "62fbfd17-5d45-4c73-b64d-7d50abb5e3cf",
+          "type": "table"
+        },
+        {
+          "config": {
+            "groupByField": "status",
+            "priorityField": "weight"
+          },
+          "filter": {
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "name": "Board",
+          "id": "21394a4e-1545-46a5-82de-e8ecda1063b0",
+          "type": "board"
+        },
+        {
+          "config": {
+            "interval": "month",
+            "dateField": "due",
+            "checkField": "published"
+          },
+          "filter": {
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "name": "Calendar",
+          "id": "ee181499-1b98-4a67-836c-ed12a5b06982",
+          "type": "calendar"
+        },
+        {
+          "config": {
+            "coverField": "image",
+            "includeFields": [
+              "due",
+              "path"
+            ]
+          },
+          "filter": {
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "name": "Gallery",
+          "id": "acbcb4bf-3104-4f63-809b-6c9a5cc8e9e2",
+          "type": "gallery"
+        }
+      ],
+      "name": "Demo project",
+      "id": "dea3f046-8ff6-497a-aebf-bf639b4b8878",
+      "path": "Projects - Demo Project"
+    },
+    {
+      "fieldConfig": {
+        "Status": {}
+      },
+      "defaultName": "",
+      "templates": [],
+      "excludedNotes": [],
+      "isDefault": false,
+      "dataSource": {
+        "kind": "dataview",
+        "config": {
+          "query": "TABLE status as \"Status\", roadmap as \"Roadmap\"\nFROM #type/new-project"
+        }
+      },
+      "newNotesFolder": "",
+      "views": [
+        {
+          "config": {
+            "fieldConfig": {
+              "Status": {
+                "width": 194
+              },
+              "Roadmap": {
+                "width": 262
+              }
+            }
+          },
+          "filter": {
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "id": "63b2f486-f4dd-455b-babd-8c7564ef4eab",
+          "name": "Table",
+          "type": "table"
+        }
+      ],
+      "id": "7c4ba3c8-cf2f-4c94-b63e-a8fc0ccdbf92",
+      "name": "Dataview"
+    },
+    {
+      "fieldConfig": {},
+      "defaultName": "",
+      "templates": [],
+      "excludedNotes": [],
+      "isDefault": true,
+      "dataSource": {
+        "kind": "dataview",
+        "config": {
+          "query": "TABLE \n  status as \"Status\",\n  due as \"Due Date\"\nFROM #new-project"
+        }
+      },
+      "newNotesFolder": "",
+      "views": [
+        {
+          "config": {},
+          "filter": {
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "id": "6a44ec36-0797-4f8d-9a56-d16f72a19c8f",
+          "name": "Table",
+          "type": "table"
+        }
+      ],
+      "id": "d20a02ce-9a1e-43ea-b7dc-2b701c72e46d",
+      "name": "Folder Dataview Combo"
+    },
+    {
+      "fieldConfig": {},
+      "defaultName": "",
+      "templates": [],
+      "excludedNotes": [],
+      "isDefault": false,
+      "dataSource": {
+        "kind": "dataview",
+        "config": {
+          "query": "TABLE status as Status\nFROM #type/content AND [[Obsidian Office Hours (Series)]]"
+        }
+      },
+      "newNotesFolder": "",
+      "views": [
+        {
+          "config": {
+            "fieldConfig": {
+              "File": {
+                "width": 641
+              }
+            }
+          },
+          "filter": {
+            "conditions": []
+          },
+          "colors": {
+            "conditions": []
+          },
+          "sort": {
+            "criteria": []
+          },
+          "id": "b2418816-8240-4dbf-863e-70a69a8f9d6d",
+          "name": "Table",
+          "type": "table"
+        }
+      ],
+      "id": "6b7ec4f1-d103-473c-bc91-a8064074ebcf",
+      "name": "Obsidian Office Hours"
+    }
+  ],
+  "archives": [],
+  "preferences": {
+    "projectSizeLimit": 1000,
+    "frontmatter": {
+      "quoteStrings": "PLAIN"
+    },
+    "commands": [],
+    "linkBehavior": "open-editor"
+  }
+}

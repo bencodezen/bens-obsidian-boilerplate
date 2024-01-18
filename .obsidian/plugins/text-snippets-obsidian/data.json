@@ -1,0 +1,29 @@
+{
+  "snippets_file": "@ : [[@$end$]]\n\n+ : [[+$end$]]\n\niab : 🥞 #i/ate/breakfast $end$\niabr : 🥂 #i/ate/brunch $end$\niad : 🍜 #i/ate/dinner $end$\nial : 🍔 #i/ate/lunch $end$\nias : 🍬 #i/ate/snack $end$\nidw : 💧 #i/drank/water — 8oz\nist : 📖 #i/studied \n\nipc : 🀄 #i/practiced/chinese ($end$)\nipj : 🇯🇵 #i/practiced/japanese ($end$)\nhm : 🧘 #i/practiced/meditation ($end$)\nhr : 📖 #i/practiced/reading $end$ (-)\nhu : 🎸 #i/practiced/ukulele ($end$)\nhw : 📝 #i/practiced/writing $end$ (0)\n\ndv :  ```dataview$nl$$end$$nl$```\n\n",
+  "snippets": [
+    "@ : [[@$end$]]",
+    "+ : [[+$end$]]",
+    "iab : 🥞 #i/ate/breakfast $end$",
+    "iabr : 🥂 #i/ate/brunch $end$",
+    "iad : 🍜 #i/ate/dinner $end$",
+    "ial : 🍔 #i/ate/lunch $end$",
+    "ias : 🍬 #i/ate/snack $end$",
+    "idw : 💧 #i/drank/water — 8oz",
+    "ist : 📖 #i/studied ",
+    "ipc : 🀄 #i/practiced/chinese ($end$)",
+    "ipj : 🇯🇵 #i/practiced/japanese ($end$)",
+    "hm : 🧘 #i/practiced/meditation ($end$)",
+    "hr : 📖 #i/practiced/reading $end$ (-)",
+    "hu : 🎸 #i/practiced/ukulele ($end$)",
+    "hw : 📝 #i/practiced/writing $end$ (0)",
+    "dv :  ```dataview$nl$$end$$nl$```"
+  ],
+  "endSymbol": "$end$",
+  "newlineSymbol": "$nl$",
+  "stopSymbol": "$tb$",
+  "pasteSymbol": "$pst$",
+  "useTab": false,
+  "useSpace": false,
+  "wordDelimiters": "$()[]{}<>,.!?;:'\"\\/",
+  "isWYSIWYG": true
+}

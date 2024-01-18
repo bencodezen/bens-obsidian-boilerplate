@@ -1,0 +1,28 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "cssclasses": "multitext",
+    "tags": "tags",
+    "updated": "datetime",
+    "dates": "date",
+    "topics": "multitext",
+    "streamType": "date",
+    "last-modified": "datetime",
+    "mode": "multitext",
+    "created-on": "datetime",
+    "last-modified-on": "datetime",
+    "relationship": "multitext",
+    "week": "text",
+    "team": "multitext",
+    "episode": "number",
+    "youtube-on": "date",
+    "twitch-on": "date",
+    "livestream-on": "date",
+    "lesson-on": "datetime",
+    "published-on": "date",
+    "updated-on": "datetime",
+    "occured-on": "date",
+    "occurred-on": "text",
+    "uuid": "number"
+  }
+}

@@ -1,19 +1,19 @@
 {
   "main": {
-    "id": "390ce2f9b053bb3c",
+    "id": "164a08f7cefb42fb",
     "type": "split",
     "children": [
       {
-        "id": "0ce7b63055adad06",
+        "id": "5d7066bc4d23a8ec",
         "type": "tabs",
         "children": [
           {
-            "id": "6519938022b3fdc8",
+            "id": "f8c8ecf70c03bb98",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/Obsidian Theme Demo File.md",
+                "file": "templates/Frontmatter (Template).md",
                 "mode": "source",
                 "source": false
               }
@@ -25,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "7e11ed0b2ad341ae",
+    "id": "e7603db1e8397fa1",
     "type": "split",
     "children": [
       {
-        "id": "9b2b54a0dbbb215d",
+        "id": "a2cf45ee0c4f6254",
         "type": "tabs",
         "children": [
           {
-            "id": "4cd46a0ca99c06f1",
+            "id": "fb856f856aa3f888",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -43,7 +43,7 @@
             }
           },
           {
-            "id": "e8b0550146f5c99e",
+            "id": "414cd9f3f8e6759e",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -58,7 +58,7 @@
             }
           },
           {
-            "id": "924f2f4b672c3982",
+            "id": "a424dc3b9601ad37",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -72,15 +72,15 @@
     "width": 300
   },
   "right": {
-    "id": "8bb12e8b3365261b",
+    "id": "bddedfe46a674ee5",
     "type": "split",
     "children": [
       {
-        "id": "6217fad8ae07b96b",
+        "id": "681b99785834025d",
         "type": "tabs",
         "children": [
           {
-            "id": "f2632ace54f501f6",
+            "id": "de8129c495f0a991",
             "type": "leaf",
             "state": {
               "type": "calendar",
@@ -88,12 +88,12 @@
             }
           },
           {
-            "id": "09bebd2aba949028",
+            "id": "de78676c121afb63",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "notes/Obsidian Theme Demo File.md",
+                "file": "templates/Frontmatter (Template).md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,19 +105,19 @@
             }
           },
           {
-            "id": "ef9dea5e933e8a6c",
+            "id": "f33178d1f80010ae",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "notes/Obsidian Theme Demo File.md",
+                "file": "templates/Frontmatter (Template).md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "8a24cc53f3c9685a",
+            "id": "e3a620f415b7dc93",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -128,12 +128,24 @@
             }
           },
           {
-            "id": "c9d3216a78fba7d4",
+            "id": "f4a7bd12343609d4",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              }
+            }
+          },
+          {
+            "id": "f86a162b39930dfa",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/Obsidian Theme Demo File.md"
+                "file": "templates/Frontmatter (Template).md"
               }
             }
           }
@@ -145,20 +157,49 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-excalidraw-plugin:Create new drawing": false,
+      "templater-obsidian:Templater": false,
+      "obsidian-omnivore:Omnivore": false,
+      "obsidian-projects:Open projects": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "command-palette:Open command palette": false,
-      "markdown-importer:Open format converter": false,
+      "random-note:Open random note": false,
       "workspaces:Manage workspace layouts": false,
-      "periodic-notes:Open today": false,
-      "templater-obsidian:Templater": false
+      "publish:Publish changes...": false,
+      "periodic-notes:Open today": false
     }
   },
-  "active": "6519938022b3fdc8",
+  "active": "f8c8ecf70c03bb98",
   "lastOpenFiles": [
-    "obsidian.css",
-    "obsidian.css.md",
-    "notes/Obsidian Office Hours (033).md"
+    "notes/Obsidian Theme Demo File.md",
+    "notes/Hello World.md",
+    "README.md",
+    "zettelkasten/@Cennydd Bowles and James Box.md",
+    "scripts",
+    "zettelkasten/How to Know a Person by David Brooks.md",
+    "zettelkasten/The Miracle Morning by Hal Elrod.md",
+    "zettelkasten/The 12 Week Year by Brian P. Moran, Michael Lennington.md",
+    "zettelkasten/You Need a Budget by Jesse Mecham .md",
+    "zettelkasten/Man's Search for Meaning by Viktor E. Frankl, Harold S. Kushner, and William J. Winslade.md",
+    "zettelkasten/Hidden Potential by Adam Grant.md",
+    "zettelkasten/Braving the Wilderness by BrenÃ© Brown .md",
+    "zettelkasten/Art & Fear by David Bayles, Ted Orland.md",
+    "zettelkasten/Keep Going by Austin Kleon.md",
+    "zettelkasten/Show Your Work! by Austin Kleon.md",
+    "zettelkasten/The Sympathizer by Viet Thanh Nguyen.md",
+    "zettelkasten/Steal Like an Artist by Austin Kleon.md",
+    "zettelkasten/The Psychology of Money by Morgan Housel.md",
+    "zettelkasten/I Will Teach You to Be Rich by Ramit Sethi-2.md",
+    "zettelkasten/The Power of Habit by Charles Duhigg.md",
+    "zettelkasten/Building a Second Brain by Tiago Forte.md",
+    "zettelkasten/Tuesdays With Morrie by Mitch Albom.md",
+    "zettelkasten/The Pathless Path by Paul Millerd.md",
+    "zettelkasten/marcusolssonobsidian-projects by marcusolsson.md",
+    "zettelkasten/marcusolssonobsidian-projects Plain text project planning in Obsidian by Natalie Kraneiß.md",
+    "zettelkasten/Waybound by Will Wight.md",
+    "zettelkasten/The Minimalist Entrepreneur by Sahil Lavingia.md",
+    "zettelkasten"
   ]
 }

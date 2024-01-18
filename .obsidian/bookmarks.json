@@ -1,0 +1,62 @@
+{
+  "items": [
+    {
+      "type": "file",
+      "path": "zettelkasten/My Obsidian Course.md",
+      "ctime": 1680498762660
+    },
+    {
+      "type": "group",
+      "ctime": 1686174556133,
+      "items": [
+        {
+          "type": "file",
+          "ctime": 1686174537294,
+          "path": "(000) Inbox.md",
+          "title": "📥 My Inbox"
+        }
+      ],
+      "title": "Dashboards"
+    },
+    {
+      "type": "group",
+      "ctime": 1686175076747,
+      "items": [
+        {
+          "type": "file",
+          "ctime": 1686175012138,
+          "path": "zettelkasten/nouns/@Obsidian.md",
+          "title": "Obsidian App"
+        },
+        {
+          "type": "file",
+          "ctime": 1686175171642,
+          "path": "zettelkasten/nouns/@Obsidian.md",
+          "subpath": "#What is @Obsidian Obsidian ?",
+          "title": "New Obsidian"
+        },
+        {
+          "type": "file",
+          "ctime": 1686175938531,
+          "path": "zettelkasten/Obsidian Bookmarks.md",
+          "subpath": "#👍 Pros"
+        }
+      ],
+      "title": "Note Taking Apps"
+    },
+    {
+      "type": "group",
+      "ctime": 1686175086510,
+      "items": [
+        {
+          "type": "file",
+          "ctime": 1686175155923,
+          "path": "zettelkasten/nouns/@Obsidian.md",
+          "subpath": "#What is @Obsidian Obsidian ?",
+          "title": "Obsidian"
+        }
+      ],
+      "title": "Markdown Apps"
+    }
+  ]
+}

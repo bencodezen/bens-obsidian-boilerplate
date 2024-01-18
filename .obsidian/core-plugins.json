@@ -7,15 +7,18 @@
   "canvas",
   "outgoing-link",
   "tag-pane",
+  "properties",
   "page-preview",
   "note-composer",
   "command-palette",
   "slash-command",
+  "editor-status",
   "bookmarks",
-  "markdown-importer",
+  "random-note",
   "outline",
   "word-count",
-  "slides",
   "workspaces",
-  "file-recovery"
+  "file-recovery",
+  "publish",
+  "sync"
 ]

@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "useMoment": false,
+      "file": "(000) Inbox.md"
+    },
+    {
+      "useMoment": false,
+      "file": "timeline/Yearly Notes/2022.md"
+    },
+    {
+      "useMoment": false,
+      "file": "zettelkasten/Build with Ben (Series).md"
+    },
+    {
+      "useMoment": false,
+      "file": "zettelkasten/Productivity Power Hour (Series).md"
+    }
+  ],
+  "useExistingPane": false,
+  "useHoverEditor": false
+}
