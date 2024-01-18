@@ -44,7 +44,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "type",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -163,35 +163,6 @@
       "periodic-notes:Open today": false
     }
   },
-  "active": "fb856f856aa3f888",
-  "lastOpenFiles": [
-    "templates/Frontmatter (Template).md",
-    "notes/Obsidian Theme Demo File.md",
-    "notes/Hello World.md",
-    "README.md",
-    "zettelkasten/@Cennydd Bowles and James Box.md",
-    "scripts",
-    "zettelkasten/How to Know a Person by David Brooks.md",
-    "zettelkasten/The Miracle Morning by Hal Elrod.md",
-    "zettelkasten/The 12 Week Year by Brian P. Moran, Michael Lennington.md",
-    "zettelkasten/You Need a Budget by Jesse Mecham .md",
-    "zettelkasten/Man's Search for Meaning by Viktor E. Frankl, Harold S. Kushner, and William J. Winslade.md",
-    "zettelkasten/Hidden Potential by Adam Grant.md",
-    "zettelkasten/Braving the Wilderness by BrenÃ© Brown .md",
-    "zettelkasten/Art & Fear by David Bayles, Ted Orland.md",
-    "zettelkasten/Keep Going by Austin Kleon.md",
-    "zettelkasten/Show Your Work! by Austin Kleon.md",
-    "zettelkasten/The Sympathizer by Viet Thanh Nguyen.md",
-    "zettelkasten/Steal Like an Artist by Austin Kleon.md",
-    "zettelkasten/The Psychology of Money by Morgan Housel.md",
-    "zettelkasten/I Will Teach You to Be Rich by Ramit Sethi-2.md",
-    "zettelkasten/The Power of Habit by Charles Duhigg.md",
-    "zettelkasten/Building a Second Brain by Tiago Forte.md",
-    "zettelkasten/Tuesdays With Morrie by Mitch Albom.md",
-    "zettelkasten/The Pathless Path by Paul Millerd.md",
-    "zettelkasten/marcusolssonobsidian-projects by marcusolsson.md",
-    "zettelkasten/marcusolssonobsidian-projects Plain text project planning in Obsidian by Natalie Kraneiß.md",
-    "zettelkasten/Waybound by Will Wight.md",
-    "zettelkasten"
-  ]
+  "active": "49a351728be3089d",
+  "lastOpenFiles": []
 }
