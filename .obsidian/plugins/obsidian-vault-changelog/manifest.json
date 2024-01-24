@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-vault-changelog",
+	"name": "Vault Changelog",
+	"version": "0.1.0",
+	"minAppVersion": "0.9.7",
+	"description": "Obsidian plugin to maintain a notes changelog in a vault",
+	"author": "Badr Bouslikhin",
+	"authorUrl": "https://github.com/MrZeroo00",
+	"isDesktopOnly": false
+}

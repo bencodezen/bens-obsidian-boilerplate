@@ -24,7 +24,7 @@
   "legacyEditor": false,
   "alwaysUpdateLinks": true,
   "newFileLocation": "folder",
-  "newFileFolderPath": "zettelkasten",
+  "newFileFolderPath": "notes",
   "foldHeading": true,
   "foldIndent": true,
   "showLineNumber": false,

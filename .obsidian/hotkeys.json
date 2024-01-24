@@ -257,5 +257,14 @@
       ],
       "key": "F"
     }
+  ],
+  "templater-obsidian:templates/Current Timestamp Now (Template).md": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "O"
+    }
   ]
 }

@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "33d3d21a1fd6ff00",
+        "id": "5d4ebd8311f10c97",
         "type": "tabs",
         "children": [
           {
-            "id": "49a351728be3089d",
+            "id": "b3fd6235b1e9c28d",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "templates/Current Timestamp Now (Template).md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -65,7 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 283.50390243530273
   },
   "right": {
     "id": "bddedfe46a674ee5",
@@ -89,6 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "templates/Current Timestamp Now (Template).md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,6 +110,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "templates/Current Timestamp Now (Template).md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,14 +144,18 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "templates/Current Timestamp Now (Template).md"
+              }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -163,6 +173,23 @@
       "periodic-notes:Open today": false
     }
   },
-  "active": "49a351728be3089d",
-  "lastOpenFiles": []
+  "active": "b3fd6235b1e9c28d",
+  "lastOpenFiles": [
+    "notes/Event (Page Template).md",
+    "templates/Current Timestamp Now (Template).md",
+    "notes/The 13th Week.md",
+    "notes/The 12 Week Year.md",
+    "notes/Test Sandbox.md",
+    "notes/The 14th Week.md",
+    "CHANGELOG.md",
+    "notes/The 15th Week.md",
+    "notes/Changelog Pattern.md",
+    "notes/Obsidian Theme Demo File.md",
+    "templates/Today (Template).md",
+    "templates/Last Modified Date  (Template).md",
+    "assets/preferences-panel.png",
+    "templates/Book (Template).md",
+    "templates/Base Note (Template).md",
+    "notes/Hello World.md"
+  ]
 }
